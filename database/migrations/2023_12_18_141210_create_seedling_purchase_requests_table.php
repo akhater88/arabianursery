@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('farm_user_id')->constrained('farm_users');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
