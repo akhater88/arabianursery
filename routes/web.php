@@ -56,7 +56,7 @@ Route::get('auth/{provider}/callback', [SocialLoginController::class, 'handlePro
 
 Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function () {
     Route::get('/dashboard', function () {
-        return view('home');
+        return view('home', ['page_title' => 'الرئيسية']);
     })->name('dashboard');
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
