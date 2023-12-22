@@ -5,10 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use MatanYadaev\EloquentSpatial\Objects\Point;
+use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 
 class Nursery extends Model
 {
-    use HasFactory;
+    use HasFactory, HasSpatial;
+
+    protected $guarded = ['id'];
+
+    protected $casts = [
+        'location' => Point::class,
+    ];
 
     public function nurseryUsers(): hasMany
     {

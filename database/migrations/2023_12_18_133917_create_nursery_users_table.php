@@ -14,17 +14,17 @@ return new class extends Migration
         Schema::create('nursery_users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
-            $table->string('country_code');
-            $table->string('mobile_number')->unique();
+            $table->string('email')->nullable()->unique();
+            $table->string('country_code')->nullable();
+            $table->string('mobile_number')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->string('provider')->nullable();
             $table->string('provider_id')->nullable();
             $table->tinyInteger('status')->default(1);
             $table->rememberToken();
 
-            $table->foreignId('nursery_id')->constrained('nurseries');
+            $table->foreignId('nursery_id')->nullable()->constrained('nurseries');
 
             $table->timestamps();
         });

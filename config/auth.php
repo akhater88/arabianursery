@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'nursery_web' => [
+            'driver' => 'session',
+            'provider' => 'nursery_users',
+        ]
     ],
 
     /*
@@ -63,6 +67,10 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+        'nursery_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\NurseryUser::class,
         ],
 
         // 'users' => [
