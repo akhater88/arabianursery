@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\SeedlingServiceStatuses;
+use App\Models\FarmUser;
 use App\Models\SeedlingService;
 use App\Models\SeedType;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class SeedlingServiceController extends Controller
     {
         $request->validate([
             "type" => ['required', Rule::in([SeedlingService::TYPE_FARMER, SeedlingService::TYPE_PERSONAL])],
-            "farm_user" => ['nullable', Rule::requiredIf($request->type == SeedlingService::TYPE_FARMER)],
+            "farm_user" => ['nullable', Rule::requiredIf($request->type == SeedlingService::TYPE_FARMER), 'exists:' . FarmUser::class . ',id'],
             "tray_count" => ['required', 'integer', 'gt:0'],
             "seed_type" => ['required', 'exists:' . SeedType::class . ',id'],
             "seed_class" => ['nullable', 'string', 'max:50'],
@@ -63,5 +64,32 @@ class SeedlingServiceController extends Controller
         ]);
 
         return redirect()->back();
+    }
+
+    public function get(Request $request)
+    {
+        return SeedlingService::with('seedlingPurchaseRequests')
+            ->personal()
+            ->where('nursery_id', $request->user()->nursery->id)
+            ->where('id', $request->id)
+            ->firstOrFail();
+    }
+
+    public function search(Request $request)
+    {
+        $personal_seedling_service_query = SeedlingService::query()->with('seedType')->limit(7);
+
+        if ($request->q) {
+            $personal_seedling_service_query->where('seed_class', 'like', "%{$request->q}%")
+                ->orWhereRelation('seedType', 'name', 'like', "%{$request->q}%");
+        }
+
+        $personal_seedling_service_query->where('nursery_id', $request->user()->nursery->id)->personal();
+
+        return [
+            'results' => $personal_seedling_service_query->get()->map(fn($seedling_service) => [
+                'id' => $seedling_service->id,
+                'text' => $seedling_service->option_name
+            ])];
     }
 }

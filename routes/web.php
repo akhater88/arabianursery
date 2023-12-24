@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\FarmUserController;
 use App\Http\Controllers\NurseryUserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SeedlingPurchaseRequestController;
 use App\Http\Controllers\SeedlingServiceController;
 use App\Http\Controllers\SeedTypeController;
 use Illuminate\Support\Facades\Route;
@@ -62,10 +63,16 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
 
     Route::get('farm-users/search', [FarmUserController::class, 'search'])->name('farmer.search');
     Route::post('farm-users/quick-add', [FarmUserController::class, 'quickStore'])->name('farmer.quick-store');
+
     Route::get('seed-types/search', [SeedTypeController::class, 'search'])->name('seed-types.search');
     Route::post('seed-types', [SeedTypeController::class, 'store'])->name('seed-types.store');
 
-    Route::resource('seedling-service', SeedlingServiceController::class);
+    Route::get('seedling-services/search', [SeedlingServiceController::class, 'search'])->name('seedling-services.search');
+    Route::get('seedling-services/get/{id}', [SeedlingServiceController::class, 'get'])->name('seedling-services.get');
+    Route::resource('seedling-services', SeedlingServiceController::class);
+
+    Route::resource('seedling-purchase-requests', SeedlingPurchaseRequestController::class);
+
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 

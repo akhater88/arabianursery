@@ -2,7 +2,7 @@
     <label for="customRadioInline">طريقة الدفع:</label>
 
     <div class="custom-control custom-radio custom-control-inline">
-        <input type="radio" id="cash" class="custom-control-input" name="payment_type"
+        <input type="radio" required id="cash" class="custom-control-input" name="payment_type"
                {{ old('payment_type') == 'cash' ? 'checked' : '' }}
                onclick="handleCashOption()" value="cash">
         <label class="custom-control-label" for="cash">كاش</label>

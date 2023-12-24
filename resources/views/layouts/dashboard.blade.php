@@ -46,6 +46,9 @@
 
     <!-- Custom style for RTL -->
     <link rel="stylesheet" href={{asset("dist/css/custom.css")}}>
+
+    @vite(['resources/js/app.js'])
+
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
