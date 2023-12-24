@@ -18,7 +18,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card card-white">
-                <form method="POST" role="form" id="asd" action="{{route('seedling-service.store')}}">
+                <form method="POST" role="form" action="{{route('seedling-services.store')}}">
                     @csrf
                     <div class="card-body">
                         <div class="row col-12">

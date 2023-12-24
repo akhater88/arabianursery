@@ -11,6 +11,8 @@ class SeedlingPurchaseRequest extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $guarded = ['id'];
+
     public function nursery(): belongsTo
     {
         return $this->belongsTo(Nursery::class);

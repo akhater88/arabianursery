@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\SeedlingServiceStatuses;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,6 +23,7 @@ class SeedlingService extends Model
         'status' => SeedlingServiceStatuses::class,
     ];
 
+    //  ----------    Relationships    ----------
     public function seedType(): belongsTo
     {
         return $this->belongsTo(SeedType::class);
@@ -45,5 +47,20 @@ class SeedlingService extends Model
     public function seedlingPurchaseRequests(): hasMany
     {
         return $this->hasMany(SeedlingPurchaseRequest::class);
+    }
+
+
+    /* -------------- Scopes -------------- */
+    public function scopePersonal($query)
+    {
+        return $query->where('type', self::TYPE_PERSONAL);
+    }
+
+    //  ----------    Accessor & Mutators    ----------
+    public function optionName(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => "{$this->seedType->name} - {$this->seed_class} - {$this->created_at}"
+        );
     }
 }
