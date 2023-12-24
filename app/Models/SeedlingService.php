@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SeedlingServiceStatuses;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class SeedlingService extends Model
 {
     use HasFactory, SoftDeletes;
+
+    const TYPE_PERSONAL = 1;
+    const TYPE_FARMER = 2;
+
+    protected $guarded = ['id'];
+
+    protected $casts = [
+        'status' => SeedlingServiceStatuses::class,
+    ];
 
     public function seedType(): belongsTo
     {

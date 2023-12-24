@@ -54,14 +54,13 @@
         <!-- ./col -->
     </div>
     <div class="mt-4">
-            <div class="row">
-                <button style="width: 60px; height: 53px; display: none;" class="others btn btn-success rounded-circle mr-2">أشتال</button>
-                <button style="width: 60px; height: 53px; display: none;" class="others btn btn-success rounded-circle">طلب</button>
-            </div>
-            <div class="row mt-1">
-                <button onclick="display()" style="width: 60px; height: 53px" class="btn btn-info rounded-circle mr-2">+</button>
-                <button style="width: 60px; height: 53px; display: none;" class="others btn btn-success rounded-circle">مخزن</button>
-            </div>
+        <div class="row">
+            <a href="{{ route('seedling-service.create') }}" style="width: 60px; height: 53px; display: none;" class="others btn btn-success rounded-circle mr-2">أشتال</a>
+            <a href="#" style="width: 60px; height: 53px; display: none;" class="others btn btn-success rounded-circle">طلب</a>
+        </div>
+        <div class="row mt-1">
+            <button onclick="display()" style="width: 60px; height: 53px" class="btn btn-info rounded-circle mr-2">+</button>
+            <a href="#" style="width: 60px; height: 53px; display: none;" class="others btn btn-success rounded-circle">مخزن</a>
         </div>
     </div>
 @endsection

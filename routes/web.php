@@ -2,14 +2,15 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
-use App\Http\Controllers\Auth\FacebookController;
-use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\FarmUserController;
 use App\Http\Controllers\NurseryUserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SeedlingServiceController;
+use App\Http\Controllers\SeedTypeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -58,6 +59,13 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
     Route::get('/dashboard', function () {
         return view('home', ['page_title' => 'الرئيسية']);
     })->name('dashboard');
+
+    Route::get('farm-users/search', [FarmUserController::class, 'search'])->name('farmer.search');
+    Route::post('farm-users/quick-add', [FarmUserController::class, 'quickStore'])->name('farmer.quick-store');
+    Route::get('seed-types/search', [SeedTypeController::class, 'search'])->name('seed-types.search');
+    Route::post('seed-types', [SeedTypeController::class, 'store'])->name('seed-types.store');
+
+    Route::resource('seedling-service', SeedlingServiceController::class);
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 

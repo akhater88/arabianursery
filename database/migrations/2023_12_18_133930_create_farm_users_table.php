@@ -24,6 +24,7 @@ return new class extends Migration
             $table->tinyInteger('status')->default(1);
             $table->rememberToken();
 
+            $table->nullableMorphs('added_by');
             $table->foreignId('farm_id')->nullable()->constrained('farms');
 
             $table->timestamps();

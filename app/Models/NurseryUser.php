@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class NurseryUser extends Authenticatable
@@ -33,6 +34,11 @@ class NurseryUser extends Authenticatable
     public function seedlingPurchaseRequests(): hasMany
     {
         return $this->hasMany(SeedlingPurchaseRequest::class);
+    }
+
+    public function addedFarmUsers(): MorphMany
+    {
+        return $this->morphMany(FarmUser::class, 'added_by');
     }
 
 
