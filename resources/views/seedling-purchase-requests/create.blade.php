@@ -28,7 +28,7 @@
                                         required style="width: 100%;">
                                     @if(old('seedling_service'))
                                         <option selected value="{{ old('seedling_service') }}">
-                                            {{ SeedlingService::find(old('seedling_service'))?->option_name }}
+                                            {{ SeedlingService::personal()->whereId(old('seedling_service'))->first()?->option_name }}
                                         </option>
                                     @endif
                                 </select>

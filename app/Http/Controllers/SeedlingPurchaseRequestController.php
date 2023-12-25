@@ -20,9 +20,8 @@ class SeedlingPurchaseRequestController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            "seedling_service" => ['required', Rule::exists(SeedlingService::class, 'id')->where(function (Builder $query) {
-                return $query->where('type', SeedlingService::TYPE_PERSONAL);
-            })],
+            "seedling_service" => ['required', Rule::exists(SeedlingService::class, 'id')
+                ->where('type', SeedlingService::TYPE_PERSONAL)->where('nursery_id', $request->user()->nursery->id)],
             "farm_user" => ['required', 'exists:' . FarmUser::class . ',id'],
             "tray_count" => ['required', 'integer', 'gt:0'],
             "price_per_tray" => ['required', 'numeric', 'regex:/^\d*\.{0,1}\d{0,2}$/'], // for exactly 2 digits: regex:/^(?:[1-9]\d+|\d)(?:\.\d\d)?$/

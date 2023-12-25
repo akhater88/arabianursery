@@ -60,7 +60,7 @@
         </div>
         <div class="row mt-1">
             <button onclick="display()" style="width: 60px; height: 53px" class="btn btn-info rounded-circle mr-2">+</button>
-            <a href="#" style="width: 60px; height: 53px; display: none;" class="others btn btn-success rounded-circle">مخزن</a>
+            <a href="{{ route('warehouse-entities.create') }}" style="width: 60px; height: 53px; display: none;" class="others btn btn-success rounded-circle">مخزن</a>
         </div>
     </div>
 @endsection

@@ -36,9 +36,19 @@ class NurseryUser extends Authenticatable
         return $this->hasMany(SeedlingPurchaseRequest::class);
     }
 
+    public function warehouseEntities(): hasMany
+    {
+        return $this->hasMany(NurseryWarehouseEntity::class);
+    }
+
     public function addedFarmUsers(): MorphMany
     {
         return $this->morphMany(FarmUser::class, 'added_by');
+    }
+
+    public function addedAgriculturalSupplyStoreUsers(): MorphMany
+    {
+        return $this->morphMany(AgriculturalSupplyStoreUser::class, 'added_by');
     }
 
 

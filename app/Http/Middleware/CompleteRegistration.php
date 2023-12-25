@@ -19,7 +19,7 @@ class CompleteRegistration
         $user = Auth::guard('nursery_web')->user();
 
         if ($user && $user->isInCompleted()) {
-            return redirect()->route('nursery.get-complete-registration');
+            return redirect()->route('nursery.create-complete-registration');
         }
 
         return $next($request);

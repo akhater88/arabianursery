@@ -12,7 +12,7 @@ use MatanYadaev\EloquentSpatial\Objects\Point;
 
 class NurseryUserController extends Controller
 {
-    public function getCompleteRegistration(Request $request)
+    public function createCompleteRegistration(Request $request)
     {
         $user = $request->user('nursery_web');
 

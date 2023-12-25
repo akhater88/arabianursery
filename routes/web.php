@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AgriculturalSupplyStoreUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\PasswordController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\FarmUserController;
 use App\Http\Controllers\NurseryUserController;
+use App\Http\Controllers\NurseryWarehouseEntityController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SeedlingPurchaseRequestController;
 use App\Http\Controllers\SeedlingServiceController;
@@ -64,6 +66,9 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
     Route::get('farm-users/search', [FarmUserController::class, 'search'])->name('farmer.search');
     Route::post('farm-users/quick-add', [FarmUserController::class, 'quickStore'])->name('farmer.quick-store');
 
+    Route::get('agricultural-supply-store-user/search', [AgriculturalSupplyStoreUserController::class, 'search'])->name('agricultural-supply-store-user.search');
+    Route::post('agricultural-supply-store-user/quick-store', [AgriculturalSupplyStoreUserController::class, 'quickStore'])->name('agricultural-supply-store-user.quick-store');
+
     Route::get('seed-types/search', [SeedTypeController::class, 'search'])->name('seed-types.search');
     Route::post('seed-types', [SeedTypeController::class, 'store'])->name('seed-types.store');
 
@@ -72,6 +77,8 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
     Route::resource('seedling-services', SeedlingServiceController::class);
 
     Route::resource('seedling-purchase-requests', SeedlingPurchaseRequestController::class);
+
+    Route::resource('warehouse-entities', NurseryWarehouseEntityController::class);
 
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
@@ -86,7 +93,7 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
 });
 
 Route::middleware(['auth:nursery_web', 'completed-registration'])->group(function () {
-    Route::get('complete-registration', [NurseryUserController::class, 'getCompleteRegistration'])->name('nursery.get-complete-registration');
+    Route::get('complete-registration', [NurseryUserController::class, 'createCompleteRegistration'])->name('nursery.create-complete-registration');
 
     Route::post('complete-registration', [NurseryUserController::class, 'storeCompleteRegistration'])->name('nursery.store-complete-registration');
 });

@@ -50,7 +50,7 @@ class SocialLoginController extends Controller
         request()->session()->regenerate();
 
         if ($user->isInCompleted()) {
-            return redirect()->route('nursery.get-complete-registration');
+            return redirect()->route('nursery.create-complete-registration');
         }
 
         return redirect()->route('dashboard');
