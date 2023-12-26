@@ -105,6 +105,16 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+        'nursery-users' => [
+            'provider' => 'nursery_users',
+            'table' => 'nursery_user_password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+    ],
+
+    'model-password-broker' => [
+        App\Models\NurseryUser::class => 'nursery-users',
     ],
 
     /*
