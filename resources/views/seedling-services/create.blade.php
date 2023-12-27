@@ -25,14 +25,14 @@
                             <div class="custom-control custom-radio custom-control-inline">
                                 <input type="radio" required id="customRadioInline1" class="custom-control-input"
                                        name="type"
-                                       {{ old('type') == SeedlingService::TYPE_FARMER ? 'checked' : '' }}
+                                       @checked(old('type') == SeedlingService::TYPE_FARMER)
                                        onclick="displayFarmUserInput()" value="{{SeedlingService::TYPE_FARMER}}">
                                 <label class="custom-control-label" for="customRadioInline1">إختر عميل</label>
                             </div>
 
                             <div class="custom-control custom-radio custom-control-inline mb-3">
                                 <input type="radio" id="customRadioInline2" class="custom-control-input" name="type"
-                                       {{ old('type') == SeedlingService::TYPE_PERSONAL ? 'checked' : '' }}
+                                       @checked(old('type') == SeedlingService::TYPE_PERSONAL)
                                        onclick="hideFarmUserInput()" value="{{SeedlingService::TYPE_PERSONAL}}">
                                 <label class="custom-control-label" for="customRadioInline2">أشتال خاصة مشتل</label>
                             </div>
@@ -150,7 +150,7 @@
                                         style="width: 100%;">
                                     @foreach($statuses as $status)
                                         <option
-                                            value="{{$status}}" {{old('status') == $status ? 'selected' : ''}}>{{$status}}</option>
+                                            value="{{$status}}" @selected(old('status') == $status)>{{$status}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -183,7 +183,7 @@
                             </div>
                         </div>
 
-                        @include('components.payments.view')
+                        @include('components.payments.view', ['model' => null])
 
                         <div class="form-group">
                             <button type="submit"
@@ -378,5 +378,5 @@
         }
     </script>
 
-    @include('components.payments.script')
+    @include('components.payments.script', ['model' => null])
 @endsection

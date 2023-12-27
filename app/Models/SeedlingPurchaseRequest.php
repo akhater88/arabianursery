@@ -13,6 +13,11 @@ class SeedlingPurchaseRequest extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'cash' => 'object',
+        'installments' => 'array',
+    ];
+
     public function nursery(): belongsTo
     {
         return $this->belongsTo(Nursery::class);

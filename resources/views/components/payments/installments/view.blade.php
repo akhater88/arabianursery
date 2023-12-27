@@ -8,12 +8,10 @@
             <th style="min-width: 110px">قيمة الدفعة</th>
             <th style="min-width: 110px">تاريخ الدفعة</th>
         </tr>
-        @if(old('installments'))
-            @foreach(old('installments') as $installment)
-                <x-installment :index="$loop->index" :canBeDeleted="!$loop->first" :installment="$installment"></x-installment>
+        @if(old('installments', $model))
+            @foreach(old('installments', $model) as $installment)
+                <x-installment :index="$loop->index" :canBeDeleted="!$loop->first && (!$model?->installments || count($model->installments) < $loop->iteration)" :installment="$installment"></x-installment>
             @endforeach
-        @else
-            <x-installment :index="0" :canBeDeleted="false"></x-installment>
         @endif
     </table>
 </div>

@@ -18,17 +18,22 @@
     <div class="row">
         <div class="col-12">
             <div class="card card-white">
-                <form method="POST" role="form" action="{{route('seedling-purchase-requests.store')}}">
+                <form method="POST" role="form" action="{{$seedling_purchase_request ? route('seedling-purchase-requests.update', $seedling_purchase_request->id) : route('seedling-purchase-requests.store')}}">
                     @csrf
+
+                    @if($seedling_purchase_request)
+                        @method('PUT')
+                    @endif
+
                     <div class="card-body">
                         <div class="form-row mb-3">
                             <div class="col-12 col-sm-4">
                                 <label for="seedling-service-select">من أشتال</label>
                                 <select class="form-control select2" id='seedling-service-select' name='seedling_service'
                                         required style="width: 100%;">
-                                    @if(old('seedling_service'))
-                                        <option selected value="{{ old('seedling_service') }}">
-                                            {{ SeedlingService::personal()->whereId(old('seedling_service'))->first()?->option_name }}
+                                    @if(old('seedling_service', $seedling_purchase_request?->seedling_service_id))
+                                        <option selected value="{{ old('seedling_service', $seedling_purchase_request?->seedling_service_id) }}">
+                                            {{ SeedlingService::personal()->whereId(old('seedling_service', $seedling_purchase_request?->seedling_service_id))->first()?->option_name }}
                                         </option>
                                     @endif
                                 </select>
@@ -37,12 +42,11 @@
                             <div class="col-12 col-sm-4">
                                 <label for="tray-count">عدد الصواني</label>
                                 <input id='tray-count' type="number" min=0 step="1" name="tray_count"
-                                       value="{{ old('tray_count') }}"
+                                       value="{{ old('tray_count', $seedling_purchase_request) }}"
                                        required
                                        onchange="setRemainingTrays(this.value)"
                                        class="form-control">
                                     <small id="trays-remaining" class="form-text text-muted"></small>
-
                             </div>
 
                             <div class="col-12 col-sm-4">
@@ -50,9 +54,9 @@
                                 <div class="input-group mb-2">
                                     <select class="form-control select2" id='farm-user-select' name="farm_user"
                                             style="width: 70%;">
-                                        @if(old('farm_user'))
-                                            <option selected value="{{ old('farm_user') }}">
-                                                {{ FarmUser::find(old('farm_user'))?->optionName }}
+                                        @if(old('farm_user', $seedling_purchase_request?->farm_user_id))
+                                            <option selected value="{{ old('farm_user', $seedling_purchase_request?->farm_user_id) }}">
+                                                {{ FarmUser::find(old('farm_user', $seedling_purchase_request?->farm_user_id))?->optionName }}
                                             </option>
                                         @endif
                                     </select>
@@ -70,7 +74,7 @@
                                 <label for="price-per-tray">السعر</label>
                                 <div class="input-group mb-2">
                                     <input type="number" min=0 step="0.01" name="price_per_tray" class="form-control"
-                                           value="{{ old('price_per_tray') }}"
+                                           value="{{ old('price_per_tray', $seedling_purchase_request) }}"
                                            required
                                            id="price-per-tray">
                                     <div class="input-group-prepend">
@@ -80,18 +84,17 @@
                             </div>
                         </div>
 
-                        @include('components.payments.view')
+                        @include('components.payments.view', ['model' => $seedling_purchase_request])
 
                         <div class="form-group">
                             <button type="submit"
                                     class="btn btn-primary float-right col-12 col-sm-3 col-md-2 col-lg-2 col-xl-1">
-                                إضافة
+                                {{ $seedling_purchase_request ? 'تعديل' : 'إضافة' }}
                             </button>
                         </div>
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
 
@@ -197,30 +200,48 @@
     </script>
 
     <script>
-        let trayCount = null;
-        let requestTrayCount = 0
+        let seedlingServiceTrayCount = null;
+        let inputTrayCount = 0
+        const seedlingServicePurchaseRequest = @json($seedling_purchase_request);
+
+        $(async () => {
+            if(seedlingServicePurchaseRequest != null) {
+                await updateSeedlingServiceTrayCount(seedlingServicePurchaseRequest.seedling_service_id)
+                setRemainingTrays(seedlingServicePurchaseRequest.tray_count)
+            }
+        })
 
         $('#seedling-service-select').on('select2:select', async (e) => {
             try {
-                let response = await axios.get(`{{route('seedling-services.get', '')}}/${e.params.data.id}`);
-                trayCount = response.data.tray_count - response.data.seedling_purchase_requests.reduce((sum, request) => sum + request.tray_count, 0)
-
-                setRemainingTrays(requestTrayCount)
+                await updateSeedlingServiceTrayCount(e.params.data.id)
+                setRemainingTrays(inputTrayCount)
             } catch (e) {
                 throw e;
             }
         })
 
         function setRemainingTrays(value) {
-            requestTrayCount = value
+            inputTrayCount = value
 
-            if(trayCount !== null) {
-                let remaining = trayCount - value;
+            if(seedlingServiceTrayCount !== null) {
+                let remaining = seedlingServiceTrayCount - value;
                 remaining = remaining > 0 ? remaining : 0
                 document.getElementById('trays-remaining').innerText = `المتبقي: ${remaining}`
             }
         }
+
+        async function updateSeedlingServiceTrayCount(seedlingServiceId) {
+            let response = await axios.get(`{{route('seedling-services.get', '')}}/${seedlingServiceId}`);
+
+            seedlingServiceTrayCount = response.data.tray_count - response.data.seedling_purchase_requests.reduce((sum, request) => {
+                if(seedlingServicePurchaseRequest != null && seedlingServicePurchaseRequest.id === request.id){
+                    return sum
+                }
+
+                return sum + request.tray_count
+            }, 0)
+        }
     </script>
 
-    @include('components.payments.script')
+    @include('components.payments.script', ['model' => $seedling_purchase_request])
 @endsection

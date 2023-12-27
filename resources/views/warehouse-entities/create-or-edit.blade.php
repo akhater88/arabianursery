@@ -18,8 +18,13 @@
     <div class="row">
         <div class="col-12">
             <div class="card card-white">
-                <form method="POST" role="form" action="{{route('warehouse-entities.store')}}">
+                <form method="POST" role="form" action="{{$nursery_warehouse_entity ? route('warehouse-entities.update', $nursery_warehouse_entity->id) : route('warehouse-entities.store')}}">
                     @csrf
+
+                    @if($nursery_warehouse_entity)
+                        @method('PUT')
+                    @endif
+
                     <div class="card-body">
                         <div class="form-row mb-3">
                             <div class="col-12 col-sm-4">
@@ -28,9 +33,9 @@
                                     <select class="form-control select2" id='agricultural-supply-store-user'
                                             name="agricultural_supply_store_user"
                                             style="width: 70%;">
-                                        @if(old('agricultural_supply_store_user'))
-                                            <option selected value="{{ old('agricultural_supply_store_user') }}">
-                                                {{ AgriculturalSupplyStoreUser::find(old('agricultural_supply_store_user'))?->optionName }}
+                                        @if(old('agricultural_supply_store_user', $nursery_warehouse_entity?->agricultural_supply_store_user_id))
+                                            <option selected value="{{ old('agricultural_supply_store_user', $nursery_warehouse_entity?->agricultural_supply_store_user_id) }}">
+                                                {{ AgriculturalSupplyStoreUser::find(old('agricultural_supply_store_user', $nursery_warehouse_entity?->agricultural_supply_store_user_id))?->optionName }}
                                             </option>
                                         @endif
                                     </select>
@@ -46,7 +51,7 @@
                                 <select class="form-control select2" required id='entity-type' name='entity_type'
                                         style="width: 100%;">
                                     @foreach($entity_types as $entity_type)
-                                        <option value="{{$entity_type->id}}" {{old('entity_type') == $entity_type->id ? 'selected' : ''}}>
+                                        <option value="{{$entity_type->id}}" @selected(old('entity_type', $nursery_warehouse_entity?->entity_type_id) == $entity_type->id)>
                                             {{$entity_type->name}}
                                         </option>
                                     @endforeach
@@ -58,9 +63,9 @@
                                 <div class="input-group mb-2">
                                     <select class="form-control select2" id='seed-type' name='seed_type'
                                             required style="width: 70%;">
-                                        @if(old('seed_type'))
-                                            <option selected value="{{ old('seed_type') }}">
-                                                {{ SeedType::find(old('seed_type'))?->name }}
+                                        @if(old('seed_type', $nursery_warehouse_entity?->entity_id))
+                                            <option selected value="{{ old('seed_type', $nursery_warehouse_entity?->entity_id) }}">
+                                                {{ SeedType::find(old('seed_type', $nursery_warehouse_entity?->entity_id))?->name }}
                                             </option>
                                         @endif
                                     </select>
@@ -77,7 +82,7 @@
                             <div class="col-12 col-sm-4">
                                 <label for="quantity">الكمية</label>
                                 <input id='quantity' type="number" min=0 step="1" name="quantity"
-                                       value="{{ old('quantity') }}"
+                                       value="{{ old('quantity', $nursery_warehouse_entity) }}"
                                        required
                                        class="form-control">
                             </div>
@@ -86,7 +91,7 @@
                                 <label for="price">السعر</label>
                                 <div class="input-group mb-2">
                                     <input type="number" min=0 step="0.01" name="price" class="form-control"
-                                           value="{{ old('price') }}"
+                                           value="{{ old('price', $nursery_warehouse_entity) }}"
                                            required
                                            id="price">
                                     <div class="input-group-prepend">
@@ -96,12 +101,12 @@
                             </div>
                         </div>
 
-                        @include('components.payments.view')
+                        @include('components.payments.view', ['model' => $nursery_warehouse_entity])
 
                         <div class="form-group">
                             <button type="submit"
                                     class="btn btn-primary float-right col-12 col-sm-3 col-md-2 col-lg-2 col-xl-1">
-                                إضافة
+                                {{ $nursery_warehouse_entity ? 'تعديل' : 'إضافة' }}
                             </button>
                         </div>
                     </div>
@@ -273,5 +278,5 @@
         })
     </script>
 
-    @include('components.payments.script')
+    @include('components.payments.script', ['model' => $nursery_warehouse_entity])
 @endsection

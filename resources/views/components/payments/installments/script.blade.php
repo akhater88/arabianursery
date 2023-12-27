@@ -1,10 +1,7 @@
 <script type="text/javascript">
-    var i = {{ old('installments') ? count(old('installments')) - 1 : 0 }};
+    var i = {{ old('installments', $model) ? count(old('installments', $model)) : 0 }};
 
     $("#add").click(function () {
-
-        ++i;
-
         $("#dynamicTable").append(
             '<tr>' +
             '<td><button type="button" class="btn btn-danger remove-tr">حذف</button></td>' +
@@ -13,6 +10,8 @@
             '<td><input required type="date" name="installments[' + i + '][invoice_date]" class="form-control" /></td>' +
             '</tr>'
         );
+
+        ++i;
     });
 
     $(document).on('click', '.remove-tr', function () {

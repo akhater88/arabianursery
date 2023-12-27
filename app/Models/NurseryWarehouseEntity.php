@@ -10,4 +10,9 @@ class NurseryWarehouseEntity extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    protected $casts = [
+        'cash' => 'object',
+        'installments' => 'array',
+    ];
 }

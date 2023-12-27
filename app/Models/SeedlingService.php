@@ -21,6 +21,8 @@ class SeedlingService extends Model
 
     protected $casts = [
         'status' => SeedlingServiceStatuses::class,
+        'cash' => 'object',
+        'installments' => 'array',
     ];
 
     //  ----------    Relationships    ----------
@@ -60,7 +62,7 @@ class SeedlingService extends Model
     public function optionName(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => "{$this->seedType->name} - {$this->seed_class} - {$this->created_at}"
+            get: fn ($value) => "{$this->seedType->name} - {$this->seed_class} - {$this->created_at->format('Y-m-d')}"
         );
     }
 }

@@ -92,7 +92,9 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
 
     Route::resource('seedling-purchase-requests', SeedlingPurchaseRequestController::class);
 
-    Route::resource('warehouse-entities', NurseryWarehouseEntityController::class);
+    Route::resource('warehouse-entities', NurseryWarehouseEntityController::class)->parameters([
+        'warehouse-entities' => 'nursery_warehouse_entity'
+    ]);
 
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');

@@ -1,6 +1,6 @@
 <tr>
     <td>
-        <button {{!$canBeDeleted? 'disabled' : ''}} type="button" class="btn btn-danger remove-tr">حذف</button>
+        <button @disabled(!$canBeDeleted) type="button" class="btn btn-danger remove-tr">حذف</button>
     </td>
     <td>
         <input type="text" name="installments[{{$index}}][invoice_number]" class="form-control" value="{{$installment['invoice_number'] ?? ''}}"/>

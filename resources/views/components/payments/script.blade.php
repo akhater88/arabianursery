@@ -4,22 +4,18 @@
     function handleCashOption() {
         document.getElementById('cash-dev').style.display = 'flex'
         document.getElementById('installments-dev').style.display = 'none'
-        document.getElementById('cash-invoice-number').required = true
-        document.getElementById('cash-amount').required = true
     }
 
     function handleInstallmentsOption() {
         document.getElementById('installments-dev').style.display = 'flex'
         document.getElementById('cash-dev').style.display = 'none'
-        document.getElementById('cash-invoice-number').required = false
-        document.getElementById('cash-amount').required = false
     }
 
-    if ({{old('payment_type') == 'installments' ? 'true' : 'false'}}) {
+    if ({{old('payment_type') == 'installments' || !is_null($model?->installments) ? 'true' : 'false'}}) {
         handleInstallmentsOption()
     }
 
-    if ({{old('payment_type') == 'cash' ? 'true' : 'false'}}) {
+    if ({{old('payment_type') == 'cash' || !is_null($model?->cash) ? 'true' : 'false'}}) {
         handleCashOption()
     }
 </script>
