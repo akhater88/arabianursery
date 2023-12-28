@@ -7,6 +7,7 @@ use App\Http\Requests\StoreSeedlingServiceRequest;
 use App\Http\Requests\UpdateSeedlingServiceRequest;
 use App\Models\SeedlingService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\File;
 
 class SeedlingServiceController extends Controller
 {
@@ -66,6 +67,8 @@ class SeedlingServiceController extends Controller
             'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
         ]);
 
+        $seedling_service->syncImages($request->images);
+
         return redirect()->back();
     }
 
@@ -94,5 +97,24 @@ class SeedlingServiceController extends Controller
                 'id' => $seedling_service->id,
                 'text' => $seedling_service->option_name
             ])];
+    }
+
+    public function storeMedia(Request $request)
+    {
+        $request->validate([
+           'file' => [
+               File::types(['jpeg','jpg','png'])
+                   ->max(2 * 1024),
+           ]
+        ]);
+
+        $file = $request->file('file');
+
+        $file->store('tmp/uploads');
+
+        return response()->json([
+            'name'          => $file->hashName(),
+            'original_name' => $file->getClientOriginalName(),
+        ]);
     }
 }

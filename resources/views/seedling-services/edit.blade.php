@@ -18,7 +18,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card card-white">
-                <form method="POST" role="form" action="{{route('seedling-services.update', $seedling_service->id)}}">
+                <form id="seedling-service-form" method="POST" role="form" action="{{route('seedling-services.update', $seedling_service->id)}}">
                     @method('PUT')
                     @csrf
 
@@ -173,6 +173,17 @@
                             </div>
                         </div>
 
+                        <div class="form-row mb-3">
+                            <div class="col-12">
+                                <label for="document">الصور</label>
+                                <div class="needsclick dropzone" id="document-dropzone">
+                                </div>
+
+                                <div id='errors-div' class="alert alert-danger" style="display: none">
+                                </div>
+                            </div>
+                        </div>
+
                         @include('components.payments.view', ['model' => $seedling_service])
 
                         <div class="form-group">
@@ -190,6 +201,105 @@
 @endsection
 
 @section('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script>
+
+    <script>
+        var uploadedDocumentMap = {}
+        Dropzone.options.documentDropzone = {
+            url: '{{ route('seedling-services.store-media') }}',
+            maxFilesize: 2, // MB
+            maxFiles: 10,
+            acceptedFiles: ".jpeg,.jpg,.png",
+            addRemoveLinks: true,
+            dictFileTooBig: `حجم الصورة أكبر من ٢ ميغا`,
+            dictRemoveFile: "احذف",
+            dictDefaultMessage: 'أضف صور هنا',
+            headers: {
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
+            success: function (file, response) {
+                $('#seedling-service-form').append('<input type="hidden" name="images[]" value="' + response.name + '">')
+                uploadedDocumentMap[file.name] = response.name
+            },
+            removedfile: function (file) {
+                file.previewElement.remove()
+                var name = ''
+                if (typeof file.file_name !== 'undefined') {
+                    name = file.file_name
+                } else {
+                    name = uploadedDocumentMap[file.name]
+                }
+
+                $('#seedling-service-form').find('input[name="images[]"][value="' + name + '"]').remove()
+            },
+            error(file, response) {
+                if (file.previewElement) {
+                    file.previewElement.classList.add("dz-error");
+                    if (typeof response !== "string" && response.message) {
+                        response = response.message;
+                    }
+                    for (let node of file.previewElement.querySelectorAll(
+                        "[data-dz-errormessage]"
+                    )) {
+                        node.textContent = response;
+                    }
+
+                    document.getElementById('errors-div').innerText = response;
+                    document.getElementById('errors-div').style.display = 'block';
+                }
+            },
+            init: function () {
+                this.on('maxfilesreached', function(files) {
+                    this.removeEventListeners();
+                    files.slice(this.options.maxFiles).forEach(file => this.removeFile(file))
+
+                    this.element.style.cursor = "not-allowed";
+                    this.hiddenFileInput.style.cursor = "not-allowed";
+                    this.hiddenFileInput.disabled = true;
+                });
+
+                this.on('removedfile', function (file) {
+                    if(this.files.length < this.options.maxFiles) {
+                        this.setupEventListeners();
+
+                        this.element.style.cursor = "pointer";
+                        this.hiddenFileInput.style.cursor = "pointer";
+                        this.hiddenFileInput.disabled = false;
+                    }
+                });
+
+                @if(isset($seedling_service) && $seedling_service->images)
+                    @foreach($seedling_service->images as $seedling_service_image)
+                    {
+                        let image = @json($seedling_service_image);
+
+                        image = {
+                            ...image,
+                            processing: true,
+                            accepted: true,
+                            status: 'success',
+                            size: 1000,
+                        }
+
+                        this.files.push(image)
+                        this.emit('addedfile', image)
+                        this.emit("thumbnail", image, "{{$seedling_service_image->url}}");
+                        this.emit("processing", image);
+                        this.emit("success", image, image, false);
+                        this.emit("complete", image);
+
+                        uploadedDocumentMap[image.name] = image.name
+                    }
+                    @endforeach
+
+                    if(this.files.length === this.options.maxFiles){
+                        this.emit('maxfilesreached', images)
+                    }
+                @endif
+            }
+        }
+    </script>
+
     <script>
         $('#seed-type').select2({
             theme: 'bootstrap4',
