@@ -84,7 +84,7 @@
                             </div>
                         </div>
 
-                        @include('components.payments.view', ['model' => $seedling_purchase_request])
+                        @include('components.payments.view', ['model' => $seedling_purchase_request, 'is_view_only' => false])
 
                         <div class="form-group">
                             <button type="submit"
@@ -243,5 +243,5 @@
         }
     </script>
 
-    @include('components.payments.script', ['model' => $seedling_purchase_request])
+    @include('components.payments.script', ['model' => $seedling_purchase_request, 'is_view_only' => false])
 @endsection

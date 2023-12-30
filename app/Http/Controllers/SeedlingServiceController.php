@@ -3,14 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Enums\SeedlingServiceStatuses;
+use App\Exports\SeedlingServicesExport;
+use App\Http\Filters\SeedlingServiceFilter;
 use App\Http\Requests\StoreSeedlingServiceRequest;
 use App\Http\Requests\UpdateSeedlingServiceRequest;
 use App\Models\SeedlingService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\File;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SeedlingServiceController extends Controller
 {
+    public function index(SeedlingServiceFilter $filters)
+    {
+        return view('seedling-services.index', [
+            'page_title' => 'خدمات التشتيل',
+            'seedling_services' => SeedlingService::with(['farmUser', 'seedType'])
+                ->filterBy($filters)
+                ->paginate()
+                ->withQueryString(),
+            'statuses' => SeedlingServiceStatuses::values(),
+        ]);
+    }
+
+    public function show(SeedlingService $seedling_service)
+    {
+        return view('seedling-services.show', [
+            'page_title' => 'خدمة تشتيل',
+            'statuses' => SeedlingServiceStatuses::values(),
+            'seedling_service' => $seedling_service,
+        ]);
+    }
+
     public function create()
     {
         return view('seedling-services/create', [
@@ -72,6 +96,18 @@ class SeedlingServiceController extends Controller
         return redirect()->back();
     }
 
+    public function export()
+    {
+        return Excel::download(new SeedlingServicesExport, 'seedling-services.xlsx');
+    }
+
+    public function destroy(SeedlingService $seedling_service)
+    {
+        $seedling_service->delete();
+
+        return redirect()->back()->with('status', 'تم الحذف بنجاح');
+    }
+
     public function get(Request $request)
     {
         return SeedlingService::with('seedlingPurchaseRequests')
@@ -116,5 +152,16 @@ class SeedlingServiceController extends Controller
             'name'          => $file->hashName(),
             'original_name' => $file->getClientOriginalName(),
         ]);
+    }
+
+    public function updateStatus(SeedlingService $seedling_service, Request $request)
+    {
+        $seedling_service->update([
+            'status' => $request->status
+        ]);
+
+        return [
+            'success' => true
+        ];
     }
 }

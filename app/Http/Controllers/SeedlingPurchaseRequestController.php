@@ -2,12 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\SeedlingPurchaseRequestsExport;
+use App\Http\Filters\SeedlingPurchaseRequestFilter;
 use App\Http\Requests\StoreSeedlingPurchaseRequest;
 use App\Http\Requests\UpdateSeedlingPurchaseRequest;
 use App\Models\SeedlingPurchaseRequest;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SeedlingPurchaseRequestController extends Controller
 {
+    public function index(SeedlingPurchaseRequestFilter $filters)
+    {
+        return view('seedling-purchase-requests.index', [
+            'page_title' => 'مبيعات اشتال خاصة مشتل',
+            'seedling_purchase_requests' => SeedlingPurchaseRequest::with(['farmUser', 'seedlingService.seedType'])
+                ->filterBy($filters)
+                ->paginate()
+                ->withQueryString(),
+        ]);
+    }
+
+    public function show(SeedlingPurchaseRequest $seedling_purchase_request)
+    {
+        return view('seedling-purchase-requests.show', [
+            'page_title' => 'تعديل طلب شراء أشتال',
+            'seedling_purchase_request' => $seedling_purchase_request,
+        ]);
+    }
+
     public function create()
     {
         return view('seedling-purchase-requests/create-or-edit', [
@@ -50,5 +72,17 @@ class SeedlingPurchaseRequestController extends Controller
         ]);
 
         return redirect()->back();
+    }
+
+    public function export()
+    {
+        return Excel::download(new SeedlingPurchaseRequestsExport, 'seedling-purchase-requests.xlsx');
+    }
+
+    public function destroy(SeedlingPurchaseRequest $seedling_purchase_request)
+    {
+        $seedling_purchase_request->delete();
+
+        return redirect()->back()->with('status', 'تم الحذف بنجاح');
     }
 }

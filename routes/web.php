@@ -88,11 +88,15 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
 
     Route::post('seedling-services/media', [SeedlingServiceController::class, 'storeMedia'])->name('seedling-services.store-media');
     Route::get('seedling-services/search', [SeedlingServiceController::class, 'search'])->name('seedling-services.search');
+    Route::get('seedling-services/export', [SeedlingServiceController::class, 'export'])->name('seedling-services.export');
     Route::get('seedling-services/get/{id}', [SeedlingServiceController::class, 'get'])->name('seedling-services.get');
+    Route::put('seedling-services/{seedling_service}/status', [SeedlingServiceController::class, 'updateStatus'])->name('seedling-services.update-status');
     Route::resource('seedling-services', SeedlingServiceController::class);
 
+    Route::get('seedling-purchase-requests/export', [SeedlingPurchaseRequestController::class, 'export'])->name('seedling-purchase-requests.export');
     Route::resource('seedling-purchase-requests', SeedlingPurchaseRequestController::class);
 
+    Route::get('warehouse-entities/export', [NurseryWarehouseEntityController::class, 'export'])->name('warehouse-entities.export');
     Route::resource('warehouse-entities', NurseryWarehouseEntityController::class)->parameters([
         'warehouse-entities' => 'nursery_warehouse_entity'
     ]);

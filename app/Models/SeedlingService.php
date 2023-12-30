@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\SeedlingServiceStatuses;
+use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 
 class SeedlingService extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Filterable;
 
     const TYPE_PERSONAL = 1;
     const TYPE_FARMER = 2;

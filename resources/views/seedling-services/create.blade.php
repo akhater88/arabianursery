@@ -183,7 +183,7 @@
                             </div>
                         </div>
 
-                        @include('components.payments.view', ['model' => null])
+                        @include('components.payments.view', ['model' => null, 'is_view_only' => false])
 
                         <div class="form-group">
                             <button type="submit"
@@ -378,5 +378,5 @@
         }
     </script>
 
-    @include('components.payments.script', ['model' => null])
+    @include('components.payments.script', ['model' => null, 'is_view_only' => false])
 @endsection
