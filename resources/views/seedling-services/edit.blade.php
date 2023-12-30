@@ -275,6 +275,7 @@
 
                         image = {
                             ...image,
+                            dataURL: "{{$seedling_service_image->url}}",
                             processing: true,
                             accepted: true,
                             status: 'success',
@@ -282,11 +283,20 @@
                         }
 
                         this.files.push(image)
+
                         this.emit('addedfile', image)
-                        this.emit("thumbnail", image, "{{$seedling_service_image->url}}");
                         this.emit("processing", image);
                         this.emit("success", image, image, false);
                         this.emit("complete", image);
+
+                        this.createThumbnailFromUrl(image,
+                            this.options.thumbnailWidth,
+                            this.options.thumbnailHeight,
+                            this.options.thumbnailMethod,
+                            true,
+                             (thumbnail) => {
+                                this.emit('thumbnail', image, thumbnail);
+                            });
 
                         uploadedDocumentMap[image.name] = image.name
                     }
