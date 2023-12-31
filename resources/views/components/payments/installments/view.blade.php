@@ -2,7 +2,7 @@
     <table class="table table-bordered" id="dynamicTable">
         <tr>
             <th>
-                <button type="button" name="add" id="add" class="btn btn-success">+</button>
+                <button type="button" @disabled($is_view_only) name="add" id="add" class="btn btn-success">+</button>
             </th>
             <th style="min-width: 110px">رقم الفاتورة</th>
             <th style="min-width: 110px">قيمة الدفعة</th>
@@ -10,7 +10,7 @@
         </tr>
         @if(old('installments', $model))
             @foreach(old('installments', $model) as $installment)
-                <x-installment :index="$loop->index" :canBeDeleted="!$loop->first && (!$model?->installments || count($model->installments) < $loop->iteration)" :installment="$installment"></x-installment>
+                <x-installment :index="$loop->index" :canBeDeleted="!$loop->first && (!$model?->installments || count($model->installments) < $loop->iteration)" :installment="$installment" :isViewOnly="$is_view_only"></x-installment>
             @endforeach
         @endif
     </table>

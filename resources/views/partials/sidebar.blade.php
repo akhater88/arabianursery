@@ -34,21 +34,21 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{route('seedling-services.index')}}" class="nav-link {{Route::currentRouteName() == 'seedling-services.index' ? 'active' : ''}}">
                         <i class="nav-icon fas fa-tractor"></i>
                         <p>خدمة تشتيل المزارعين</p>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{route('seedling-purchase-requests.index')}}" class="nav-link {{Route::currentRouteName() == 'seedling-purchase-requests.index' ? 'active' : ''}}">
                         <i class="nav-icon fas fa-list-ul"></i>
                         <p>طلبات</p>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{route('warehouse-entities.index')}}" class="nav-link {{Route::currentRouteName() == 'warehouse-entities.index' ? 'active' : ''}}">
                         <i class="nav-icon fas fa-warehouse"></i>
                         <p>المخزن</p>
                     </a>

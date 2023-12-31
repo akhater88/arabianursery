@@ -2,14 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\NurseryWarehouseEntitiesExport;
+use App\Http\Filters\NurseryWareHouseEntityFilter;
 use App\Http\Requests\StoreNurseryWarehouseEntityRequest;
 use App\Http\Requests\UpdateNurseryWarehouseEntityRequest;
 use App\Models\EntityType;
 use App\Models\NurseryWarehouseEntity;
 use App\Models\SeedType;
+use Maatwebsite\Excel\Facades\Excel;
 
 class NurseryWarehouseEntityController extends Controller
 {
+    public function index(NurseryWareHouseEntityFilter $filters)
+    {
+        return view('warehouse-entities.index', [
+            'page_title' => 'إدارة المخزن',
+            'nursery_warehouse_entities' => NurseryWarehouseEntity::with(['agriculturalSupplyStoreUser', 'entity'])
+                ->filterBy($filters)
+                ->paginate()
+                ->withQueryString(),
+        ]);
+    }
+
+    public function show(NurseryWarehouseEntity $nursery_warehouse_entity)
+    {
+        return view('warehouse-entities.show', [
+            'page_title' => 'مدخل إلى المخزن',
+            'entity_types' => EntityType::get(),
+            'nursery_warehouse_entity' => $nursery_warehouse_entity,
+        ]);
+    }
+
     public function create()
     {
         return view('warehouse-entities/create-or-edit', [
@@ -63,5 +86,17 @@ class NurseryWarehouseEntityController extends Controller
         );
 
         return redirect()->back();
+    }
+
+    public function export()
+    {
+        return Excel::download(new NurseryWarehouseEntitiesExport, 'nursery-warehouse-entities.xlsx');
+    }
+
+    public function destroy(NurseryWarehouseEntity $nursery_warehouse_entity)
+    {
+        $nursery_warehouse_entity->delete();
+
+        return redirect()->back()->with('status', 'تم الحذف بنجاح');
     }
 }

@@ -18,7 +18,7 @@
                 <div class="icon">
                     <i class="fas fa-tractor"></i>
                 </div>
-                <a href="#" class="small-box-footer">اضغط هنا <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="{{route('seedling-services.index')}}" class="small-box-footer">اضغط هنا <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->
@@ -33,7 +33,7 @@
                 <div class="icon">
                     <i class="fas fa-list-ul"></i>
                 </div>
-                <a href="#" class="small-box-footer">اضغط هنا <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="{{route('seedling-purchase-requests.index')}}" class="small-box-footer">اضغط هنا <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->
@@ -48,7 +48,7 @@
                 <div class="icon">
                     <i class="fas fa-warehouse"></i>
                 </div>
-                <a href="#" class="small-box-footer">اضغط هنا <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="{{route('warehouse-entities.index')}}" class="small-box-footer">اضغط هنا <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->

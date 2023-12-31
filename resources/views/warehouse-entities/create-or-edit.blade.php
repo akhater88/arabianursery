@@ -101,7 +101,7 @@
                             </div>
                         </div>
 
-                        @include('components.payments.view', ['model' => $nursery_warehouse_entity])
+                        @include('components.payments.view', ['model' => $nursery_warehouse_entity, 'is_view_only' => false])
 
                         <div class="form-group">
                             <button type="submit"
@@ -278,5 +278,5 @@
         })
     </script>
 
-    @include('components.payments.script', ['model' => $nursery_warehouse_entity])
+    @include('components.payments.script', ['model' => $nursery_warehouse_entity, 'is_view_only' => false])
 @endsection

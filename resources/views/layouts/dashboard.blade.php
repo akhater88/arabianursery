@@ -30,6 +30,12 @@
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
+    <!-- Dropzone JS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css" rel="stylesheet" />
+
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href={{asset('plugins/sweetalert2/sweetalert2.min.css')}}>
+
     <!-- Bootstrap 4 RTL -->
 {{--      <link rel="stylesheet" href="https://cdn.rtlcss.com/bootstrap/v4.2.1/css/bootstrap.min.css">--}}
     <link
@@ -121,7 +127,10 @@
 <script src={{asset("plugins/datatables-buttons/js/buttons.colVis.min.js")}}></script>
 
 <!-- Select2 -->
-<script src={{asset("plugins/select2/js/select2.full.min.js")}}></script>
+<script src={{asset("plugins/select2/js/select2.min.js")}}></script>
+
+<!-- SweetAlert2 -->
+<script src={{asset("plugins/sweetalert2/sweetalert2.all.min.js")}}></script>
 
 <!-- overlayScrollbars -->
 <script src={{asset("plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js")}}></script>
