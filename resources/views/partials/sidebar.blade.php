@@ -43,14 +43,14 @@
                 <li class="nav-item">
                     <a href="{{route('seedling-purchase-requests.index')}}" class="nav-link {{Route::currentRouteName() == 'seedling-purchase-requests.index' ? 'active' : ''}}">
                         <i class="nav-icon fas fa-list-ul"></i>
-                        <p>طلبات</p>
+                        <p>مبيعات اشتال خاصة مشتل</p>
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a href="{{route('warehouse-entities.index')}}" class="nav-link {{Route::currentRouteName() == 'warehouse-entities.index' ? 'active' : ''}}">
                         <i class="nav-icon fas fa-warehouse"></i>
-                        <p>المخزن</p>
+                        <p> مخزن المشتل</p>
                     </a>
                 </li>
 
