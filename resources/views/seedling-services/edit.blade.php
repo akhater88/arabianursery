@@ -175,8 +175,8 @@
 
                         <div class="form-row mb-3">
                             <div class="col-12">
-                                <label for="document">الصور</label>
-                                <div class="needsclick dropzone" id="document-dropzone">
+                                <label >الصور</label>
+                                <div class="needsclick dropzone text-center text-sm-left" id="document-dropzone">
                                 </div>
 
                                 <div id='errors-div' class="alert alert-danger" style="display: none">

@@ -8,10 +8,9 @@
     </div>
     <div class="row">
         <div class="col-lg-4 col-12">
-            <!-- small box -->
             <div class="small-box bg-info">
                 <div class="inner">
-                    <h3>150</h3>
+                    <h3>{{$seedling_service_count}}</h3>
 
                     <p>خدمة تشتيل الزارعين</p>
                 </div>
@@ -21,12 +20,10 @@
                 <a href="{{route('seedling-services.index')}}" class="small-box-footer">اضغط هنا <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        <!-- ./col -->
         <div class="col-lg-4 col-12">
-            <!-- small box -->
             <div class="small-box bg-success">
                 <div class="inner">
-                    <h3>100</h3>
+                    <h3>{{$seedling_purchase_request_count}}</h3>
 
                     <p>طلبات</p>
                 </div>
@@ -36,12 +33,10 @@
                 <a href="{{route('seedling-purchase-requests.index')}}" class="small-box-footer">اضغط هنا <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        <!-- ./col -->
         <div class="col-lg-4 col-12">
-            <!-- small box -->
             <div class="small-box bg-danger">
                 <div class="inner">
-                    <h3>44</h3>
+                    <h3>{{$warehouse_entity_count}}</h3>
 
                     <p>المخزن</p>
                 </div>
@@ -51,7 +46,6 @@
                 <a href="{{route('warehouse-entities.index')}}" class="small-box-footer">اضغط هنا <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        <!-- ./col -->
     </div>
     <div class="mt-4">
         <div class="row">

@@ -1,7 +1,9 @@
 <tr>
-    <td>
-        <button @disabled(!$canBeDeleted || $isViewOnly) type="button" class="btn btn-danger remove-tr">حذف</button>
-    </td>
+    @if(!$isViewOnly)
+        <td>
+            <button @disabled(!$canBeDeleted) type="button" class="btn btn-danger remove-tr">حذف</button>
+        </td>
+    @endif
     <td>
         <input @disabled($isViewOnly) type="text" name="installments[{{$index}}][invoice_number]" class="form-control" value="{{$installment['invoice_number'] ?? ''}}"/>
     </td>

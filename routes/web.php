@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\FarmUserController;
 use App\Http\Controllers\NurseryUserController;
+use App\Http\Controllers\NurseryUserDashboardController;
 use App\Http\Controllers\NurseryWarehouseEntityController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SeedlingPurchaseRequestController;
@@ -31,10 +32,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
-
-Route::get('/home', function () {
-    return view('home');
 });
 
 Route::middleware('auth:nursery_web')->group(function () {
@@ -73,9 +70,7 @@ Route::get('auth/{provider}', [SocialLoginController::class, 'redirectToProvider
 Route::get('auth/{provider}/callback', [SocialLoginController::class, 'handleProviderCallback'])->name('login.social.callback');
 
 Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('home', ['page_title' => 'الرئيسية']);
-    })->name('dashboard');
+    Route::get('/dashboard', [NurseryUserDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('farm-users/search', [FarmUserController::class, 'search'])->name('farmer.search');
     Route::post('farm-users/quick-add', [FarmUserController::class, 'quickStore'])->name('farmer.quick-store');

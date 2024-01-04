@@ -21,10 +21,10 @@
                     </div>
 
                     <div class="col-12 col-sm-4">
-                        <label for="phone_number">رقم الهاتف</label>
-                        <input type="text" name="phone_number"
-                               value="{{ request('phone_number') }}"
-                               class="form-control" id="phone_number">
+                        <label for="farm-user-phone-number">رقم الهاتف</label>
+                        <input type="text" name="farm_user_phone_number"
+                               value="{{ request('farm_user_phone_number') }}"
+                               class="form-control" id="farm-user-phone-number">
                     </div>
 
                     <div class="col-12 col-sm-4">
@@ -91,7 +91,7 @@
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <a class="btn btn-info" href="{{route('seedling-purchase-requests.edit', $seedling_purchase_request->id)}}">
-                                                    <i class="fa fa-pencil fas fa-edit fas fa-pen"></i>
+                                                    <i class="fas fa-pen"></i>
                                                 </a>
                                                 <form class="d-inline" id="delete-{{$seedling_purchase_request->id}}-form" method="post" action="{{route('seedling-purchase-requests.destroy', $seedling_purchase_request->id)}}" style="padding: 0">
                                                     @csrf

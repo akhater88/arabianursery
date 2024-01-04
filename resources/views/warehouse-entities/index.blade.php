@@ -91,7 +91,7 @@
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <a class="btn btn-info" href="{{route('warehouse-entities.edit', $nursery_warehouse_entity->id)}}">
-                                                    <i class="fas fa-edit"></i>
+                                                    <i class="fas fa-pen"></i>
                                                 </a>
                                                 <form class="d-inline" id="delete-{{$nursery_warehouse_entity->id}}-form" method="post" action="{{route('warehouse-entities.destroy', $nursery_warehouse_entity->id)}}" style="padding: 0">
                                                     @csrf

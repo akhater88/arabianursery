@@ -1,5 +1,5 @@
 <div class="row col-12">
-    <label for="customRadioInline">طريقة الدفع:</label>
+    <label>طريقة الدفع:</label>
 
     <div class="custom-control custom-radio custom-control-inline">
         <input type="radio" required id="cash" class="custom-control-input" name="payment_type"

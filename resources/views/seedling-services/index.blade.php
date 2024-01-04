@@ -13,28 +13,37 @@
             <div class="card-body">
                 <form>
                     <div class="form-row mb-3">
-                    <div class="col-12 col-sm-4">
-                        <label for="farm-user-name">اسم العميل</label>
-                        <input id='farm-user-name' type="text" name="farm_user_name"
-                               value="{{ request('farm_user_name') }}"
-                               class="form-control">
+                        <div class="col-12 col-sm-4">
+                            <label for="farm-user-name">اسم العميل</label>
+                            <input id='farm-user-name' type="text" name="farm_user_name"
+                                   value="{{ request('farm_user_name') }}"
+                                   class="form-control">
+                        </div>
+
+                        <div class="col-12 col-sm-4">
+                            <label for="farm-user-phone-number">رقم الهاتف</label>
+                            <input type="text" name="farm_user_phone_number"
+                                   value="{{ request('farm_user_phone_number') }}"
+                                   class="form-control" id="farm-user-phone-number">
+                        </div>
+
+                        <div class="col-12 col-sm-4">
+                            <label for="germination-date">تاريخ التشتيل</label>
+                            <input type="date" name="germination_date"
+                                   class="form-control"
+                                   value="{{ request('germination_date') }}"
+                                   id="germination-date">
+                        </div>
                     </div>
 
-                    <div class="col-12 col-sm-4">
-                        <label for="phone_number">رقم الهاتف</label>
-                        <input type="text" name="phone_number"
-                               value="{{ request('phone_number') }}"
-                               class="form-control" id="phone_number">
+                    <div class="form-row mb-3 col-12 col-sm-4 pr-2">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" name="is_personal_type"
+                                   @checked(request('is_personal_type'))
+                                   class="custom-control-input" id="is-personal-type">
+                            <label class="custom-control-label" for="is-personal-type">أشتال خاصة مشتل</label>
+                        </div>
                     </div>
-
-                    <div class="col-12 col-sm-4">
-                        <label for="germination-date">تاريخ التشتيل</label>
-                        <input type="date" name="germination_date"
-                               class="form-control"
-                               value="{{ request('germination_date') }}"
-                               id="germination-date">
-                    </div>
-                </div>
 
                     <div class="form-group">
                         <button type="submit"
@@ -104,7 +113,7 @@
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <a class="btn btn-info" href="{{route('seedling-services.edit', $seedling_service->id)}}">
-                                                    <i class="fa fa-pencil fas fa-edit fas fa-pen"></i>
+                                                    <i class="fas fa-pen"></i>
                                                 </a>
                                                 <form class="d-inline" id="delete-{{$seedling_service->id}}-form" method="post" action="{{route('seedling-services.destroy', $seedling_service->id)}}" style="padding: 0">
                                                     @csrf
@@ -130,6 +139,32 @@
 @endsection
 
 @section('scripts')
+    <script>
+        $('#is-personal-type').click(function (e){
+            if(e.target.checked){
+                disableFarmUserInputs();
+            } else {
+                enableFarmUserInputs();
+            }
+        })
+
+        @if(request('is_personal_type'))
+            disableFarmUserInputs();
+        @endif
+
+        function disableFarmUserInputs() {
+            $('#farm-user-name').val( '' );
+            $('#farm-user-name').prop( "disabled", true );
+
+            $('#farm-user-phone-number').val( '' );
+            $('#farm-user-phone-number').prop( "disabled", true );
+        }
+
+        function enableFarmUserInputs() {
+            $('#farm-user-name').prop( "disabled", false );
+            $('#farm-user-phone-number').prop( "disabled", false );
+        }
+    </script>
     <script>
         @foreach($seedling_services as $seedling_service)
             $("#status-{{$seedling_service->id}}").change(async function (e) {
