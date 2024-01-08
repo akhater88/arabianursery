@@ -19,6 +19,7 @@ class SeedlingServiceController extends Controller
         return view('seedling-services.index', [
             'page_title' => 'خدمات التشتيل',
             'seedling_services' => SeedlingService::with(['farmUser', 'seedType'])
+                ->orderBy('id', 'DESC')
                 ->filterBy($filters)
                 ->paginate()
                 ->withQueryString(),
