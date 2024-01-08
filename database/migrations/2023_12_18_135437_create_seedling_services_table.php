@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedTinyInteger('type');
             $table->string('seed_class')->nullable();
-            $table->integer('seed_count');
+            $table->integer('seed_count')->nullable();
             $table->integer('tray_count');
             $table->unsignedTinyInteger('germination_rate')->nullable();
             $table->unsignedInteger('germination_period');
-            $table->integer('greenhouse_number')->nullable();
-            $table->integer('tunnel_greenhouse_number')->nullable();
+            $table->string('greenhouse_number')->nullable();
+            $table->string('tunnel_greenhouse_number')->nullable();
             $table->decimal('price_per_tray');
             $table->decimal('additional_cost')->nullable();
             $table->json('cash')->nullable();
