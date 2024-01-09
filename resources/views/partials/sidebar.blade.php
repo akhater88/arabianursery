@@ -35,15 +35,22 @@
 
                 <li class="nav-item">
                     <a href="{{route('seedling-services.index')}}" class="nav-link {{Route::currentRouteName() == 'seedling-services.index' ? 'active' : ''}}">
-                        <i class="nav-icon fas fa-tractor"></i>
+                        <i class="nav-icon fas fa-seedling" ></i>
                         <p>خدمة تشتيل المزارعين</p>
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a href="{{route('seedling-purchase-requests.index')}}" class="nav-link {{Route::currentRouteName() == 'seedling-purchase-requests.index' ? 'active' : ''}}">
-                        <i class="nav-icon fas fa-list-ul"></i>
+                        <i class="nav-icon fas fa-seedling" style="color: #8cba92;"></i>
                         <p>مبيعات اشتال خاصة مشتل</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{route('nursery-seeds-sales.index')}}" class="nav-link {{Route::currentRouteName() == 'nursery-seeds-sales.index' ? 'active' : ''}}">
+                        <i class="nav-icon fas fa-allergies"></i>
+                        <p>مبيعات بذور المشتل</p>
                     </a>
                 </li>
 

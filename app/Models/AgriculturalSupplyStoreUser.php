@@ -19,6 +19,11 @@ class AgriculturalSupplyStoreUser extends Model
         return $this->hasMany(NurseryWarehouseEntity::class);
     }
 
+    public function nurserySeedsSales(): hasMany
+    {
+        return $this->hasMany(NurserySeedsSale::class);
+    }
+
     //  ----------    Accessor & Mutators    ----------
     public function optionName(): Attribute
     {

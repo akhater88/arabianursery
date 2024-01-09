@@ -24,6 +24,11 @@ class FarmUser extends Model
         return $this->hasMany(SeedlingService::class);
     }
 
+    public function nurserySeedsSales(): hasMany
+    {
+        return $this->hasMany(NurserySeedsSale::class);
+    }
+
     public function seedlingPurchaseRequests(): hasMany
     {
         return $this->hasMany(SeedlingPurchaseRequest::class);

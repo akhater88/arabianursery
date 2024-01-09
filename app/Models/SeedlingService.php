@@ -48,61 +48,8 @@ class SeedlingService extends Model
         return $this->belongsTo(FarmUser::class);
     }
 
-    public function seedlingPurchaseRequests(): hasMany
+    public function agriculturalSupplyStoreUser(): belongsTo
     {
-        return $this->hasMany(SeedlingPurchaseRequest::class);
+        return $this->belongsTo(AgriculturalSupplyStoreUser::class);
     }
-
-    public function images(): hasMany
-    {
-        return $this->hasMany(SeedlingServiceImage::class);
-    }
-
-
-    /* -------------- Scopes -------------- */
-    public function scopePersonal($query)
-    {
-        return $query->where('type', self::TYPE_PERSONAL);
-    }
-
-    //  ----------    Accessor & Mutators    ----------
-    public function optionName(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => "{$this->seedType->name} - {$this->seed_class} - {$this->created_at->format('Y-m-d')}"
-        );
-    }
-
-    //  ----------    Tools    ----------
-    public function syncImages($uploaded_images)
-    {
-        $uploaded_images = collect($uploaded_images);
-
-        $this->images->each(function ($image) use ($uploaded_images) {
-            if ($uploaded_images->doesntContain($image->name)) {
-                Storage::delete($image->path);
-                $image->delete();
-            }
-        });
-
-        $uploaded_images->each(function ($uploaded_image){
-            if($this->images->contains('name', $uploaded_image)) {
-                return;
-            }
-
-            if(Storage::directoryMissing("seedling-services/{$this->id}")){
-                Storage::makeDirectory("seedling-services/{$this->id}");
-            }
-
-            if(Storage::fileExists("tmp/uploads/{$uploaded_image}")){
-                Storage::move("tmp/uploads/{$uploaded_image}", "seedling-services/{$this->id}/{$uploaded_image}");
-
-                $this->images()->create([
-                    'name' => $uploaded_image,
-                    'path' => "seedling-services/{$this->id}/{$uploaded_image}"
-                ]);
-            }
-        });
-    }
-
 }
