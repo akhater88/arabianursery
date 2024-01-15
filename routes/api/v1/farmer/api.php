@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'config'], function () {
+    Route::get('/app', 'ConfigController@configuration');
+});
+
+Route::group(['prefix' => 'login'], function () {
+    Route::post('/farmer', 'AuthController@login');
+});
+Route::group(['namespace' => 'Api\V1\Farmer', 'middleware'=>'auth:farmer_api'], function () {
+
 });

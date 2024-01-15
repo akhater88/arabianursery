@@ -43,6 +43,10 @@ return [
         'nursery_web' => [
             'driver' => 'session',
             'provider' => 'nursery_users',
+        ],
+        'farmer_api' => [
+            'driver' => 'passport',
+            'provider' => 'farmer_users',
         ]
     ],
 
@@ -72,7 +76,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\NurseryUser::class,
         ],
-
+        'farmer_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\FarmUser::class,
+        ],
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -111,10 +118,17 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+        'farmer-users' => [
+            'provider' => 'nursery_users',
+            'table' => 'farmer_user_password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
     ],
 
     'model-password-broker' => [
         App\Models\NurseryUser::class => 'nursery-users',
+        App\Models\FarmUser::class => 'farm-users',
     ],
 
     /*
