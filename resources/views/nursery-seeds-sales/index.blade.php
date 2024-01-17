@@ -48,7 +48,7 @@
                     <div class="">
                         <a href="{{route('nursery-seeds-sales.create')}}" class="btn btn-primary">
                             <i class="fa fa-plus-circle"></i>
-                            أضف خدمة تشتيل
+                            أضف بيع بذور
                         </a>
 
 {{--                        <a href="{{route('seedling-services.export')}}" class="btn btn-primary">--}}

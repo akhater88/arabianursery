@@ -42,13 +42,7 @@
                         </div>
 
                         <div class="form-row mb-3">
-                            <div class="col-12 col-sm-4">
-                                <label for="seed-count">عدد البذور</label>
-                                <input id='seed-count' type="number" min=0 step="1" name="seed_count"
-                                       value="{{ old('seed_count') }}"
-                                       required
-                                       class="form-control">
-                            </div>
+
 
                             <div class="col-12 col-sm-4">
                                 <label for="seed-type">نوع البذار</label>

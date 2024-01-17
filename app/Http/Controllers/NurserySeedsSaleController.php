@@ -47,7 +47,7 @@ class NurserySeedsSaleController extends Controller
 
     public function store(NurserySeedsSaleRequest $request)
     {
-        $request->user()->nurserySeedsSales()->create([
+        $seeds_sale = $request->user()->nurserySeedsSales()->create([
             "farm_user_id" => $request->farm_user,
             "seed_type_id" => $request->seed_type,
             "nursery_id" => $request->user()->nursery->id,
@@ -58,6 +58,10 @@ class NurserySeedsSaleController extends Controller
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
             'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
         ]);
+
+        if($request->payment_type == 'installments'){
+            $seeds_sale->installments()->createManyQuietly($request->installments);
+        }
 
         return redirect()->back();
     }
@@ -80,7 +84,10 @@ class NurserySeedsSaleController extends Controller
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
             'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
         ]);
-
+        if($request->payment_type == 'installments'){
+            $nurserySeedsSale->installments()->delete();
+            $nurserySeedsSale->installments()->createManyQuietly($request->installments);
+        }
         return redirect()->back();
     }
 

@@ -40,7 +40,7 @@ class SeedlingPurchaseRequestController extends Controller
 
     public function store(StoreSeedlingPurchaseRequest $request)
     {
-        $request->user()->seedlingPurchaseRequests()->create([
+        $seedlingPurchase = $request->user()->seedlingPurchaseRequests()->create([
             "farm_user_id" => $request->farm_user,
             "seedling_service_id" => $request->seedling_service,
             "tray_count" => $request->tray_count,
@@ -48,6 +48,10 @@ class SeedlingPurchaseRequestController extends Controller
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
             'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
         ]);
+
+        if($request->payment_type == 'installments'){
+            $seedlingPurchase->installments()->createManyQuietly($request->installments);
+        }
 
         return redirect()->back();
     }
@@ -71,6 +75,10 @@ class SeedlingPurchaseRequestController extends Controller
             'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
         ]);
 
+        if($request->payment_type == 'installments'){
+            $seedling_purchase_request->installments()->delete();
+            $seedling_purchase_request->installments()->createManyQuietly($request->installments);
+        }
         return redirect()->back();
     }
 

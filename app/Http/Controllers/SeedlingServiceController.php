@@ -46,7 +46,7 @@ class SeedlingServiceController extends Controller
 
     public function store(StoreSeedlingServiceRequest $request)
     {
-        $request->user()->seedlingServices()->create([
+        $seedlingService = $request->user()->seedlingServices()->create([
             "type" => $request->type,
             "farm_user_id" => $request->type == SeedlingService::TYPE_FARMER ? $request->farm_user : null,
             "tray_count" => $request->tray_count,
@@ -63,8 +63,12 @@ class SeedlingServiceController extends Controller
             "discount_amount" => $request->discount_amount,
             "status" => $request->status,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
-            'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
         ]);
+
+        if($request->payment_type == 'installments'){
+            $seedlingService->installments()->createManyQuietly($request->installments);
+        }
+
 
         return redirect()->back();
     }
@@ -95,6 +99,11 @@ class SeedlingServiceController extends Controller
         ]);
 
         $seedling_service->syncImages($request->images);
+
+        if($request->payment_type == 'installments'){
+            $seedling_service->installments()->delete();
+            $seedling_service->installments()->createManyQuietly($request->installments);
+        }
 
         return redirect()->back();
     }

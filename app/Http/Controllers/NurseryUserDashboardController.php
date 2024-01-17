@@ -15,7 +15,9 @@ class NurseryUserDashboardController extends Controller
             'seedling_service_count' => SeedlingService::count(),
             'seedling_purchase_request_count' => SeedlingPurchaseRequest::count(),
             'warehouse_entity_count' => NurseryWarehouseEntity::count(),
-            'nursery_seeds_sales_count' => NurseryWarehouseEntity::count()
+            'nursery_seeds_sales_count' => NurseryWarehouseEntity::count(),
+            'up_coming_seeds_instalments' => '',
+            'up_coming_seedling_instalments' => '',
         ]);
     }
 }

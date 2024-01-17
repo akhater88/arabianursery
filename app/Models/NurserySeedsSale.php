@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,8 +21,7 @@ class NurserySeedsSale extends Model
 
     protected $casts = [
         'status' => NurserySeedsSaleStatuses::class,
-        'cash' => 'object',
-        'installments' => 'array',
+        'cash' => 'object'
     ];
 
     //  ----------    Relationships    ----------
@@ -55,6 +55,14 @@ class NurserySeedsSale extends Model
         return $this->hasMany(SeedlingServiceImage::class);
     }
 
+    /**
+     * Get all of the seeds sales installments.
+     */
+    public function installments(): MorphMany
+    {
+        return $this->morphMany(Installment::class, 'installmentable');
+    }
+
 
     /* -------------- Scopes -------------- */
     public function scopePersonal($query)
@@ -71,35 +79,6 @@ class NurserySeedsSale extends Model
     }
 
     //  ----------    Tools    ----------
-    public function syncImages($uploaded_images)
-    {
-        $uploaded_images = collect($uploaded_images);
 
-        $this->images->each(function ($image) use ($uploaded_images) {
-            if ($uploaded_images->doesntContain($image->name)) {
-                Storage::delete($image->path);
-                $image->delete();
-            }
-        });
-
-        $uploaded_images->each(function ($uploaded_image){
-            if($this->images->contains('name', $uploaded_image)) {
-                return;
-            }
-
-            if(Storage::directoryMissing("seedling-services/{$this->id}")){
-                Storage::makeDirectory("seedling-services/{$this->id}");
-            }
-
-            if(Storage::fileExists("tmp/uploads/{$uploaded_image}")){
-                Storage::move("tmp/uploads/{$uploaded_image}", "seedling-services/{$this->id}/{$uploaded_image}");
-
-                $this->images()->create([
-                    'name' => $uploaded_image,
-                    'path' => "seedling-services/{$this->id}/{$uploaded_image}"
-                ]);
-            }
-        });
-    }
 
 }
