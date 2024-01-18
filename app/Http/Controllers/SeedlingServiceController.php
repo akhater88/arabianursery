@@ -65,7 +65,7 @@ class SeedlingServiceController extends Controller
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
 
-        if($request->payment_type == 'installments'){
+        if($request->payment_type == 'installments' && !empty($request->installments)){
             $seedlingService->installments()->createManyQuietly($request->installments);
         }
 
@@ -100,7 +100,7 @@ class SeedlingServiceController extends Controller
 
         $seedling_service->syncImages($request->images);
 
-        if($request->payment_type == 'installments'){
+        if($request->payment_type == 'installments' && !empty($request->installments)){
             $seedling_service->installments()->delete();
             $seedling_service->installments()->createManyQuietly($request->installments);
         }

@@ -48,7 +48,7 @@ class SeedlingPurchaseRequestController extends Controller
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
 
-        if($request->payment_type == 'installments'){
+        if($request->payment_type == 'installments' && !empty($request->installments)){
             $seedlingPurchase->installments()->createManyQuietly($request->installments);
         }
 
@@ -73,7 +73,7 @@ class SeedlingPurchaseRequestController extends Controller
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
 
-        if($request->payment_type == 'installments'){
+        if($request->payment_type == 'installments' && !empty($request->installments)){
             $seedling_purchase_request->installments()->delete();
             $seedling_purchase_request->installments()->createManyQuietly($request->installments);
         }

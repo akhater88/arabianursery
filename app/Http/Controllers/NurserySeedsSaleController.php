@@ -59,7 +59,7 @@ class NurserySeedsSaleController extends Controller
             'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
         ]);
 
-        if($request->payment_type == 'installments'){
+        if($request->payment_type == 'installments' && !empty($request->installments)){
             $seeds_sale->installments()->createManyQuietly($request->installments);
         }
 
@@ -84,7 +84,7 @@ class NurserySeedsSaleController extends Controller
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
             'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
         ]);
-        if($request->payment_type == 'installments'){
+        if($request->payment_type == 'installments' && !empty($request->installments)){
             $nurserySeedsSale->installments()->delete();
             $nurserySeedsSale->installments()->createManyQuietly($request->installments);
         }
