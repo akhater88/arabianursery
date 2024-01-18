@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\NurserySeedsSaleStatuses;
-use App\Exports\SeedlingServicesExport;
+use App\Exports\NurserySeedsSalesExport;
 use App\Http\Filters\SeedlingServiceFilter;
 use App\Http\Requests\NurserySeedsSaleRequest;
 use App\Http\Requests\UpdateNurserySeedsSaleRequest;
@@ -93,7 +93,7 @@ class NurserySeedsSaleController extends Controller
 
     public function export()
     {
-        return Excel::download(new SeedlingServicesExport, 'seedling-services.xlsx');
+        return Excel::download(new NurserySeedsSalesExport, 'Nursery-Seeds-Sales.xlsx');
     }
 
     public function destroy(NurserySeedsSale $nurserySeedsSale)

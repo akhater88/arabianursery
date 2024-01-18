@@ -46,7 +46,6 @@ class SeedlingPurchaseRequestController extends Controller
             "tray_count" => $request->tray_count,
             "price_per_tray" => $request->price_per_tray,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
-            'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
         ]);
 
         if($request->payment_type == 'installments'){
@@ -72,7 +71,6 @@ class SeedlingPurchaseRequestController extends Controller
             "tray_count" => $request->tray_count,
             "price_per_tray" => $request->price_per_tray,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
-            'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
         ]);
 
         if($request->payment_type == 'installments'){
