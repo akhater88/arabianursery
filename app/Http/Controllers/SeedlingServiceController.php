@@ -65,8 +65,16 @@ class SeedlingServiceController extends Controller
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
 
+
+
         if($request->payment_type == 'installments' && !empty($request->installments)){
-            $seedlingService->installments()->createManyQuietly($request->installments);
+            $instalmentsArray = [];
+            foreach ($request->installments as $key => $value ){
+                $instalmentsArray[$key] = $value;
+                $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
+                $instalmentsArray[$key]['type'] = 'Collection';
+            }
+            $seedlingService->installments()->createManyQuietly($instalmentsArray);
         }
 
 
@@ -95,14 +103,19 @@ class SeedlingServiceController extends Controller
             "discount_amount" => $request->discount_amount,
             "status" => $request->status,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
-            'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
         ]);
 
         $seedling_service->syncImages($request->images);
 
         if($request->payment_type == 'installments' && !empty($request->installments)){
             $seedling_service->installments()->delete();
-            $seedling_service->installments()->createManyQuietly($request->installments);
+            $instalmentsArray = [];
+            foreach ($request->installments as $key => $value ){
+                $instalmentsArray[$key] = $value;
+                $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
+                $instalmentsArray[$key]['type'] = 'Collection';
+            }
+            $seedling_service->installments()->createManyQuietly($instalmentsArray);
         }
 
         return redirect()->back();

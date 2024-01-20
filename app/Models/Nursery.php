@@ -43,4 +43,9 @@ class Nursery extends Model
     {
         return $this->belongsToMany(FarmUser::class, 'nursery_farm_user', 'nursery_id', 'farm_user_id');
     }
+
+    public function installments(): hasMany
+    {
+        return $this->hasMany(Installment::class);
+    }
 }

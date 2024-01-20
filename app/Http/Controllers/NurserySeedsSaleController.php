@@ -60,7 +60,13 @@ class NurserySeedsSaleController extends Controller
         ]);
 
         if($request->payment_type == 'installments' && !empty($request->installments)){
-            $seeds_sale->installments()->createManyQuietly($request->installments);
+            $instalmentsArray = [];
+            foreach ($request->installments as $key => $value ){
+                $instalmentsArray[$key] = $value;
+                $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
+                $instalmentsArray[$key]['type'] = 'Collection';
+            }
+            $seeds_sale->installments()->createManyQuietly($instalmentsArray);
         }
 
         return redirect()->back();
@@ -86,7 +92,13 @@ class NurserySeedsSaleController extends Controller
         ]);
         if($request->payment_type == 'installments' && !empty($request->installments)){
             $nurserySeedsSale->installments()->delete();
-            $nurserySeedsSale->installments()->createManyQuietly($request->installments);
+            $instalmentsArray = [];
+            foreach ($request->installments as $key => $value ){
+                $instalmentsArray[$key] = $value;
+                $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
+                $instalmentsArray[$key]['type'] = 'Collection';
+            }
+            $nurserySeedsSale->installments()->createManyQuietly($instalmentsArray);
         }
         return redirect()->back();
     }

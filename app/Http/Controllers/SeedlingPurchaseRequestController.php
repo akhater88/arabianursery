@@ -49,7 +49,13 @@ class SeedlingPurchaseRequestController extends Controller
         ]);
 
         if($request->payment_type == 'installments' && !empty($request->installments)){
-            $seedlingPurchase->installments()->createManyQuietly($request->installments);
+            $instalmentsArray = [];
+            foreach ($request->installments as $key => $value ){
+                $instalmentsArray[$key] = $value;
+                $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
+                $instalmentsArray[$key]['type'] = 'Collection';
+            }
+            $seedlingPurchase->installments()->createManyQuietly($instalmentsArray);
         }
 
         return redirect()->back();
@@ -75,7 +81,13 @@ class SeedlingPurchaseRequestController extends Controller
 
         if($request->payment_type == 'installments' && !empty($request->installments)){
             $seedling_purchase_request->installments()->delete();
-            $seedling_purchase_request->installments()->createManyQuietly($request->installments);
+            $instalmentsArray = [];
+            foreach ($request->installments as $key => $value ){
+                $instalmentsArray[$key] = $value;
+                $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
+                $instalmentsArray[$key]['type'] = 'Collection';
+            }
+            $seedling_purchase_request->installments()->createManyQuietly($instalmentsArray);
         }
         return redirect()->back();
     }

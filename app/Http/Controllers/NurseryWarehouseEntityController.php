@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateNurseryWarehouseEntityRequest;
 use App\Models\EntityType;
 use App\Models\NurseryWarehouseEntity;
 use App\Models\SeedType;
+use Illuminate\Support\Arr;
 use Maatwebsite\Excel\Facades\Excel;
 
 class NurseryWarehouseEntityController extends Controller
@@ -44,7 +45,7 @@ class NurseryWarehouseEntityController extends Controller
 
     public function store(StoreNurseryWarehouseEntityRequest $request)
     {
-        $request->user()->warehouseEntities()->create([
+        $warehouseEntity = $request->user()->warehouseEntities()->create([
             "agricultural_supply_store_user_id" => $request->agricultural_supply_store_user,
             "entity_type_id" => $request->entity_type,
             "quantity" => $request->quantity,
@@ -54,8 +55,17 @@ class NurseryWarehouseEntityController extends Controller
             "seed_type_id" => $request->seed_type,
             "nursery_id" => $request->user()->nursery->id,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
-            'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
         ]);
+
+        if($request->payment_type == 'installments' && !empty($request->installments)){
+            $instalmentsArray = [];
+            foreach ($request->installments as $key => $value ){
+                $instalmentsArray[$key] = $value;
+                $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
+                $instalmentsArray[$key]['type'] = 'Due';
+            }
+            $warehouseEntity->installments()->createManyQuietly($instalmentsArray);
+        }
 
         return redirect()->back();
     }
@@ -81,9 +91,19 @@ class NurseryWarehouseEntityController extends Controller
                 "seed_type_id" => $request->seed_type,
                 "nursery_id" => $request->user()->nursery->id,
                 "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
-                'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
             ]
         );
+
+        if($request->payment_type == 'installments' && !empty($request->installments)){
+            $nursery_warehouse_entity->installments()->delete();
+            $instalmentsArray = [];
+            foreach ($request->installments as $key => $value ){
+                $instalmentsArray[$key] = $value;
+                $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
+                $instalmentsArray[$key]['type'] = 'Due';
+            }
+            $nursery_warehouse_entity->installments()->createManyQuietly($instalmentsArray);
+        }
 
         return redirect()->back();
     }
