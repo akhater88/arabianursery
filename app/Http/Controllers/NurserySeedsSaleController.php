@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateNurserySeedsSaleRequest;
 use App\Models\NurserySeedsSale;
 use App\Models\SeedlingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\File;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -17,19 +18,25 @@ class NurserySeedsSaleController extends Controller
 {
     public function index(SeedlingServiceFilter $filters)
     {
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $nurserySeedsSales = $nursery->nurserySeedsSales()->with(['farmUser', 'seedType'])
+            ->orderBy('id', 'DESC')
+            ->filterBy($filters)
+            ->paginate()
+            ->withQueryString();
         return view('nursery-seeds-sales.index', [
             'page_title' => 'مبيعات بذور المشتل',
-            'nursery_seeds_sales' => NurserySeedsSale::with(['farmUser', 'seedType'])
-                ->orderBy('id', 'DESC')
-                ->filterBy($filters)
-                ->paginate()
-                ->withQueryString(),
+            'nursery_seeds_sales' => $nurserySeedsSales,
             'statuses' => NurserySeedsSaleStatuses::values(),
         ]);
     }
 
     public function show(NurserySeedsSale $nurserySeedsSale)
     {
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $nurserySeedsSale = $nursery->nurserySeedsSales()->findOrFail($nurserySeedsSale->id);
         return view('nursery-seeds-sales.show', [
             'page_title' => 'مبيعات بذور',
             'statuses' => NurserySeedsSaleStatuses::values(),
@@ -74,6 +81,9 @@ class NurserySeedsSaleController extends Controller
 
     public function edit(NurserySeedsSale $nurserySeedsSale)
     {
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $nurserySeedsSale = $nursery->nurserySeedsSales()->findOrFail($nurserySeedsSale->id);
         return view('nursery-seeds-sales/edit', [
             'page_title' => 'تعديل مبيعات بذور',
             'statuses' => NurserySeedsSaleStatuses::values(),
@@ -83,6 +93,9 @@ class NurserySeedsSaleController extends Controller
 
     public function update(NurserySeedsSale $nurserySeedsSale, UpdateNurserySeedsSaleRequest $request)
     {
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $nurserySeedsSale = $nursery->nurserySeedsSales()->findOrFail($nurserySeedsSale->id);
         $nurserySeedsSale->update([
             "farm_user" => $request->farm_user,
             "price" => $request->price,

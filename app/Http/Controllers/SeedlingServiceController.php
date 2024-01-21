@@ -9,6 +9,7 @@ use App\Http\Requests\StoreSeedlingServiceRequest;
 use App\Http\Requests\UpdateSeedlingServiceRequest;
 use App\Models\SeedlingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\File;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -16,23 +17,29 @@ class SeedlingServiceController extends Controller
 {
     public function index(SeedlingServiceFilter $filters)
     {
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $seedlingServices = $nursery->seedlingServices()->with(['farmUser', 'seedType'])
+            ->orderBy('id', 'DESC')
+            ->filterBy($filters)
+            ->paginate()
+            ->withQueryString();
         return view('seedling-services.index', [
             'page_title' => 'خدمات التشتيل',
-            'seedling_services' => SeedlingService::with(['farmUser', 'seedType'])
-                ->orderBy('id', 'DESC')
-                ->filterBy($filters)
-                ->paginate()
-                ->withQueryString(),
+            'seedling_services' => $seedlingServices,
             'statuses' => SeedlingServiceStatuses::values(),
         ]);
     }
 
     public function show(SeedlingService $seedling_service)
     {
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $seedlingService = $nursery->seedlingServices()->findOrFail($seedling_service->id);
         return view('seedling-services.show', [
             'page_title' => 'خدمة تشتيل',
             'statuses' => SeedlingServiceStatuses::values(),
-            'seedling_service' => $seedling_service,
+            'seedling_service' => $seedlingService,
         ]);
     }
 
@@ -83,6 +90,9 @@ class SeedlingServiceController extends Controller
 
     public function edit(SeedlingService $seedling_service)
     {
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $seedlingService = $nursery->seedlingServices()->findOrFail($seedling_service->id);
         return view('seedling-services/edit', [
             'page_title' => 'تعديل خدمة تشتيل',
             'statuses' => SeedlingServiceStatuses::values(),
@@ -92,7 +102,10 @@ class SeedlingServiceController extends Controller
 
     public function update(SeedlingService $seedling_service, UpdateSeedlingServiceRequest $request)
     {
-        $seedling_service->update([
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $seedlingService = $nursery->seedlingServices()->findOrFail($seedling_service->id);
+        $seedlingService->update([
             "tray_count" => $request->tray_count,
             "germination_rate" => $request->germination_rate,
             "germination_period" => $request->germination_period,
@@ -128,7 +141,10 @@ class SeedlingServiceController extends Controller
 
     public function destroy(SeedlingService $seedling_service)
     {
-        $seedling_service->delete();
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $seedlingService = $nursery->seedlingServices()->findOrFail($seedling_service->id);
+        $seedlingService->delete();
 
         return redirect()->back()->with('status', 'تم الحذف بنجاح');
     }
@@ -144,7 +160,9 @@ class SeedlingServiceController extends Controller
 
     public function search(Request $request)
     {
-        $personal_seedling_service_query = SeedlingService::query()->with('seedType')->limit(7);
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $personal_seedling_service_query = SeedlingService::query()->with('seedType')->where('nursery_id',$nursery->id)->limit(7);
 
         if ($request->q) {
             $personal_seedling_service_query->where('seed_class', 'like', "%{$request->q}%")
@@ -181,7 +199,10 @@ class SeedlingServiceController extends Controller
 
     public function updateStatus(SeedlingService $seedling_service, Request $request)
     {
-        $seedling_service->update([
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $seedlingService = $nursery->seedlingServices()->findOrFail($seedling_service->id);
+        $seedlingService->update([
             'status' => $request->status
         ]);
 

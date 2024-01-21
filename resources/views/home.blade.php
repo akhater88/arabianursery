@@ -64,9 +64,9 @@
         <div class="col-lg-6 col-12">
             <div class="card">
         <div class="card-header border-0">
-
+            <h3 class="card-title">دفعات للتحصيل</h3>
             <div class="card-tools">
-                <h3 class="card-title">دفعات للتحصيل</h3>
+                {{$collection_installments_sum}} JOD
             </div>
         </div>
         <div class="card-body table-responsive p-0">
@@ -129,8 +129,9 @@
         <div class="col-lg-6 col-12">
             <div class="card">
                 <div class="card-header border-0">
+                    <h3 class="card-title">دفعات مستحقة على مخزن المشتل</h3>
                     <div class="card-tools">
-                        <h3 class="card-title">دفعات مستحقة على مخزن المشتل</h3>
+                        {{$due_installments_sum}} JOD
                     </div>
                 </div>
                 <div class="card-body table-responsive p-0">

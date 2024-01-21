@@ -48,6 +48,11 @@ class SeedlingService extends Model
         return $this->belongsTo(FarmUser::class);
     }
 
+    public function seedlingPurchaseRequests(): hasMany
+    {
+        return $this->hasMany(SeedlingPurchaseRequest::class);
+    }
+
     public function images(): hasMany
     {
         return $this->hasMany(SeedlingServiceImage::class);

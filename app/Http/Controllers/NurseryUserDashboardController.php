@@ -19,12 +19,16 @@ class NurseryUserDashboardController extends Controller
 
         $instalments = $nursery->installments()->where('invoice_number', '=', null)->get()->groupBy('type');
         $collectionInstallments = collect([]);
+        $collectionInstallmentsSum = 0;
         if(isset($instalments['Collection'])){
             $collectionInstallments = $instalments['Collection']->sortBy('invoice_date');
+            $collectionInstallmentsSum = $instalments['Collection']->sum('amount');
         }
         $dueInstallments = collect([]);
+        $dueInstalmentsSum = 0;
         if(isset($instalments['Due'])){
             $dueInstallments = $instalments['Due']->sortBy('invoice_date');
+            $dueInstalmentsSum = $instalments['Due']->sum('amount');
         }
 
         return view('home', [
@@ -36,7 +40,10 @@ class NurseryUserDashboardController extends Controller
             'up_coming_seeds_instalments' => '',
             'up_coming_seedling_instalments' => '',
             'collection_installments' => $collectionInstallments,
-            'due_installments' => $dueInstallments
+            'collection_installments_sum' => $collectionInstallmentsSum,
+            'due_installments' => $dueInstallments,
+            'due_installments_sum' => $dueInstalmentsSum,
+
         ]);
     }
 }

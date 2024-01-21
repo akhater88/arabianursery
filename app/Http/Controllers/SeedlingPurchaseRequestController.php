@@ -7,26 +7,31 @@ use App\Http\Filters\SeedlingPurchaseRequestFilter;
 use App\Http\Requests\StoreSeedlingPurchaseRequest;
 use App\Http\Requests\UpdateSeedlingPurchaseRequest;
 use App\Models\SeedlingPurchaseRequest;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class SeedlingPurchaseRequestController extends Controller
 {
     public function index(SeedlingPurchaseRequestFilter $filters)
     {
+        $user = Auth::user();
+        $seedlingPurchaseRequest = $user->seedlingPurchaseRequests()->with(['farmUser', 'seedlingService.seedType'])
+            ->filterBy($filters)
+            ->paginate()
+            ->withQueryString();
         return view('seedling-purchase-requests.index', [
             'page_title' => 'مبيعات اشتال خاصة مشتل',
-            'seedling_purchase_requests' => SeedlingPurchaseRequest::with(['farmUser', 'seedlingService.seedType'])
-                ->filterBy($filters)
-                ->paginate()
-                ->withQueryString(),
+            'seedling_purchase_requests' => $seedlingPurchaseRequest,
         ]);
     }
 
     public function show(SeedlingPurchaseRequest $seedling_purchase_request)
     {
+        $user = Auth::user();
+        $seedlingPurchaseRequest = $user->seedlingPurchaseRequests()->findOrFail($seedling_purchase_request->id);
         return view('seedling-purchase-requests.show', [
             'page_title' => 'تعديل طلب شراء أشتال',
-            'seedling_purchase_request' => $seedling_purchase_request,
+            'seedling_purchase_request' => $seedlingPurchaseRequest,
         ]);
     }
 
@@ -63,15 +68,19 @@ class SeedlingPurchaseRequestController extends Controller
 
     public function edit(SeedlingPurchaseRequest $seedling_purchase_request)
     {
+        $user = Auth::user();
+        $seedlingPurchaseRequest = $user->seedlingPurchaseRequests()->findOrFail($seedling_purchase_request->id);
         return view('seedling-purchase-requests/create-or-edit', [
             'page_title' => 'تعديل طلب شراء أشتال',
-            'seedling_purchase_request' => $seedling_purchase_request,
+            'seedling_purchase_request' => $seedlingPurchaseRequest,
         ]);
     }
 
     public function update(SeedlingPurchaseRequest $seedling_purchase_request, UpdateSeedlingPurchaseRequest $request)
     {
-        $seedling_purchase_request->update([
+        $user = Auth::user();
+        $seedlingPurchaseRequest = $user->seedlingPurchaseRequests()->findOrFail($seedling_purchase_request->id);
+        $seedlingPurchaseRequest->update([
             "farm_user_id" => $request->farm_user,
             "seedling_service_id" => $request->seedling_service,
             "tray_count" => $request->tray_count,
@@ -87,7 +96,7 @@ class SeedlingPurchaseRequestController extends Controller
                 $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
                 $instalmentsArray[$key]['type'] = 'Collection';
             }
-            $seedling_purchase_request->installments()->createManyQuietly($instalmentsArray);
+            $seedlingPurchaseRequest->installments()->createManyQuietly($instalmentsArray);
         }
         return redirect()->back();
     }
@@ -99,7 +108,9 @@ class SeedlingPurchaseRequestController extends Controller
 
     public function destroy(SeedlingPurchaseRequest $seedling_purchase_request)
     {
-        $seedling_purchase_request->delete();
+        $user = Auth::user();
+        $seedlingPurchaseRequest = $user->seedlingPurchaseRequests()->findOrFail($seedling_purchase_request->id);
+        $seedlingPurchaseRequest->delete();
 
         return redirect()->back()->with('status', 'تم الحذف بنجاح');
     }

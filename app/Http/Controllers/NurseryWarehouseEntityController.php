@@ -10,27 +10,35 @@ use App\Models\EntityType;
 use App\Models\NurseryWarehouseEntity;
 use App\Models\SeedType;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class NurseryWarehouseEntityController extends Controller
 {
     public function index(NurseryWareHouseEntityFilter $filters)
     {
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $nurseryWarehouseEntities = $nursery->nurseryWarehouseEntities()->with(['agriculturalSupplyStoreUser', 'entity'])
+            ->orderBy('id', 'DESC')
+            ->filterBy($filters)
+            ->paginate()
+            ->withQueryString();
         return view('warehouse-entities.index', [
             'page_title' => 'إدارة المخزن',
-            'nursery_warehouse_entities' => NurseryWarehouseEntity::with(['agriculturalSupplyStoreUser', 'entity'])
-                ->filterBy($filters)
-                ->paginate()
-                ->withQueryString(),
+            'nursery_warehouse_entities' => $nurseryWarehouseEntities,
         ]);
     }
 
     public function show(NurseryWarehouseEntity $nursery_warehouse_entity)
     {
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $nurseryWarehouseEntity = $nursery->nurseryWarehouseEntities()->findOrFail($nursery_warehouse_entity->id);
         return view('warehouse-entities.show', [
             'page_title' => 'مدخل إلى المخزن',
             'entity_types' => EntityType::get(),
-            'nursery_warehouse_entity' => $nursery_warehouse_entity,
+            'nursery_warehouse_entity' => $nurseryWarehouseEntity,
         ]);
     }
 
@@ -72,16 +80,23 @@ class NurseryWarehouseEntityController extends Controller
 
     public function edit(NurseryWarehouseEntity $nursery_warehouse_entity)
     {
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $nurseryWarehouseEntity = $nursery->nurseryWarehouseEntities()->findOrFail($nursery_warehouse_entity->id);
         return view('warehouse-entities/create-or-edit', [
             'page_title' => 'تعديل طلب إدخال إلى المخزن',
             'entity_types' => EntityType::get(),
-            'nursery_warehouse_entity' => $nursery_warehouse_entity,
+            'nursery_warehouse_entity' => $nurseryWarehouseEntity,
         ]);
     }
 
     public function update(NurseryWarehouseEntity $nursery_warehouse_entity, UpdateNurseryWarehouseEntityRequest $request)
     {
-        $nursery_warehouse_entity->update([
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $nurseryWarehouseEntity = $nursery->nurseryWarehouseEntities()->findOrFail($nursery_warehouse_entity->id);
+
+        $nurseryWarehouseEntity->update([
                 "agricultural_supply_store_user_id" => $request->agricultural_supply_store_user,
                 "entity_type_id" => $request->entity_type,
                 "quantity" => $request->quantity,
@@ -95,14 +110,14 @@ class NurseryWarehouseEntityController extends Controller
         );
 
         if($request->payment_type == 'installments' && !empty($request->installments)){
-            $nursery_warehouse_entity->installments()->delete();
+            $nurseryWarehouseEntity->installments()->delete();
             $instalmentsArray = [];
             foreach ($request->installments as $key => $value ){
                 $instalmentsArray[$key] = $value;
                 $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
                 $instalmentsArray[$key]['type'] = 'Due';
             }
-            $nursery_warehouse_entity->installments()->createManyQuietly($instalmentsArray);
+            $nurseryWarehouseEntity->installments()->createManyQuietly($instalmentsArray);
         }
 
         return redirect()->back();
@@ -115,8 +130,10 @@ class NurseryWarehouseEntityController extends Controller
 
     public function destroy(NurseryWarehouseEntity $nursery_warehouse_entity)
     {
-        $nursery_warehouse_entity->delete();
-
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $nurseryWarehouseEntity = $nursery->nurseryWarehouseEntities()->findOrFail($nursery_warehouse_entity->id);
+        $nurseryWarehouseEntity->delete();
         return redirect()->back()->with('status', 'تم الحذف بنجاح');
     }
 }

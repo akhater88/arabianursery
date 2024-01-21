@@ -30,6 +30,11 @@ class NurseryWarehouseEntity extends Model
         return $this->morphTo(__FUNCTION__, 'entity_type', 'entity_id');
     }
 
+    public function nursery(): belongsTo
+    {
+        return $this->belongsTo(Nursery::class);
+    }
+
     /**
      * Get all of the seedling service's installments.
      */

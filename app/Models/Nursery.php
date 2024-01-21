@@ -39,6 +39,11 @@ class Nursery extends Model
         return $this->hasMany(SeedlingPurchaseRequest::class);
     }
 
+    public function nurseryWarehouseEntities(): hasMany
+    {
+        return $this->hasMany(NurseryWarehouseEntity::class);
+    }
+
     public function farmUsers(): BelongsToMany
     {
         return $this->belongsToMany(FarmUser::class, 'nursery_farm_user', 'nursery_id', 'farm_user_id');
