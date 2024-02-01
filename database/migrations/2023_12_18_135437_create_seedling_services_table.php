@@ -27,10 +27,10 @@ return new class extends Migration
             $table->json('installments')->nullable();
             $table->string('status');
 
-            $table->foreignId('seed_type_id')->constrained('seed_types');
-            $table->foreignId('nursery_id')->constrained('nurseries');
-            $table->foreignId('nursery_user_id')->constrained('nursery_users');
-            $table->foreignId('farm_user_id')->nullable()->constrained('farm_users');
+            $table->unsignedBigInteger('seed_type_id')->nullable();
+            $table->unsignedBigInteger('nursery_id')->nullable();
+            $table->unsignedBigInteger('nursery_user_id')->nullable();
+            $table->unsignedBigInteger('farm_user_id')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

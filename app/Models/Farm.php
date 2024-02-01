@@ -10,6 +10,9 @@ class Farm extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['name'];
+
+
     public function farmUsers(): hasMany
     {
         return $this->hasMany(FarmUser::class);

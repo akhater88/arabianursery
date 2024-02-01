@@ -17,13 +17,11 @@ return new class extends Migration
             $table->decimal('price');
             $table->json('cash')->nullable();
             $table->json('installments')->nullable();
-
             $table->morphs('entity');
-            $table->foreignId('entity_type_id')->constrained('entity_types');
-            $table->foreignId('agricultural_supply_store_user_id')->constrained('agricultural_supply_store_users', 'id', 'agricultural_supply_store_user_id_foreign');
-            $table->foreignId('nursery_user_id')->constrained('nursery_users');
-            $table->foreignId('nursery_id')->constrained('nurseries');
-
+            $table->unsignedBigInteger('entity_type_id');
+            $table->unsignedBigInteger('agricultural_supply_store_user_id');
+            $table->unsignedBigInteger('nursery_user_id');
+            $table->unsignedBigInteger('nursery_id');
             $table->timestamps();
             $table->softDeletes();
         });

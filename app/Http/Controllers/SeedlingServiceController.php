@@ -7,7 +7,9 @@ use App\Exports\SeedlingServicesExport;
 use App\Http\Filters\SeedlingServiceFilter;
 use App\Http\Requests\StoreSeedlingServiceRequest;
 use App\Http\Requests\UpdateSeedlingServiceRequest;
+use App\Models\FarmUser;
 use App\Models\SeedlingService;
+use App\Notifications\SeedlingServiceCreated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\File;
@@ -84,6 +86,12 @@ class SeedlingServiceController extends Controller
             $seedlingService->installments()->createManyQuietly($instalmentsArray);
         }
 
+        if($request->type == SeedlingService::TYPE_FARMER){
+            $farmerUser = FarmUser::find($request->farm_user);
+            if($farmerUser->email){
+                $farmerUser->notify(new SeedlingServiceCreated($seedlingService));
+            }
+        }
 
         return redirect()->back();
     }

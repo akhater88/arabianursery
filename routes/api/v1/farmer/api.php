@@ -14,13 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => 'config'], function () {
-    Route::get('/app', 'ConfigController@configuration');
-});
+Route::get('/config/app', 'ConfigController@configuration');
+Route::post('/login/farmer', 'AuthController@login');
+Route::post('/register/farm', 'AuthController@farmRegister');
 
-Route::group(['prefix' => 'login'], function () {
-    Route::post('/farmer', 'AuthController@login');
-});
-Route::group(['namespace' => 'Api\V1\Farmer', 'middleware'=>'auth:farmer_api'], function () {
 
+Route::group(['middleware'=>'auth:farmer_api'], function () {
+    Route::put('/farmer/update-fcm-token','AuthController@updateFcmToken' );
+    Route::get('/farmer/profile', 'FarmController@getFarmerProfile');
+    Route::get('/farmer/notifications', 'FarmController@getFarmerNotifications');
 });

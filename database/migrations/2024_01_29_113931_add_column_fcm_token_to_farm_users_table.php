@@ -11,14 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('seedling_service_images', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('path');
-
-            $table->unsignedBigInteger('seedling_service_id')->nullable();
-
-            $table->timestamps();
+        Schema::table('farm_users', function (Blueprint $table) {
+            $table->string('fcm_token')->nullable()->after('farm_id');
         });
     }
 
@@ -27,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('seedling_service_images');
+        Schema::table('farm_users', function (Blueprint $table) {
+            $table->dropColumn('fcm_token');
+        });
     }
 };
