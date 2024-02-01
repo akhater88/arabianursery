@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Farmer;
 
+use App\CentralLogics\Helpers;
+use App\Models\SeedlingService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use App\Enums\SeedlingServiceStatuses;
+
 
 class FarmController extends Controller
 {
@@ -23,5 +28,36 @@ class FarmController extends Controller
         $notifications = $user->notifications; // Retrieve all notifications
         $user->unreadNotifications->markAsRead();
         return response()->json($notifications);
+    }
+
+    public function getSeedling(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'limit' => 'required',
+            'offset' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => Helpers::error_processor($validator)], 403);
+        }
+        $user = Auth::user();
+        $paginator = SeedlingService::with(['seedType', 'nursery'])
+            ->where(['farm_user_id' => $user->id])
+            ->whereIn('status', [
+                SeedlingServiceStatuses::SEEDS_NOT_RECEIVED,
+                SeedlingServiceStatuses::SEEDS_RECEIVED,
+                SeedlingServiceStatuses::GERMINATION_COMPLETED,
+                SeedlingServiceStatuses::READY_FOR_PICKUP,
+                SeedlingServiceStatuses::DELIVERED
+            ])
+            ->orderBy('created_at', 'desc')
+            ->paginate($request['limit'], ['*'], 'page', $request['offset']);
+        $seedlings = Helpers::seedling_data_formatting($paginator->items(), true);
+        $data = [
+            'total_size' => $paginator->total(),
+            'limit' => $request['limit'],
+            'offset' => $request['offset'],
+            'seedlings' => $seedlings
+        ];
+        return response()->json($data, 200);
     }
 }

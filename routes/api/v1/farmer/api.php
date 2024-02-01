@@ -23,4 +23,5 @@ Route::group(['middleware'=>'auth:farmer_api'], function () {
     Route::put('/farmer/update-fcm-token','AuthController@updateFcmToken' );
     Route::get('/farmer/profile', 'FarmController@getFarmerProfile');
     Route::get('/farmer/notifications', 'FarmController@getFarmerNotifications');
+    Route::get('/farmer/all-seedlings', 'FarmController@getSeedling');
 });
