@@ -3,7 +3,7 @@
     <a href="{{route('dashboard')}}" class="brand-link">
         <img src="{{asset('dist/img/AdminLTELogo.png')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
              style="opacity: .8">
-        <span class="brand-text font-weight-light">{{ Auth::guard('nursery_web')->user()->nursery->name }}</span>
+        <span class="brand-text font-weight-light">{{ Auth::guard('admin')->user()->name }}</span>
     </a>
 
     <!-- Sidebar -->
@@ -14,7 +14,7 @@
                 <img src="{{asset('dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">{{ Auth::guard('nursery_web')->user()->name }}</a>
+                <a href="#" class="d-block">{{ Auth::guard('admin')->user()->name }}</a>
             </div>
         </div>
 
@@ -34,46 +34,12 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{route('seedling-services.index')}}" class="nav-link {{Route::currentRouteName() == 'seedling-services.index' ? 'active' : ''}}">
+                    <a href="{{route('admin.posts')}}" class="nav-link {{Route::currentRouteName() == 'admin.posts' ? 'active' : ''}}">
                         <i class="nav-icon fas fa-seedling" ></i>
-                        <p>خدمة تشتيل المزارعين</p>
+                        <p>المنشورات</p>
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a href="{{route('seedling-purchase-requests.index')}}" class="nav-link {{Route::currentRouteName() == 'seedling-purchase-requests.index' ? 'active' : ''}}">
-                        <i class="nav-icon fas fa-seedling" style="color: #8cba92;"></i>
-                        <p>مبيعات اشتال خاصة مشتل</p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="{{route('nursery-seeds-sales.index')}}" class="nav-link {{Route::currentRouteName() == 'nursery-seeds-sales.index' ? 'active' : ''}}">
-                        <i class="nav-icon fas fa-allergies"></i>
-                        <p>مبيعات بذور المشتل</p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="{{route('warehouse-entities.index')}}" class="nav-link {{Route::currentRouteName() == 'warehouse-entities.index' ? 'active' : ''}}">
-                        <i class="nav-icon fas fa-warehouse"></i>
-                        <p> مخزن المشتل</p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-marker"></i>
-                        <p>سياسة الخصوصية</p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-clipboard-list"></i>
-                        <p>شروط الاستخدام</p>
-                    </a>
-                </li>
 
                 <li class="nav-item">
                     <form method="POST" action="{{ route('logout') }}" id="logout">

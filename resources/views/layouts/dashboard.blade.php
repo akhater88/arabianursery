@@ -62,11 +62,13 @@
     <!-- Navbar -->
         @include('partials.navbar')
     <!-- /.navbar -->
-
+    @if( \Auth::guard('nursery_web')->check() )
     <!-- Main Sidebar Container -->
         @include('partials.sidebar')
     <!-- /.Main Sidebar Container -->
-
+    @elseif(\Auth::guard('admin')->check())
+        @include('partials.admin.sidebar')
+    @endif
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
