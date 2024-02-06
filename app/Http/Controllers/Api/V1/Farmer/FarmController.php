@@ -40,7 +40,7 @@ class FarmController extends Controller
             return response()->json(['errors' => Helpers::error_processor($validator)], 403);
         }
         $user = Auth::user();
-        $paginator = SeedlingService::with(['seedType', 'nursery'])
+        $paginator = SeedlingService::with(['seedType', 'nursery','images'])
             ->where(['farm_user_id' => $user->id])
             ->whereIn('status', [
                 SeedlingServiceStatuses::SEEDS_NOT_RECEIVED,

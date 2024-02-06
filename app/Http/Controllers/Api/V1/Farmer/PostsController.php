@@ -28,4 +28,11 @@ class PostsController extends Controller
        return response()->json($data, 200);
     }
 
+    public function getPostById(Post $post){
+        $data = [
+            $post->toArray()
+        ];
+        return response()->json($data, 200);
+    }
+
 }

@@ -18,6 +18,7 @@ Route::get('/config/app', 'ConfigController@configuration');
 Route::post('/login/farmer', 'AuthController@login');
 Route::post('/register/farm', 'AuthController@farmRegister');
 Route::get('/posts', 'PostsController@posts');
+Route::get('/post/{post}', 'PostsController@getPostById');
 
 
 Route::group(['middleware'=>'auth:farmer_api'], function () {
