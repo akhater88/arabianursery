@@ -60,4 +60,17 @@ class FarmController extends Controller
         ];
         return response()->json($data, 200);
     }
+
+    public function getSeedlingById($seedlingID){
+        $user = Auth::user();
+        $seedlingService = SeedlingService::with(['seedType', 'nursery','images'])->where('id',$seedlingID)->first();
+        if($user->id == $seedlingService->farm_user_id){
+            $data = $seedlingService->toArray();
+            return response()->json($data, 200);
+        }
+        else{
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+    }
 }
