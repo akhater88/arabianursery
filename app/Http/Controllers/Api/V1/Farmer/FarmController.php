@@ -63,13 +63,16 @@ class FarmController extends Controller
 
     public function getSeedlingById($seedlingID){
         $user = Auth::user();
-        $seedlingService = SeedlingService::with(['seedType', 'nursery','images'])->where('id',$seedlingID)->first();
-        if($user->id == $seedlingService->farm_user_id){
+        $seedlingService = SeedlingService::with(['seedType', 'nursery', 'images' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }])->where('id', $seedlingID)->where('farm_user_id', $user->id)->first();
+
+        if($seedlingService){
             $data = $seedlingService->toArray();
             return response()->json($data, 200);
         }
         else{
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => 'Not Found'], 404);
         }
 
     }
