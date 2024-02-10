@@ -35,16 +35,18 @@ class PostController extends Controller
 
         Post::create($validatedData);
 
-        return redirect()->route('posts.index')->with('success', 'Post created successfully.');
+        return redirect()->route('admin.posts')->with('success', 'Post created successfully.');
     }
 
-    public function edit(Post $post)
+    public function edit($id)
     {
+       $post = Post::findOrFail($id);
         return view('posts.edit', compact('post'));
     }
 
-    public function update(Request $request, Post $post)
+    public function update(Request $request, $id)
     {
+        $post = Post::findOrFail($id);
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -59,6 +61,6 @@ class PostController extends Controller
 
         $post->update($validatedData);
 
-        return redirect()->route('posts.index')->with('success', 'Post updated successfully.');
+        return redirect()->route('admin.posts')->with('success', 'Post updated successfully.');
     }
 }

@@ -30,6 +30,8 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('posts',[PostController::class,'index'])->name('admin.posts');
     Route::get('/posts/create', [PostController::class, 'create'])->name('admin.posts.create');
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+    Route::get('/posts/{post_id}', [PostController::class, 'edit'])->name('posts.edit');
+    Route::put('/posts/update/{post_id?}', [PostController::class, 'update'])->name('admin.posts.update');
 
 
 });
