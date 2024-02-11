@@ -40,6 +40,7 @@ class AuthController extends Controller
             'last_name' => ['required', 'string', 'max:255'],
             'farm_name' => ['required', 'string', 'max:255'],
             'mobile_number' => ['required', 'string', 'max:255'],
+            'country_code' => ['required', 'string', 'max:5'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . FarmUser::class],
             'password' => ['required', Rules\Password::defaults()],
         ]);
@@ -56,6 +57,7 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'farm_id' => $farm->id,
+                'country_code' => $request->country_code,
             ]);
         } else {
             $farmUser->farm_id = $farm->id;

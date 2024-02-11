@@ -29,7 +29,7 @@ class FarmUserController extends Controller
     {
         $request->validate([
             'farm_user_name' => ['required', 'string', 'max:255'],
-            'farm_user_mobile_number' => ['required', 'string', 'max:255'],
+            'farm_user_mobile_number' => ['required', 'string', 'max:10', 'min:10'],
         ]);
 
         $farmUser = FarmUser::where('mobile_number',$request->farm_user_mobile_number)->first();
