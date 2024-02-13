@@ -156,7 +156,7 @@ class SeedlingServiceController extends Controller
                     'token' => $FcmToken,
                     'notification' => [
                         'title' => 'تحديث حالة الاشتال',
-                        'body' => 'تم تعديل اشتال '.$seedlingService->status
+                        'body' => 'تم تعديل اشتال '
                     ],
                 ]);
 
