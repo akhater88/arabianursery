@@ -14,9 +14,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\File;
 use Maatwebsite\Excel\Facades\Excel;
+use Kreait\Laravel\Firebase\Facades\Firebase;
+
 
 class SeedlingServiceController extends Controller
 {
+    protected $notification;
+
+    public function __construct()
+    {
+        $this->notification = Firebase::messaging();
+    }
     public function index(SeedlingServiceFilter $filters)
     {
         $user = Auth::user();
@@ -137,6 +145,24 @@ class SeedlingServiceController extends Controller
                 $instalmentsArray[$key]['type'] = 'Collection';
             }
             $seedling_service->installments()->createManyQuietly($instalmentsArray);
+        }
+
+        if($seedlingService->type == SeedlingService::TYPE_FARMER){
+            $farmerUser = $seedlingService->farmUser;
+            if($farmerUser->fcm_token){
+                $FcmToken = $farmerUser->fcm_token;
+                $title = $request->input('title');
+                $body = $request->input('body');
+                $message = CloudMessage::fromArray([
+                    'token' => $FcmToken,
+                    'notification' => [
+                        'title' => $title,
+                        'body' => $body
+                    ],
+                ]);
+
+                $this->notification->send($message);
+            }
         }
 
         return redirect()->back();

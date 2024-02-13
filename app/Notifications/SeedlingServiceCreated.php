@@ -30,7 +30,7 @@ class SeedlingServiceCreated extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database','firebase'];
     }
 
     /**
@@ -64,5 +64,10 @@ class SeedlingServiceCreated extends Notification
             "updated_at" => $this->seedlingService->updated_at,
 
         ];
+    }
+
+    public function toFirebase($notifiable)
+    {
+
     }
 }
