@@ -152,13 +152,11 @@ class SeedlingServiceController extends Controller
             $farmerUser = $seedlingService->farmUser;
             if($farmerUser->fcm_token){
                 $FcmToken = $farmerUser->fcm_token;
-                $title = $request->input('title');
-                $body = $request->input('body');
                 $message = CloudMessage::fromArray([
                     'token' => $FcmToken,
                     'notification' => [
-                        'title' => $title,
-                        'body' => $body
+                        'title' => 'تحديث حالة الاشتال',
+                        'body' => 'تم تعديل اشتال '. $seedlingService->status
                     ],
                 ]);
 
