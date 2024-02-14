@@ -118,7 +118,7 @@ class SeedlingServiceController extends Controller
     public function update(SeedlingService $seedling_service, UpdateSeedlingServiceRequest $request)
     {
         $user = Auth::user();
-        $title = "تم تعديل حالة الاشتال";
+        $title = "تم تعديل خدمة تشتيل";
         $nursery = $user->nursery;
         $seedlingService = $nursery->seedlingServices()->findOrFail($seedling_service->id);
         $seedlingService->update([
