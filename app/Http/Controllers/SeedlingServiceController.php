@@ -140,7 +140,7 @@ class SeedlingServiceController extends Controller
         }
 
         if($request->payment_type == 'installments' && !empty($request->installments)){
-            $countInstalmentsBefore = $seedling_service->installments->count;
+            $countInstalmentsBefore = $seedling_service->installments->count();
             $seedling_service->installments()->delete();
             $instalmentsArray = [];
             $countInstalmentsAfter = 0;
