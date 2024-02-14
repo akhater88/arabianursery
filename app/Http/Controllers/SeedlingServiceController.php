@@ -134,8 +134,9 @@ class SeedlingServiceController extends Controller
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
         $body = $seedlingService->seedType->name." ".$seedlingService->seed_class.":";
+        $isUpdated = $seedling_service->syncImages($request->images);
 
-        if($seedling_service->syncImages($request->images)){
+        if($isUpdated){
             $body .= 'تم إضافة صور ';
         }
 
