@@ -57,7 +57,7 @@ class Helpers
                     'title' => $title,
                     'body' => $body
                 ],
-                'data' => $data
+                //'data' => $data
             ]);
             $notification->send($message);
         }
