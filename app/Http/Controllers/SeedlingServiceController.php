@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CentralLogics\Helpers;
 use App\Enums\SeedlingServiceStatuses;
 use App\Exports\SeedlingServicesExport;
 use App\Http\Filters\SeedlingServiceFilter;
@@ -14,18 +15,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\File;
 use Maatwebsite\Excel\Facades\Excel;
-use Kreait\Laravel\Firebase\Facades\Firebase;
-use Kreait\Firebase\Messaging\CloudMessage;
 
 
 class SeedlingServiceController extends Controller
 {
-    protected $notification;
 
-    public function __construct()
-    {
-        $this->notification = Firebase::messaging();
-    }
     public function index(SeedlingServiceFilter $filters)
     {
         $user = Auth::user();
@@ -94,12 +88,16 @@ class SeedlingServiceController extends Controller
             }
             $seedlingService->installments()->createManyQuietly($instalmentsArray);
         }
-
         if($request->type == SeedlingService::TYPE_FARMER){
             $farmerUser = FarmUser::find($request->farm_user);
             if($farmerUser->email){
                 $farmerUser->notify(new SeedlingServiceCreated($seedlingService));
             }
+
+            $title = "تم إضافة أشتال";
+            $body = $seedlingService->seed_type->name." ".$seedlingService->seed_class.":";
+            Helpers::sendNotification($farmerUser, $title, $body );
+
         }
 
         return redirect()->back();
@@ -113,13 +111,14 @@ class SeedlingServiceController extends Controller
         return view('seedling-services/edit', [
             'page_title' => 'تعديل خدمة تشتيل',
             'statuses' => SeedlingServiceStatuses::values(),
-            'seedling_service' => $seedling_service,
+            'seedling_service' => $seedlingService,
         ]);
     }
 
     public function update(SeedlingService $seedling_service, UpdateSeedlingServiceRequest $request)
     {
         $user = Auth::user();
+        $title = "تم تعديل حالة الاشتال";
         $nursery = $user->nursery;
         $seedlingService = $nursery->seedlingServices()->findOrFail($seedling_service->id);
         $seedlingService->update([
@@ -134,34 +133,36 @@ class SeedlingServiceController extends Controller
             "status" => $request->status,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
+        $body = $seedlingService->seed_type->name." ".$seedlingService->seed_class.":";
 
-        $seedling_service->syncImages($request->images);
+        if($seedling_service->syncImages($request->images)){
+            $body .= 'تم إضافة صور ';
+        }
 
         if($request->payment_type == 'installments' && !empty($request->installments)){
+            $countInstalmentsBefore = $seedling_service->installments->count;
             $seedling_service->installments()->delete();
             $instalmentsArray = [];
+            $countInstalmentsAfter = 0;
             foreach ($request->installments as $key => $value ){
                 $instalmentsArray[$key] = $value;
                 $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
                 $instalmentsArray[$key]['type'] = 'Collection';
+                $countInstalmentsAfter++;
+            }
+            if($countInstalmentsBefore != $countInstalmentsAfter){
+                $body .= 'تم تعديل الدفعات ';
             }
             $seedling_service->installments()->createManyQuietly($instalmentsArray);
+
+        } elseif($request->payment_type == 'cash'){
+            $seedling_service->installments()->delete();
+            $body .= 'تم تعديل طريقة الدفع الى كاش ';
         }
 
         if($seedlingService->type == SeedlingService::TYPE_FARMER){
             $farmerUser = $seedlingService->farmUser;
-            if($farmerUser->fcm_token){
-                $FcmToken = $farmerUser->fcm_token;
-                $message = CloudMessage::fromArray([
-                    'token' => $FcmToken,
-                    'notification' => [
-                        'title' => 'تحديث حالة الاشتال',
-                        'body' => 'تم تعديل اشتال '
-                    ],
-                ]);
-
-                $this->notification->send($message);
-            }
+            Helpers::sendNotification($farmerUser, $title, $body );
         }
 
         return redirect()->back();

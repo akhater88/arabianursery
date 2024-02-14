@@ -2,6 +2,10 @@
 
 namespace App\CentralLogics;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Laravel\Firebase\Facades\Firebase;
+
 class Helpers
 {
     public static function error_processor($validator)
@@ -41,6 +45,21 @@ class Helpers
         }
         $data = $storage;
         return $data;
+    }
+
+    public static function sendNotification(Authenticatable $user, $title, $body, $action = ""){
+        $notification = Firebase::messaging();
+        if($user->fcm_token) {
+            $FcmToken = $user->fcm_token;
+            $message = CloudMessage::fromArray([
+                'token' => $FcmToken,
+                'notification' => [
+                    'title' => $title,
+                    'body' => $body
+                ],
+            ]);
+            $notification->send($message);
+        }
     }
 
 

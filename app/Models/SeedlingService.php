@@ -77,11 +77,12 @@ class SeedlingService extends Model
     public function syncImages($uploaded_images)
     {
         $uploaded_images = collect($uploaded_images);
-
+        $isUpdated = false;
         $this->images->each(function ($image) use ($uploaded_images) {
             if ($uploaded_images->doesntContain($image->name)) {
                 Storage::delete($image->path);
                 $image->delete();
+                $isUpdated = true;
             }
         });
 
@@ -101,8 +102,10 @@ class SeedlingService extends Model
                     'name' => $uploaded_image,
                     'path' => "seedling-services/{$this->id}/{$uploaded_image}"
                 ]);
+                $isUpdated = true;
             }
         });
+        return $isUpdated;
     }
 
     public function agriculturalSupplyStoreUser(): belongsTo
