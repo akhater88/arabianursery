@@ -14,12 +14,14 @@ use App\Enums\SeedlingServiceStatuses;
 class FarmController extends Controller
 {
     public function getFarmerProfile(Request $request){
-        $user = Auth::user();
-        $farm = $user->farm;
-        $userArray = $user->toArray();
-        $userArray['farm'] = $farm->toArray();
-        return response()->json($userArray, 200);
-
+        if(Auth::check()){
+            $user = Auth::user();
+            $farm = $user->farm;
+            $userArray = $user->toArray();
+            $userArray['farm'] = $farm->toArray();
+            return response()->json($userArray, 200);
+        }
+        return response()->json([], 401);
     }
 
     public function getFarmerNotifications()

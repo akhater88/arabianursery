@@ -96,7 +96,7 @@ class SeedlingServiceController extends Controller
 
             $title = "تم إضافة أشتال";
             $body = $seedlingService->seedType->name." ".$seedlingService->seed_class.":";
-            Helpers::sendNotification($farmerUser, $title, $body );
+            Helpers::sendNotification($farmerUser, $title, $body, ['seedling_id' => $seedlingService->id, 'type' => 'seedling'] );
 
         }
 
@@ -163,7 +163,7 @@ class SeedlingServiceController extends Controller
 
         if($seedlingService->type == SeedlingService::TYPE_FARMER){
             $farmerUser = $seedlingService->farmUser;
-            Helpers::sendNotification($farmerUser, $title, $body );
+            Helpers::sendNotification($farmerUser, $title, $body, ['seedling_id' => $seedlingService->id, 'type' => 'seedling'] );
         }
 
         return redirect()->back();

@@ -47,7 +47,7 @@ class Helpers
         return $data;
     }
 
-    public static function sendNotification(Authenticatable $user, $title, $body, $action = ""){
+    public static function sendNotification(Authenticatable $user, $title, $body, $data = []){
         $notification = Firebase::messaging();
         if($user->fcm_token) {
             $FcmToken = $user->fcm_token;
@@ -57,6 +57,7 @@ class Helpers
                     'title' => $title,
                     'body' => $body
                 ],
+                'data' => $data
             ]);
             $notification->send($message);
         }
