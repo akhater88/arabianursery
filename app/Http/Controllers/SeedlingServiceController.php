@@ -95,7 +95,7 @@ class SeedlingServiceController extends Controller
             }
 
             $title = "تم إضافة أشتال";
-            $body = $seedlingService->seed_type->name." ".$seedlingService->seed_class.":";
+            $body = $seedlingService->seedType->name." ".$seedlingService->seed_class.":";
             Helpers::sendNotification($farmerUser, $title, $body );
 
         }
@@ -133,7 +133,7 @@ class SeedlingServiceController extends Controller
             "status" => $request->status,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
-        $body = $seedlingService->seed_type->name." ".$seedlingService->seed_class.":";
+        $body = $seedlingService->seedType->name." ".$seedlingService->seed_class.":";
 
         if($seedling_service->syncImages($request->images)){
             $body .= 'تم إضافة صور ';
