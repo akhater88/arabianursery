@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('path');
 
-            $table->foreignId('seedling_service_id')->nullable()->constrained('seedling_services');
+            $table->unsignedBigInteger('seedling_service_id')->nullable();
 
             $table->timestamps();
         });

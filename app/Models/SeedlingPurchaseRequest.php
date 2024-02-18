@@ -6,6 +6,7 @@ use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SeedlingPurchaseRequest extends Model
@@ -16,7 +17,6 @@ class SeedlingPurchaseRequest extends Model
 
     protected $casts = [
         'cash' => 'object',
-        'installments' => 'array',
     ];
 
     public function nursery(): belongsTo
@@ -37,5 +37,13 @@ class SeedlingPurchaseRequest extends Model
     public function seedlingService(): belongsTo
     {
         return $this->belongsTo(SeedlingService::class);
+    }
+
+    /**
+     * Get all of the Seedling Purchase's installments.
+     */
+    public function installments(): MorphMany
+    {
+        return $this->morphMany(Installment::class, 'installmentable');
     }
 }

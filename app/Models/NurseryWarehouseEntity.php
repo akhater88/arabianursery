@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class NurseryWarehouseEntity extends Model
 {
@@ -17,7 +18,6 @@ class NurseryWarehouseEntity extends Model
 
     protected $casts = [
         'cash' => 'object',
-        'installments' => 'array',
     ];
 
     public function agriculturalSupplyStoreUser(): belongsTo
@@ -28,5 +28,18 @@ class NurseryWarehouseEntity extends Model
     public function entity(): MorphTo
     {
         return $this->morphTo(__FUNCTION__, 'entity_type', 'entity_id');
+    }
+
+    public function nursery(): belongsTo
+    {
+        return $this->belongsTo(Nursery::class);
+    }
+
+    /**
+     * Get all of the seedling service's installments.
+     */
+    public function installments(): MorphMany
+    {
+        return $this->morphMany(Installment::class, 'installmentable');
     }
 }

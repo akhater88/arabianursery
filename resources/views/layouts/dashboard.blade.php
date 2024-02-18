@@ -33,6 +33,9 @@
     <!-- Dropzone JS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css" rel="stylesheet" />
 
+    <link rel="stylesheet" href={{asset('plugins/summernote/summernote-bs4.css')}} />
+
+
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href={{asset('plugins/sweetalert2/sweetalert2.min.css')}}>
 
@@ -62,11 +65,13 @@
     <!-- Navbar -->
         @include('partials.navbar')
     <!-- /.navbar -->
-
+    @if( \Auth::guard('nursery_web')->check() )
     <!-- Main Sidebar Container -->
         @include('partials.sidebar')
     <!-- /.Main Sidebar Container -->
-
+    @elseif(\Auth::guard('admin')->check())
+        @include('partials.admin.sidebar')
+    @endif
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">

@@ -25,7 +25,7 @@ return new class extends Migration
             $table->rememberToken();
 
             $table->nullableMorphs('added_by');
-            $table->foreignId('farm_id')->nullable()->constrained('farms');
+            $table->unsignedBigInteger('farm_id')->nullable();
 
             $table->timestamps();
         });

@@ -39,6 +39,7 @@ class StoreSeedlingServiceRequest extends FormRequest
             "tunnel_greenhouse_number" => ['nullable', 'integer', 'min:0'],
             "price_per_tray" => ['required', 'numeric', 'regex:/^\d*\.{0,1}\d{0,2}$/'], // for exactly 2 digits: regex:/^(?:[1-9]\d+|\d)(?:\.\d\d)?$/
             "additional_cost" => ['nullable', 'numeric', 'regex:/^\d*\.{0,1}\d{0,2}$/'],
+            "discount_amount" => ['nullable', 'numeric', 'regex:/^\d*\.{0,1}\d{0,2}$/'],
             "status" => ['required', Rule::enum(SeedlingServiceStatuses::class)],
             "payment_type" => ['required', 'in:cash,installments'],
             "cash_invoice_number" => ['nullable', 'required_with:cash_amount'],

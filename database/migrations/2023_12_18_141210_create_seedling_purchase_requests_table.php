@@ -18,9 +18,10 @@ return new class extends Migration
             $table->json('cash')->nullable();
             $table->json('installments')->nullable();
 
-            $table->foreignId('seedling_service_id')->constrained('seedling_services');
-            $table->foreignId('nursery_user_id')->constrained('nursery_users');
-            $table->foreignId('farm_user_id')->constrained('farm_users');
+            $table->unsignedBigInteger('seedling_service_id');
+            $table->unsignedBigInteger('nursery_user_id');
+            $table->unsignedBigInteger('nursery_id');
+            $table->unsignedBigInteger('farm_user_id');
 
             $table->timestamps();
             $table->softDeletes();
