@@ -3,7 +3,7 @@
     <a href="{{route('dashboard')}}" class="brand-link">
         <img src="{{asset('dist/img/AdminLTELogo.png')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
              style="opacity: .8">
-        <span class="brand-text font-weight-light">{{ Auth::guard()->user()->nursery->name }}</span>
+        <span class="brand-text font-weight-light">{{ Auth::guard('nursery_web')->user()->nursery->name }}</span>
     </a>
 
     <!-- Sidebar -->
@@ -14,7 +14,7 @@
                 <img src="{{asset('dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">{{ Auth::guard()->user()->name }}</a>
+                <a href="#" class="d-block">{{ Auth::guard('nursery_web')->user()->name }}</a>
             </div>
         </div>
 
@@ -35,15 +35,22 @@
 
                 <li class="nav-item">
                     <a href="{{route('seedling-services.index')}}" class="nav-link {{Route::currentRouteName() == 'seedling-services.index' ? 'active' : ''}}">
-                        <i class="nav-icon fas fa-tractor"></i>
+                        <i class="nav-icon fas fa-seedling" ></i>
                         <p>خدمة تشتيل المزارعين</p>
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a href="{{route('seedling-purchase-requests.index')}}" class="nav-link {{Route::currentRouteName() == 'seedling-purchase-requests.index' ? 'active' : ''}}">
-                        <i class="nav-icon fas fa-list-ul"></i>
+                        <i class="nav-icon fas fa-seedling" style="color: #8cba92;"></i>
                         <p>مبيعات اشتال خاصة مشتل</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{route('nursery-seeds-sales.index')}}" class="nav-link {{Route::currentRouteName() == 'nursery-seeds-sales.index' ? 'active' : ''}}">
+                        <i class="nav-icon fas fa-allergies"></i>
+                        <p>مبيعات بذور المشتل</p>
                     </a>
                 </li>
 

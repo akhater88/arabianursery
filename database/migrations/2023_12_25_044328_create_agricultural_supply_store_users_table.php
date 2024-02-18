@@ -25,7 +25,7 @@ return new class extends Migration
             $table->rememberToken();
 
             $table->nullableMorphs('added_by');
-            $table->foreignId('agricultural_supply_store_id')->nullable()->constrained('agricultural_supply_stores', 'id', 'agricultural_supply_store_id_foreign');
+            $table->unsignedBigInteger('agricultural_supply_store_id')->nullable();
 
             $table->timestamps();
         });

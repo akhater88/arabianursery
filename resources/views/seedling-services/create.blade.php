@@ -181,6 +181,17 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-12 col-sm-4">
+                                <label for="discount-amount">قيمة خصم العميل</label>
+                                <div class="input-group mb-2">
+                                    <input type="number" min=0 step="0.01" name="discount_amount" class="form-control"
+                                           value="{{ old('discount_amount') }}"
+                                           id="discount-amount">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">دينار</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         @include('components.payments.view', ['model' => null, 'is_view_only' => false])

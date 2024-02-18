@@ -23,8 +23,7 @@ return new class extends Migration
             $table->string('provider_id')->nullable();
             $table->tinyInteger('status')->default(1);
             $table->rememberToken();
-
-            $table->foreignId('nursery_id')->nullable()->constrained('nurseries');
+            $table->unsignedBigInteger('nursery_id')->nullable();
 
             $table->timestamps();
         });

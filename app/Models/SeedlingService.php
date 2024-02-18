@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class SeedlingService extends Model
 {
@@ -19,12 +20,13 @@ class SeedlingService extends Model
     const TYPE_PERSONAL = 1;
     const TYPE_FARMER = 2;
 
+    public $isUpdated;
+
     protected $guarded = ['id'];
 
     protected $casts = [
         'status' => SeedlingServiceStatuses::class,
-        'cash' => 'object',
-        'installments' => 'array',
+        'cash' => 'object'
     ];
 
     //  ----------    Relationships    ----------
@@ -77,15 +79,16 @@ class SeedlingService extends Model
     public function syncImages($uploaded_images)
     {
         $uploaded_images = collect($uploaded_images);
-
+        $this->isUpdated = false;
         $this->images->each(function ($image) use ($uploaded_images) {
             if ($uploaded_images->doesntContain($image->name)) {
                 Storage::delete($image->path);
                 $image->delete();
+                $this->isUpdated = true;
             }
         });
 
-        $uploaded_images->each(function ($uploaded_image){
+        $uploaded_images->each(function ($uploaded_image) {
             if($this->images->contains('name', $uploaded_image)) {
                 return;
             }
@@ -101,8 +104,22 @@ class SeedlingService extends Model
                     'name' => $uploaded_image,
                     'path' => "seedling-services/{$this->id}/{$uploaded_image}"
                 ]);
+                $this->isUpdated = true;
             }
         });
+        return $this->isUpdated;
     }
 
+    public function agriculturalSupplyStoreUser(): belongsTo
+    {
+        return $this->belongsTo(AgriculturalSupplyStoreUser::class);
+    }
+
+    /**
+     * Get all of the seedling service's installments.
+     */
+    public function installments(): MorphMany
+    {
+        return $this->morphMany(Installment::class, 'installmentable');
+    }
 }

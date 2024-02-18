@@ -13,6 +13,7 @@ use App\Http\Controllers\FarmUserController;
 use App\Http\Controllers\NurseryUserController;
 use App\Http\Controllers\NurseryUserDashboardController;
 use App\Http\Controllers\NurseryWarehouseEntityController;
+use App\Http\Controllers\NurserySeedsSaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SeedlingPurchaseRequestController;
 use App\Http\Controllers\SeedlingServiceController;
@@ -87,6 +88,12 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
     Route::get('seedling-services/get/{id}', [SeedlingServiceController::class, 'get'])->name('seedling-services.get');
     Route::put('seedling-services/{seedling_service}/status', [SeedlingServiceController::class, 'updateStatus'])->name('seedling-services.update-status');
     Route::resource('seedling-services', SeedlingServiceController::class);
+
+    Route::put('nursery-seeds-sales/{nursery_seeds_sale}/status', [NurserySeedsSaleController::class, 'updateStatus'])->name('nursery-seeds-sales.update-status');
+    Route::get('nursery-seeds-sales/search', [NurserySeedsSaleController::class, 'search'])->name('nursery-seeds-sales.search');
+    Route::get('nursery-seeds-sales/export', [NurserySeedsSaleController::class, 'export'])->name('nursery-seeds-sales.export');
+    Route::get('nursery-seeds-sales/get/{id}', [NurserySeedsSaleController::class, 'get'])->name('nursery-seeds-sales.get');
+    Route::resource('nursery-seeds-sales', NurserySeedsSaleController::class);
 
     Route::get('seedling-purchase-requests/export', [SeedlingPurchaseRequestController::class, 'export'])->name('seedling-purchase-requests.export');
     Route::resource('seedling-purchase-requests', SeedlingPurchaseRequestController::class);
