@@ -54,12 +54,16 @@ class Helpers
 
             $message = CloudMessage::fromArray([
                 'token' => $FcmToken,
-                'data' => [
+                'notification' => [
                     'title' => $title,
-                    'body' => $body,
-                    'type' => 'seedling',
-                    'seedling_id' => '283'
-                ]
+                    'body' => $body
+                ],
+//                'data' => [
+//                    'title' => $title,
+//                    'body' => $body,
+//                    'type' => 'seedling',
+//                    'seedling_id' => ''
+//                ]
             ]);
             $notification->send($message);
         }
