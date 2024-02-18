@@ -65,7 +65,12 @@ class Helpers
 //                    'seedling_id' => ''
 //                ]
             ]);
-            $notification->send($message);
+            try {
+                $notification->send($message);
+
+            } catch (\Exception $e){
+
+            }
         }
     }
 
