@@ -51,13 +51,15 @@ class Helpers
         $notification = Firebase::messaging();
         if($user->fcm_token) {
             $FcmToken = $user->fcm_token;
+
             $message = CloudMessage::fromArray([
                 'token' => $FcmToken,
-                'notification' => [
+                'data' => [
                     'title' => $title,
-                    'body' => $body
-                ],
-                //'data' => $data
+                    'body' => $body,
+                    'type' => 'seedling',
+                    'seedling_id' => '283'
+                ]
             ]);
             $notification->send($message);
         }
