@@ -60,6 +60,10 @@ class AuthController extends Controller
                 'country_code' => $request->country_code,
             ]);
         } else {
+            $farmUser->name =  $request->first_name.' '.$request->last_name;
+            $farmUser->email = $request->email,
+            $farmUser->password = Hash::make($request->password);
+            $farmUser->country_code =  $request->country_code;
             $farmUser->farm_id = $farm->id;
             $farmUser->save();
         }
