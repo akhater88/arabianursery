@@ -45,13 +45,14 @@ class AuthController extends Controller
             'password' => ['required', Rules\Password::defaults()],
         ]);
 
-        $farmUser = FarmUser::where('mobile_number',$request->mobile_number)->first();
-        $farm = Farm::create([
-            'name' => $request->farm_name,
-        ]);
+        $farmUser = FarmUser::withTrashed()->where('mobile_number',$request->mobile_number)->first();
 
         if(!$farmUser){
-            $farmUser = FarmUser::create([
+            $farm = Farm::create([
+                'name' => $request->farm_name,
+            ]);
+
+            FarmUser::create([
                 'name' => $request->first_name.' '.$request->last_name,
                 'mobile_number' => $request->mobile_number,
                 'email' => $request->email,
@@ -60,11 +61,18 @@ class AuthController extends Controller
                 'country_code' => $request->country_code,
             ]);
         } else {
+            if($farmUser->deleted_at != null ){
+                $farmUser->restore();
+            } else {
+                $farm = Farm::create([
+                    'name' => $request->farm_name,
+                ]);
+                $farmUser->farm_id = $farm->id;
+            }
             $farmUser->name =  $request->first_name.' '.$request->last_name;
             $farmUser->email = $request->email;
             $farmUser->password = Hash::make($request->password);
             $farmUser->country_code =  $request->country_code;
-            $farmUser->farm_id = $farm->id;
             $farmUser->save();
         }
 
@@ -80,5 +88,44 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Successful Updated'
         ], 200);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'mobile_number' => ['required', 'string', 'max:255','unique:' . FarmUser::class.',mobile_number,'.$user->id],
+            'country_code' => ['required', 'string', 'max:5'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . FarmUser::class.',email,'.$user->id],
+        ]);
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->mobile_number = $request->mobile_number;
+        $user->country_code = $request->country_code;
+        $user->save();
+        return response()->json([
+            'message' => 'Successful Updated'
+        ], 200);
+    }
+
+    public function changePassword(Request $request){
+        $farmUser = $request->user();
+        $request->validate([
+            'confirm_password' => ['required'],
+            'password' => ['required', 'same:confirm_password', Rules\Password::defaults()]
+        ]);
+
+        $farmUser->password = Hash::make($request->password);
+        $farmUser->save();
+        return response()->json([
+            'message' => 'Successful Updated'
+        ], 200);
+    }
+
+    public function removeAccount(Request $request){
+        $farmUser = $request->user();
+        $farmUser->delete();
     }
 }

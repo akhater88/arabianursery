@@ -31,6 +31,7 @@ class ConfigController extends Controller
             'email' => $settings['email_address'],
             'base_urls' => [
                 'post_image_url' => asset('storage/public/images/posts'),
+                'pages_image_url' => asset('storage/public/images/pages'),
                 'seedling_image_url' => asset('storage/'),
                 'assets_url' => asset(''),
                 'notification_image_url' => asset('storage/app/public/notification'),
