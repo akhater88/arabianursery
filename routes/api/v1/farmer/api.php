@@ -20,6 +20,8 @@ Route::post('/register/farm', 'AuthController@farmRegister');
 Route::get('/posts', 'PostsController@posts');
 Route::get('/post/{post}', 'PostsController@getPostById');
 
+Route::get('/page/{code}', 'PagesController@getPageByCode');
+
 
 Route::group(['middleware'=>'auth:farmer_api'], function () {
     Route::put('/farmer/update-fcm-token','AuthController@updateFcmToken' );
@@ -27,4 +29,7 @@ Route::group(['middleware'=>'auth:farmer_api'], function () {
     Route::get('/farmer/notifications', 'FarmController@getFarmerNotifications');
     Route::get('/farmer/all-seedlings', 'FarmController@getSeedling');
     Route::get('/farmer/seedlings/{seedlingService}', 'FarmController@getSeedlingById');
+    Route::put('/farmer/update-profile', 'AuthController@updateProfile' );
+    Route::put('/farmer/change-password', 'AuthController@changePassword' );
+    Route::delete('/farmer/remove-account','AuthController@removeAccount' );
 });

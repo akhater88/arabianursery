@@ -35,11 +35,17 @@
 
                 <li class="nav-item">
                     <a href="{{route('admin.posts')}}" class="nav-link {{Route::currentRouteName() == 'admin.posts' ? 'active' : ''}}">
-                        <i class="nav-icon fas fa-seedling" ></i>
+                        <i class="nav-icon fas fa-newspaper" ></i>
                         <p>المنشورات</p>
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a href="{{route('admin.pages')}}" class="nav-link {{Route::currentRouteName() == 'admin.pages' ? 'active' : ''}}">
+                        <i class="nav-icon fas fa-blog" ></i>
+                        <p>الصفحات</p>
+                    </a>
+                </li>
 
                 <li class="nav-item">
                     <form method="POST" action="{{ route('logout') }}" id="logout">
