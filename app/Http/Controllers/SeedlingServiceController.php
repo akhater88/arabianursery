@@ -24,7 +24,7 @@ class SeedlingServiceController extends Controller
     {
         $user = Auth::user();
         $nursery = $user->nursery;
-        $seedlingServices = $nursery->seedlingServices()->with(['farmUser', 'seedType'])
+        $seedlingServices = $nursery->seedlingServices()->with(['farmUser' => fn($q) => $q->withTrashed(), 'seedType'])
             ->orderBy('id', 'DESC')
             ->filterBy($filters)
             ->paginate()
@@ -40,7 +40,7 @@ class SeedlingServiceController extends Controller
     {
         $user = Auth::user();
         $nursery = $user->nursery;
-        $seedlingService = $nursery->seedlingServices()->findOrFail($seedling_service->id);
+        $seedlingService = $nursery->seedlingServices()->with(['farmUser' => fn($q) => $q->withTrashed()])->findOrFail($seedling_service->id);
         return view('seedling-services.show', [
             'page_title' => 'خدمة تشتيل',
             'statuses' => SeedlingServiceStatuses::values(),
@@ -58,7 +58,7 @@ class SeedlingServiceController extends Controller
 
     public function store(StoreSeedlingServiceRequest $request)
     {
-        $seedlingService = $request->user()->seedlingServices()->create([
+        $seedlingService = $request->user()->seedlingServices()->with(['farmUser' => fn($q) => $q->withTrashed()])->create([
             "type" => $request->type,
             "farm_user_id" => $request->type == SeedlingService::TYPE_FARMER ? $request->farm_user : null,
             "tray_count" => $request->tray_count,
@@ -107,7 +107,7 @@ class SeedlingServiceController extends Controller
     {
         $user = Auth::user();
         $nursery = $user->nursery;
-        $seedlingService = $nursery->seedlingServices()->findOrFail($seedling_service->id);
+        $seedlingService = $nursery->seedlingServices()->with(['farmUser' => fn($q) => $q->withTrashed()])->findOrFail($seedling_service->id);
         return view('seedling-services/edit', [
             'page_title' => 'تعديل خدمة تشتيل',
             'statuses' => SeedlingServiceStatuses::values(),
@@ -120,7 +120,7 @@ class SeedlingServiceController extends Controller
         $user = Auth::user();
         $title = "تم تعديل خدمة تشتيل";
         $nursery = $user->nursery;
-        $seedlingService = $nursery->seedlingServices()->findOrFail($seedling_service->id);
+        $seedlingService = $nursery->seedlingServices()->with(['farmUser' => fn($q) => $q->withTrashed()])->findOrFail($seedling_service->id);
         $seedlingService->update([
             "tray_count" => $request->tray_count,
             "germination_rate" => $request->germination_rate,
