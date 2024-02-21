@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PagesController;
 use App\Http\Controllers\Admin\PostController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,12 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::get('/posts/{post_id}', [PostController::class, 'edit'])->name('posts.edit');
     Route::put('/posts/update/{post_id?}', [PostController::class, 'update'])->name('admin.posts.update');
+
+    Route::get('pages',[PagesController::class,'index'])->name('admin.pages');
+    Route::get('/pages/create', [PagesController::class, 'create'])->name('admin.pages.create');
+    Route::post('/pages', [PagesController::class, 'store'])->name('pages.store');
+    Route::get('/pages/{page_id}', [PagesController::class, 'edit'])->name('pages.edit');
+    Route::put('/pages/update/{page_id}', [PagesController::class, 'update'])->name('admin.pages.update');
 
 
 });

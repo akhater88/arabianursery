@@ -2,25 +2,26 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Post;
+use App\Models\Page;
 use Illuminate\Http\Request;
 
-class PostController extends Controller
+class PagesController extends Controller
 {
     public function index()
     {
-        $posts = Post::all();
-        return view('admin.posts.index', compact('posts'));
+        $pages = Page::all();
+        return view('admin.pages.index', compact('pages'));
     }
 
     public function create()
     {
-        return view('admin.posts.create');
+        return view('admin.pages.create');
     }
 
     public function store(Request $request)
     {
         $validatedData = $request->validate([
+            'code' =>  'required|string|max:255',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => 'nullable|image',
@@ -29,24 +30,24 @@ class PostController extends Controller
 
         // Handle file upload if 'image' is provided
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('public/images/posts');
+            $path = $request->file('image')->store('public/images/pages');
             $validatedData['image'] = basename($path);
         }
 
-        Post::create($validatedData);
+        Page::create($validatedData);
 
-        return redirect()->route('admin.posts')->with('success', 'Post created successfully.');
+        return redirect()->route('admin.pages')->with('success', 'Page created successfully.');
     }
 
     public function edit($id)
     {
-       $post = Post::findOrFail($id);
-        return view('admin.posts.edit', compact('post'));
+       $page = Page::findOrFail($id);
+        return view('admin.pages.edit', compact('page'));
     }
 
     public function update(Request $request, $id)
     {
-        $post = Post::findOrFail($id);
+        $page = Page::findOrFail($id);
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -55,12 +56,12 @@ class PostController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('public/images');
+            $path = $request->file('image')->store('public/images/pages');
             $validatedData['image'] = basename($path);
         }
 
-        $post->update($validatedData);
+        $page->update($validatedData);
 
-        return redirect()->route('admin.posts')->with('success', 'Post updated successfully.');
+        return redirect()->route('admin.pages')->with('success', 'Page updated successfully.');
     }
 }
