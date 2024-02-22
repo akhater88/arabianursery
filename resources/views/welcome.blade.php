@@ -17,6 +17,9 @@
 <body class="landing-page">
 @include('agrislanding.partials.header')
 
+@include('agrislanding.partials.product')
+
+@include('agrislanding.partials.pricing')
 
 @include('agrislanding.partials.footer')
 
