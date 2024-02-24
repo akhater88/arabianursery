@@ -106,6 +106,9 @@ class SeedlingServiceController extends Controller
     public function edit(SeedlingService $seedling_service)
     {
         $user = Auth::user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
         $nursery = $user->nursery;
         $seedlingService = $nursery->seedlingServices()->with(['farmUser' => fn($q) => $q->withTrashed()])->findOrFail($seedling_service->id);
         return view('seedling-services/edit', [
@@ -117,7 +120,11 @@ class SeedlingServiceController extends Controller
 
     public function update(SeedlingService $seedling_service, UpdateSeedlingServiceRequest $request)
     {
+
         $user = Auth::user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
         $title = "تم تعديل خدمة تشتيل";
         $nursery = $user->nursery;
         $seedlingService = $nursery->seedlingServices()->with(['farmUser' => fn($q) => $q->withTrashed()])->findOrFail($seedling_service->id);
@@ -169,14 +176,21 @@ class SeedlingServiceController extends Controller
         return redirect()->back();
     }
 
-    public function export()
+    public function export(Request $request)
     {
+        $user = $request->user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
         return Excel::download(new SeedlingServicesExport, 'seedling-services.xlsx');
     }
 
     public function destroy(SeedlingService $seedling_service)
     {
         $user = Auth::user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
         $nursery = $user->nursery;
         $seedlingService = $nursery->seedlingServices()->findOrFail($seedling_service->id);
         $seedlingService->delete();

@@ -6,6 +6,7 @@
         <span class="brand-text font-weight-light">{{ Auth::guard('nursery_web')->user()->nursery->name }}</span>
     </a>
 
+
     <!-- Sidebar -->
     <div class="sidebar">
         <!-- Sidebar user panel -->
@@ -60,7 +61,20 @@
                         <p> مخزن المشتل</p>
                     </a>
                 </li>
-
+                @hasrole('nursery-admin')
+                <li class="nav-item">
+                    <a href="{{route('nursery-operators')}}" class="nav-link {{Route::currentRouteName() == 'nursery-operators' ? 'active' : ''}}">
+                        <i class="nav-icon fas fa-people-carry"></i>
+                        <p>مشغلين المشتل</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('nursery-reports')}}" class="nav-link {{Route::currentRouteName() == 'nursery-reports' ? 'active' : ''}}">
+                        <i class="nav-icon fas fa-chart-bar"></i>
+                        <p>تقارير المشتل</p>
+                    </a>
+                </li>
+                @endhasrole
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-marker"></i>
@@ -74,6 +88,7 @@
                         <p>شروط الاستخدام</p>
                     </a>
                 </li>
+
 
                 <li class="nav-item">
                     <form method="POST" action="{{ route('logout') }}" id="logout">

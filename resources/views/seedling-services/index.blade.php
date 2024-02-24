@@ -66,11 +66,12 @@
                             <i class="fa fa-plus-circle"></i>
                             أضف خدمة تشتيل
                         </a>
-
+                        @hasrole('nursery-admin')
                         <a href="{{route('seedling-services.export')}}" class="btn btn-primary">
                             <i class="fas fa-file-excel"></i>
                             تصدير
                         </a>
+                        @endhasrole
                     </div>
                 </div>
                 <div class="card-body">
@@ -112,6 +113,7 @@
                                                 <a class="btn btn-primary" href="{{route('seedling-services.show', $seedling_service->id)}}">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
+                                                @hasrole('nursery-admin')
                                                 <a class="btn btn-info" href="{{route('seedling-services.edit', $seedling_service->id)}}">
                                                     <i class="fas fa-pen"></i>
                                                 </a>
@@ -122,6 +124,7 @@
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </form>
+                                                @endhasrole
                                             </div>
                                         </td>
                                     </tr>
