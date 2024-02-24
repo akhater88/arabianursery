@@ -50,11 +50,12 @@
                             <i class="fa fa-plus-circle"></i>
                             أضف بيع بذور
                         </a>
-
+                        @hasrole('nursery-admin')
                         <a href="{{route('nursery-seeds-sales.export')}}" class="btn btn-primary">
                             <i class="fas fa-file-excel"></i>
                             تصدير
                         </a>
+                        @endhasrole
                     </div>
                 </div>
                 <div class="card-body">
@@ -96,6 +97,7 @@
                                                 <a class="btn btn-primary" href="{{route('nursery-seeds-sales.show', $nursery_seeds_sale->id)}}">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
+                                                @hasrole('nursery-admin')
                                                 <a class="btn btn-info" href="{{route('nursery-seeds-sales.edit', $nursery_seeds_sale->id)}}">
                                                     <i class="fas fa-pen"></i>
                                                 </a>
@@ -106,6 +108,7 @@
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </form>
+                                                @endhasrole
                                             </div>
                                         </td>
                                     </tr>

@@ -6,6 +6,7 @@
             <h2 class="text-black-50">أهلا بك في مشتل: {{ Auth::guard()->user()->nursery->name }}</h2>
         </div>
     </div>
+    @hasrole('nursery-admin')
     <div class="row">
         <div class="col-lg-3 col-12">
             <div class="small-box bg-info">
@@ -179,6 +180,7 @@
             </div>
         </div>
     </div>
+    @endhasrole
     <div class="mt-4">
         <div class="row">
             <a href="{{ route('seedling-services.create') }}" style="width: 60px; height: 53px; display: none;" class="others btn btn-success rounded-circle mr-2">أشتال</a>
