@@ -57,11 +57,12 @@
                             <i class="fa fa-plus-circle"></i>
                             أضف مدخل إلى المخزن
                         </a>
-
+                        @hasrole('nursery-admin')
                         <a href="{{route('warehouse-entities.export')}}" class="btn btn-primary">
                             <i class="fas fa-file-excel"></i>
                             تصدير
                         </a>
+                        @endhasrole
                     </div>
                 </div>
                 <div class="card-body">
@@ -90,6 +91,7 @@
                                                 <a class="btn btn-primary" href="{{route('warehouse-entities.show', $nursery_warehouse_entity->id)}}">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
+                                                @hasrole('nursery-admin')
                                                 <a class="btn btn-info" href="{{route('warehouse-entities.edit', $nursery_warehouse_entity->id)}}">
                                                     <i class="fas fa-pen"></i>
                                                 </a>
@@ -100,6 +102,7 @@
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </form>
+                                                @endhasrole
                                             </div>
                                         </td>
                                     </tr>

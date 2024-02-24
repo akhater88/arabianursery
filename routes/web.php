@@ -113,6 +113,17 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('verification.send');
+
+    Route::get('nursery/operators', [NurseryUserController::class,'showNurseriesUsers'])->name('nursery-operators');
+    Route::get('nursery/operator/create', [NurseryUserController::class,'createNurseriesUsers'])->name('nursery-operators.create');
+    Route::post('nursery/operator/create', [NurseryUserController::class,'storeNurseriesUsers'])->name('nursery-operators.store');
+    Route::get('nursery/operator/{nursery_user}', [NurseryUserController::class,'editNurseriesUsers'])->name('nursery-operators.edit');
+    Route::put('nursery/operator/{nursery_user}', [NurseryUserController::class,'updateNurseriesUsers'])->name('nursery-operators.update');
+    Route::put('nursery/operator/delete/{nursery_user}', [NurseryUserController::class,'destroyNurseriesUsers'])->name('nursery-operators.destroy');
+
+    Route::get('nursery/reports', [NurseryUserController::class,'showNurseriesUsers'])->name('nursery-reports');
+
+
 });
 
 Route::middleware(['auth:nursery_web', 'completed-registration'])->group(function () {

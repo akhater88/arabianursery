@@ -7,6 +7,7 @@ use App\Http\Filters\SeedlingPurchaseRequestFilter;
 use App\Http\Requests\StoreSeedlingPurchaseRequest;
 use App\Http\Requests\UpdateSeedlingPurchaseRequest;
 use App\Models\SeedlingPurchaseRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -15,6 +16,7 @@ class SeedlingPurchaseRequestController extends Controller
     public function index(SeedlingPurchaseRequestFilter $filters)
     {
         $user = Auth::user();
+
         $seedlingPurchaseRequest = $user->seedlingPurchaseRequests()->with(['farmUser', 'seedlingService.seedType'])
             ->filterBy($filters)
             ->paginate()
@@ -69,6 +71,9 @@ class SeedlingPurchaseRequestController extends Controller
     public function edit(SeedlingPurchaseRequest $seedling_purchase_request)
     {
         $user = Auth::user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
         $seedlingPurchaseRequest = $user->seedlingPurchaseRequests()->findOrFail($seedling_purchase_request->id);
         return view('seedling-purchase-requests/create-or-edit', [
             'page_title' => 'تعديل طلب شراء أشتال',
@@ -79,6 +84,9 @@ class SeedlingPurchaseRequestController extends Controller
     public function update(SeedlingPurchaseRequest $seedling_purchase_request, UpdateSeedlingPurchaseRequest $request)
     {
         $user = Auth::user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
         $seedlingPurchaseRequest = $user->seedlingPurchaseRequests()->findOrFail($seedling_purchase_request->id);
         $seedlingPurchaseRequest->update([
             "farm_user_id" => $request->farm_user,
@@ -101,14 +109,21 @@ class SeedlingPurchaseRequestController extends Controller
         return redirect()->back();
     }
 
-    public function export()
+    public function export(Request $request)
     {
+        $user = $request->user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
         return Excel::download(new SeedlingPurchaseRequestsExport, 'seedling-purchase-requests.xlsx');
     }
 
     public function destroy(SeedlingPurchaseRequest $seedling_purchase_request)
     {
         $user = Auth::user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
         $seedlingPurchaseRequest = $user->seedlingPurchaseRequests()->findOrFail($seedling_purchase_request->id);
         $seedlingPurchaseRequest->delete();
 

@@ -82,6 +82,9 @@ class NurserySeedsSaleController extends Controller
     public function edit(NurserySeedsSale $nurserySeedsSale)
     {
         $user = Auth::user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
         $nursery = $user->nursery;
         $nurserySeedsSale = $nursery->nurserySeedsSales()->findOrFail($nurserySeedsSale->id);
         return view('nursery-seeds-sales/edit', [
@@ -94,6 +97,9 @@ class NurserySeedsSaleController extends Controller
     public function update(NurserySeedsSale $nurserySeedsSale, UpdateNurserySeedsSaleRequest $request)
     {
         $user = Auth::user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
         $nursery = $user->nursery;
         $nurserySeedsSale = $nursery->nurserySeedsSales()->findOrFail($nurserySeedsSale->id);
         $nurserySeedsSale->update([
@@ -116,15 +122,22 @@ class NurserySeedsSaleController extends Controller
         return redirect()->back();
     }
 
-    public function export()
+    public function export(Request $request)
     {
+        $user = $request->user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
         return Excel::download(new NurserySeedsSalesExport, 'Nursery-Seeds-Sales.xlsx');
     }
 
-    public function destroy(NurserySeedsSale $nurserySeedsSale)
+    public function destroy(NurserySeedsSale $nurserySeedsSale, Request $request)
     {
+        $user = $request->user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
         $nurserySeedsSale->delete();
-
         return redirect()->back()->with('status', 'تم الحذف بنجاح');
     }
 
