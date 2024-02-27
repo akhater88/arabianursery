@@ -71,6 +71,7 @@ class NurserySeedsSaleController extends Controller
             foreach ($request->installments as $key => $value ){
                 $instalmentsArray[$key] = $value;
                 $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
+                $instalmentsArray[$key]['farm_user_id'] =  $request->farm_user;
                 $instalmentsArray[$key]['type'] = 'Collection';
             }
             $seeds_sale->installments()->createManyQuietly($instalmentsArray);
@@ -115,6 +116,7 @@ class NurserySeedsSaleController extends Controller
             foreach ($request->installments as $key => $value ){
                 $instalmentsArray[$key] = $value;
                 $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
+                $instalmentsArray[$key]['farm_user_id'] =  $nurserySeedsSale->farm_user_id;
                 $instalmentsArray[$key]['type'] = 'Collection';
             }
             $nurserySeedsSale->installments()->createManyQuietly($instalmentsArray);

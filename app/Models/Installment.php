@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Installment extends Model
 {
-    protected $fillable = ['invoice_number','invoice_date', 'amount', 'type', 'nursery_id'];
+    protected $fillable = ['invoice_number','invoice_date', 'amount', 'type', 'nursery_id', 'farm_user_id'];
     /**
      * Get the parent Installmentable model seedling service or Seedling Purchase
      */
@@ -20,5 +20,10 @@ class Installment extends Model
     public function nursery(): belongsTo
     {
         return $this->belongsTo(Nursery::class);
+    }
+
+    public function farmUser(): belongsTo
+    {
+        return $this->belongsTo(FarmUser::class);
     }
 }
