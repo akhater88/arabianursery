@@ -84,6 +84,7 @@ class SeedlingServiceController extends Controller
             foreach ($request->installments as $key => $value ){
                 $instalmentsArray[$key] = $value;
                 $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
+                $instalmentsArray[$key]['farm_user_id'] =  $request->type == SeedlingService::TYPE_FARMER ? $request->farm_user : null;
                 $instalmentsArray[$key]['type'] = 'Collection';
             }
             $seedlingService->installments()->createManyQuietly($instalmentsArray);
@@ -155,6 +156,7 @@ class SeedlingServiceController extends Controller
             foreach ($request->installments as $key => $value ){
                 $instalmentsArray[$key] = $value;
                 $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
+                $instalmentsArray[$key]['farm_user_id'] =  $seedlingService->farm_user_id;
                 $instalmentsArray[$key]['type'] = 'Collection';
                 $countInstalmentsAfter++;
             }

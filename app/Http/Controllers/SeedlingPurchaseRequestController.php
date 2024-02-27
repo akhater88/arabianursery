@@ -48,6 +48,7 @@ class SeedlingPurchaseRequestController extends Controller
     public function store(StoreSeedlingPurchaseRequest $request)
     {
         $seedlingPurchase = $request->user()->seedlingPurchaseRequests()->create([
+            "nursery_id" => $request->user()->nursery->id,
             "farm_user_id" => $request->farm_user,
             "seedling_service_id" => $request->seedling_service,
             "tray_count" => $request->tray_count,
@@ -60,6 +61,7 @@ class SeedlingPurchaseRequestController extends Controller
             foreach ($request->installments as $key => $value ){
                 $instalmentsArray[$key] = $value;
                 $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
+                $instalmentsArray[$key]['farm_user_id'] =  $request->farm_user;
                 $instalmentsArray[$key]['type'] = 'Collection';
             }
             $seedlingPurchase->installments()->createManyQuietly($instalmentsArray);
@@ -102,6 +104,7 @@ class SeedlingPurchaseRequestController extends Controller
             foreach ($request->installments as $key => $value ){
                 $instalmentsArray[$key] = $value;
                 $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
+                $instalmentsArray[$key]['farm_user_id'] =  $seedlingPurchaseRequest->farm_user_id;
                 $instalmentsArray[$key]['type'] = 'Collection';
             }
             $seedlingPurchaseRequest->installments()->createManyQuietly($instalmentsArray);
