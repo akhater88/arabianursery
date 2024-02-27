@@ -43,6 +43,11 @@ class FarmUser extends Authenticatable
         return $this->belongsToMany(Nursery::class, 'nursery_farm_user', 'farm_user_id', 'nursery_id');
     }
 
+    public function installments(): hasMany
+    {
+        return $this->hasMany(Installment::class);
+    }
+
     //  ----------    Accessor & Mutators    ----------
     public function optionName(): Attribute
     {

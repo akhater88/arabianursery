@@ -18,6 +18,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SeedlingPurchaseRequestController;
 use App\Http\Controllers\SeedlingServiceController;
 use App\Http\Controllers\SeedTypeController;
+use App\Http\Controllers\NurseryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -120,6 +121,10 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
     Route::get('nursery/operator/{nursery_user}', [NurseryUserController::class,'editNurseriesUsers'])->name('nursery-operators.edit');
     Route::put('nursery/operator/{nursery_user}', [NurseryUserController::class,'updateNurseriesUsers'])->name('nursery-operators.update');
     Route::put('nursery/operator/delete/{nursery_user}', [NurseryUserController::class,'destroyNurseriesUsers'])->name('nursery-operators.destroy');
+
+    Route::get('nursery/farmers', [NurseryController::class,'showNurseryFarmers'])->name('nursery-farmers');
+    Route::get('nursery/farmers/details/{farmer}', [NurseryController::class,'showNurseryFarmerDetails'])->name('nursery-farmers.details');
+
 
     Route::get('nursery/reports', [NurseryUserController::class,'showNurseriesUsers'])->name('nursery-reports');
 
