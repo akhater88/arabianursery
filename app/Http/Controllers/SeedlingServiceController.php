@@ -9,6 +9,7 @@ use App\Http\Filters\SeedlingServiceFilter;
 use App\Http\Requests\StoreSeedlingServiceRequest;
 use App\Http\Requests\UpdateSeedlingServiceRequest;
 use App\Models\FarmUser;
+use App\Models\Nursery;
 use App\Models\SeedlingService;
 use App\Notifications\SeedlingServiceCreated;
 use Illuminate\Http\Request;
@@ -29,9 +30,11 @@ class SeedlingServiceController extends Controller
             ->filterBy($filters)
             ->paginate()
             ->withQueryString();
+        $nurseries = Nursery::where('id','<>',$nursery->id)->get()->pluck( 'name','id');
         return view('seedling-services.index', [
             'page_title' => 'خدمات التشتيل',
             'seedling_services' => $seedlingServices,
+            'nurseries' => $nurseries,
             'statuses' => SeedlingServiceStatuses::values(),
         ]);
     }
@@ -202,7 +205,7 @@ class SeedlingServiceController extends Controller
 
     public function get(Request $request)
     {
-        return SeedlingService::with('seedlingPurchaseRequests')
+        return SeedlingService::with(['seedlingPurchaseRequests','sharedWithNurseries'])
             ->personal()
             ->where('nursery_id', $request->user()->nursery->id)
             ->where('id', $request->id)
@@ -260,5 +263,50 @@ class SeedlingServiceController extends Controller
         return [
             'success' => true
         ];
+    }
+
+    public function share(Request $request, SeedlingService $seedling_service)
+    {
+        $user = Auth::user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
+
+        if($user->nursery_id != $seedling_service->nursery_id && $seedling_service->type != SeedlingService::TYPE_PERSONAL){
+            return abort(403);
+        }
+
+        $seedling_service->share_with_farmers = false;
+        $seedling_service->share_with_nurseries = false;
+
+        if($request->share_with == 'all' || $request->share_with == 'farmers' ){
+            $seedling_service->share_with_farmers = true;
+        }
+
+        if($request->share_with == 'all' || $request->share_with == 'nurseries' ){
+            $seedling_service->share_with_nurseries = true;
+            $seedling_service->sharedWithNurseries()->detach();
+            foreach ($request->share_nurseries as $share_nursery) {
+                $seedling_service->sharedWithNurseries()->attach($share_nursery);
+            }
+        }
+        $seedling_service->save();
+        return response()->json([],200);
+
+    }
+
+    public function getSharedSeedlings(){
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $seedlings = $nursery->seedlingsShared()
+            ->with(['nursery','seedType'])->withSum('seedlingPurchaseRequests', 'tray_count')->orderBy('created_at','desc')->get();
+        $nurseries = Nursery::where('id','<>',$nursery->id)->get()->pluck( 'name','id');
+        return view('seedling-services.shared', [
+            'page_title' => 'أشتال مشاركة',
+            'seedlings' => $seedlings,
+            'nurseries' => $nurseries,
+            'statuses' => SeedlingServiceStatuses::values(),
+        ]);
+
     }
 }

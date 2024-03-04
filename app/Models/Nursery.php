@@ -53,4 +53,12 @@ class Nursery extends Model
     {
         return $this->hasMany(Installment::class);
     }
+
+    /**
+     * The seedling that shared to the nurseries.
+     */
+    public function seedlingsShared(): BelongsToMany
+    {
+        return $this->belongsToMany(SeedlingService::class,'seedling_shared_with_nurseries', 'nursery_id', 'seedling_id')->withTimestamps();
+    }
 }
