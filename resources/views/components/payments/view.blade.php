@@ -2,7 +2,7 @@
     <label>طريقة الدفع:</label>
 
     <div class="custom-control custom-radio custom-control-inline">
-        <input type="radio" required id="cash" class="custom-control-input" name="payment_type"
+        <input type="radio"  id="cash" class="custom-control-input" name="payment_type"
                @checked(old('payment_type') == 'cash' || !is_null($model?->cash))
                @disabled($is_view_only)
                onclick="handleCashOption()" value="cash">

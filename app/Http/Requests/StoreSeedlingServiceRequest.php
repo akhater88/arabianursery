@@ -41,7 +41,7 @@ class StoreSeedlingServiceRequest extends FormRequest
             "additional_cost" => ['nullable', 'numeric', 'regex:/^\d*\.{0,1}\d{0,2}$/'],
             "discount_amount" => ['nullable', 'numeric', 'regex:/^\d*\.{0,1}\d{0,2}$/'],
             "status" => ['required', Rule::enum(SeedlingServiceStatuses::class)],
-            "payment_type" => ['required', 'in:cash,installments'],
+            "payment_type" => ['nullable', 'in:cash,installments'],
             "cash_invoice_number" => ['nullable', 'required_with:cash_amount'],
             "cash_amount" => ['nullable', 'required_with:cash_invoice_number'],
             'installments' =>  ['nullable'],

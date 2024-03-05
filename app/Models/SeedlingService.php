@@ -7,6 +7,7 @@ use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -121,5 +122,13 @@ class SeedlingService extends Model
     public function installments(): MorphMany
     {
         return $this->morphMany(Installment::class, 'installmentable');
+    }
+
+    /**
+     * The seedling that shared to the nurseries.
+     */
+    public function sharedWithNurseries(): BelongsToMany
+    {
+        return $this->belongsToMany(Nursery::class,'seedling_shared_with_nurseries', 'seedling_id', 'nursery_id')->withTimestamps();
     }
 }

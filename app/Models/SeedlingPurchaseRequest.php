@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\SeedlingRequestStatuses;
 use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SeedlingPurchaseRequest extends Model
@@ -15,6 +17,7 @@ class SeedlingPurchaseRequest extends Model
 
     protected $guarded = ['id'];
 
+    protected static $statuses = ['مرفوض','تم الحجز','قيد إنتظار الموافقة'];
     protected $casts = [
         'cash' => 'object',
     ];
@@ -45,5 +48,10 @@ class SeedlingPurchaseRequest extends Model
     public function installments(): MorphMany
     {
         return $this->morphMany(Installment::class, 'installmentable');
+    }
+
+    public function requestedbyUser(): MorphTo
+    {
+        return $this->morphTo(__FUNCTION__,'requestedby_type','requestedby');
     }
 }

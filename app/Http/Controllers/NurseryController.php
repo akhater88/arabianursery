@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FarmUser;
 use Illuminate\Http\Request;
 
 
@@ -27,7 +28,7 @@ class NurseryController extends Controller
                                     ->get()
                                     ->keyBy('id');
         $seedlingServices = $user->nursery->seedlingServices;
-        $seedlingPurchase = $user->nursery->seedlingPurchaseRequests;
+        $seedlingPurchase = $user->nursery->seedlingPurchaseRequests->where('requestedby_type', FarmUser::class);
         $totalTrays = $seedlingServices->sum('tray_count');
         $farmSeedlings = $seedlingServices->groupBy('farm_user_id');
 
@@ -43,7 +44,7 @@ class NurseryController extends Controller
             $sumSeedlingTrayByFarmer->put( $key,$farmSeedling->sum('tray_count'));
         }
 
-        $instalmentsPaid = $user->nursery->installments->where('invoice_number','<>',null)->where('type', 'Collection')->groupBy('farm_user_id');
+        $instalmentsPaid = $user->nursery->installments->where('invoice_number','<>',null)->where('farm_user_id_type','FarmUser')->where('type', 'Collection')->groupBy('farm_user_id');
 
         $sumInstalmentsPaidByFarmer = collect();
         foreach ($instalmentsPaid as $instalmentPaid){
@@ -52,7 +53,7 @@ class NurseryController extends Controller
             $key++;
         }
 
-        $instalmentsNotPaid = $user->nursery->installments->whereNull('invoice_number')->where('type', 'Collection')->groupBy('farm_user_id');
+        $instalmentsNotPaid = $user->nursery->installments->whereNull('invoice_number')->where('farm_user_id_type','FarmUser')->where('type', 'Collection')->groupBy('farm_user_id');
         $sumInstalmentsNotPaidByFarmer = collect();
         foreach ($instalmentsNotPaid as $instalmentNotPaid){
             $key = 0;
