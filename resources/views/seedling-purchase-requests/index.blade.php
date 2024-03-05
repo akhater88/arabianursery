@@ -70,22 +70,38 @@
                         <table id="example2" class="table table-bordered table-hover">
                             <thead>
                             <tr>
-                                <th>الرقم التعريفي</th>
+                                <th>النوع - الصنف</th>
                                 <th>اسم العميل</th>
                                 <th>رقم الهاتف</th>
                                 <th>عدد الصواني</th>
-                                <th>النوع - الصنف</th>
+                                <th>الحالة</th>
                                 <th>العمليات</th>
                             </tr>
                             </thead>
                             <tbody>
                                 @foreach($seedling_purchase_requests as $seedling_purchase_request)
                                     <tr>
-                                        <td>{{$seedling_purchase_request->id}}</td>
-                                        <td>{{$seedling_purchase_request->farmUser->name}}</td>
-                                        <td>{{$seedling_purchase_request->farmUser->mobile_number}}</td>
-                                        <td>{{$seedling_purchase_request->tray_count}}</td>
                                         <td style="min-width:170px">{{"{$seedling_purchase_request->seedlingService->seedType->name} - {$seedling_purchase_request->seedlingService->seed_class}"}}</td>
+                                        <td>
+                                            @if($seedling_purchase_request->requestedbyUser::class =='App\Models\Nursery')
+                                                مشتل:
+                                            @else
+                                                مزارع:
+                                            @endif
+                                                {{$seedling_purchase_request->requestedbyUser->name}}
+                                        </td>
+                                        <td>
+                                            @if($seedling_purchase_request->requestedbyUser::class =='App\Models\Nursery')
+                                                مشتل: {{$seedling_purchase_request->requestedbyUser->nurseryUsers[0]->mobile_number}}
+                                            @else
+                                                مزارع:  {{$seedling_purchase_request->farmUser->mobile_number}}
+                                            @endif
+
+                                        </td>
+                                        <td>{{$seedling_purchase_request->tray_count}}</td>
+                                        <td>
+                                            {{$seedling_purchase_request->status}}
+                                        </td>
                                         <td>
                                             <div class="col-12" style="min-width:170px">
                                                 <a class="btn btn-primary" href="{{route('seedling-purchase-requests.show', $seedling_purchase_request->id)}}">

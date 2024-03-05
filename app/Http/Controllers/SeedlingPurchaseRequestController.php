@@ -6,7 +6,11 @@ use App\Exports\SeedlingPurchaseRequestsExport;
 use App\Http\Filters\SeedlingPurchaseRequestFilter;
 use App\Http\Requests\StoreSeedlingPurchaseRequest;
 use App\Http\Requests\UpdateSeedlingPurchaseRequest;
+use App\Models\Farm;
+use App\Models\FarmUser;
+use App\Models\Nursery;
 use App\Models\SeedlingPurchaseRequest;
+use App\Models\SeedlingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -17,10 +21,14 @@ class SeedlingPurchaseRequestController extends Controller
     {
         $user = Auth::user();
 
-        $seedlingPurchaseRequest = $user->seedlingPurchaseRequests()->with(['farmUser', 'seedlingService.seedType'])
+        $seedlingPurchaseRequest = $user->seedlingPurchaseRequests()->with(['requestedbyUser', 'seedlingService.seedType'])
+            //->where('status',1)
+            ->orderBy('status', 'desc')
+            ->orderBy('created_at', 'desc')
             ->filterBy($filters)
             ->paginate()
             ->withQueryString();
+        //dd($seedlingPurchaseRequest);
         return view('seedling-purchase-requests.index', [
             'page_title' => 'مبيعات اشتال خاصة مشتل',
             'seedling_purchase_requests' => $seedlingPurchaseRequest,
@@ -47,12 +55,23 @@ class SeedlingPurchaseRequestController extends Controller
 
     public function store(StoreSeedlingPurchaseRequest $request)
     {
+        $requestedBy = $request->farm_user;
+        $requestedByType = FarmUser::class;
+        $farmUserIdType = 'FarmUser';
+        if($request->requestedby_type == 'nursery'){
+            $requestedBy = $request->nursery_id;
+            $requestedByType = Nursery::class;
+            $farmUserIdType = 'Nursery';
+        }
+
         $seedlingPurchase = $request->user()->seedlingPurchaseRequests()->create([
             "nursery_id" => $request->user()->nursery->id,
-            "farm_user_id" => $request->farm_user,
+            "farm_user_id" => $requestedBy,
             "seedling_service_id" => $request->seedling_service,
             "tray_count" => $request->tray_count,
             "price_per_tray" => $request->price_per_tray,
+            'requestedby' => $requestedBy,
+            'requestedby_type' => $requestedByType,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
 
@@ -61,7 +80,8 @@ class SeedlingPurchaseRequestController extends Controller
             foreach ($request->installments as $key => $value ){
                 $instalmentsArray[$key] = $value;
                 $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
-                $instalmentsArray[$key]['farm_user_id'] =  $request->farm_user;
+                $instalmentsArray[$key]['farm_user_id'] =  $requestedBy;
+                $instalmentsArray[$key]['farm_user_id_type'] =  $farmUserIdType;
                 $instalmentsArray[$key]['type'] = 'Collection';
             }
             $seedlingPurchase->installments()->createManyQuietly($instalmentsArray);
@@ -89,12 +109,24 @@ class SeedlingPurchaseRequestController extends Controller
         if(!$user->hasRole('nursery-admin')){
             return abort(403);
         }
+
+        $requestedBy = $request->farm_user;
+        $requestedByType = FarmUser::class;
+        $farmUserIdType = 'FarmUser';
+        if($request->requestedby_type == 'nursery'){
+            $requestedBy = $request->nursery_id;
+            $requestedByType = Nursery::class;
+            $farmUserIdType = 'Nursery';
+        }
+
         $seedlingPurchaseRequest = $user->seedlingPurchaseRequests()->findOrFail($seedling_purchase_request->id);
         $seedlingPurchaseRequest->update([
-            "farm_user_id" => $request->farm_user,
+            "farm_user_id" => $requestedBy,
             "seedling_service_id" => $request->seedling_service,
             "tray_count" => $request->tray_count,
             "price_per_tray" => $request->price_per_tray,
+            'requestedby' => $requestedBy,
+            'requestedby_type' => $requestedByType,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
 
@@ -104,7 +136,8 @@ class SeedlingPurchaseRequestController extends Controller
             foreach ($request->installments as $key => $value ){
                 $instalmentsArray[$key] = $value;
                 $instalmentsArray[$key]['nursery_id'] = $request->user()->nursery->id;
-                $instalmentsArray[$key]['farm_user_id'] =  $seedlingPurchaseRequest->farm_user_id;
+                $instalmentsArray[$key]['farm_user_id'] =  $requestedBy;
+                $instalmentsArray[$key]['farm_user_id_type'] =  $farmUserIdType;
                 $instalmentsArray[$key]['type'] = 'Collection';
             }
             $seedlingPurchaseRequest->installments()->createManyQuietly($instalmentsArray);
@@ -131,5 +164,31 @@ class SeedlingPurchaseRequestController extends Controller
         $seedlingPurchaseRequest->delete();
 
         return redirect()->back()->with('status', 'تم الحذف بنجاح');
+    }
+
+    public function reserveRequestSharedSeedlings(Request $request){
+        $user = Auth::user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
+
+        $requestedBy = $user->nursery->id;
+        $requestedByType = Nursery::class;
+
+        $seedling = SeedlingService::findOrFail($request->seedling_service_id);
+        $seedlingPurchaseRequest = SeedlingPurchaseRequest::create([
+            "nursery_id" => $seedling->nursery_id,
+            "nursery_user_id" => $seedling->nursery_user_id,
+            "farm_user_id" => $requestedBy,
+            "seedling_service_id" => $seedling->id,
+            "tray_count" => $request->tray_count,
+            "price_per_tray" => '10',
+            'requestedby' => $requestedBy,
+            'requestedby_type' => $requestedByType,
+            'status' => 2,
+            "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
+        ]);
+
+
     }
 }

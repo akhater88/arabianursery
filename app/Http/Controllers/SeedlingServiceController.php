@@ -299,7 +299,7 @@ class SeedlingServiceController extends Controller
         $user = Auth::user();
         $nursery = $user->nursery;
         $seedlings = $nursery->seedlingsShared()
-            ->with(['nursery','seedType'])->withSum('seedlingPurchaseRequests', 'tray_count')->orderBy('created_at','desc')->get();
+            ->with(['nursery','seedType'])->withSum(['seedlingPurchaseRequests' => function ($qry){ $qry->where('status',1);}], 'tray_count')->orderBy('created_at','desc')->get();
         $nurseries = Nursery::where('id','<>',$nursery->id)->get()->pluck( 'name','id');
         return view('seedling-services.shared', [
             'page_title' => 'أشتال مشاركة',

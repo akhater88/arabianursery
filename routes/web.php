@@ -131,6 +131,7 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
     Route::get('nursery/reports', [NurseryUserController::class,'showNurseriesUsers'])->name('nursery-reports');
 
     Route::get('nursery/shared/seedlings', [SeedlingServiceController::class,'getSharedSeedlings'])->name('shared-seedlings');
+    Route::post('nursery/reserve/seedlings', [SeedlingPurchaseRequestController::class,'reserveRequestSharedSeedlings'])->name('seedling-services.reserve.request');
 
 
 });

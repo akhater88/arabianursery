@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 
@@ -37,6 +38,11 @@ class Nursery extends Model
     public function seedlingPurchaseRequests(): hasMany
     {
         return $this->hasMany(SeedlingPurchaseRequest::class);
+    }
+
+    public function seedlingPurchaseRequestsRequestedBy(): MorphMany
+    {
+        return $this->morphMany(SeedlingPurchaseRequest::class, 'requestedby','requestedby_type');
     }
 
     public function nurseryWarehouseEntities(): hasMany
