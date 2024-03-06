@@ -89,6 +89,8 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
     Route::get('seedling-services/get/{id}', [SeedlingServiceController::class, 'get'])->name('seedling-services.get');
     Route::put('seedling-services/{seedling_service}/status', [SeedlingServiceController::class, 'updateStatus'])->name('seedling-services.update-status');
     Route::resource('seedling-services', SeedlingServiceController::class);
+    Route::post('seedling-services/share/{seedling_service}', [SeedlingServiceController::class, 'share'])->name('seedling-services.share');
+
 
     Route::put('nursery-seeds-sales/{nursery_seeds_sale}/status', [NurserySeedsSaleController::class, 'updateStatus'])->name('nursery-seeds-sales.update-status');
     Route::get('nursery-seeds-sales/search', [NurserySeedsSaleController::class, 'search'])->name('nursery-seeds-sales.search');
@@ -127,6 +129,11 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
 
 
     Route::get('nursery/reports', [NurseryUserController::class,'showNurseriesUsers'])->name('nursery-reports');
+
+    Route::get('nursery/shared/seedlings', [SeedlingServiceController::class,'getSharedSeedlings'])->name('shared-seedlings');
+    Route::post('nursery/reserve/seedlings', [SeedlingPurchaseRequestController::class,'reserveRequestSharedSeedlings'])->name('seedling-services.reserve.request');
+
+    Route::post('nursery/reserve/seedlings/{seedling_purchase_request}', [SeedlingPurchaseRequestController::class,'updateReserveRequestSeedlingsStatus'])->name('seedling-purchase-request.status-update');
 
 
 });

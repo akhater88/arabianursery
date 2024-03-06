@@ -2,6 +2,8 @@
 @extends('layouts.dashboard')
 
 @section('content')
+    <div id='alert-success' class="alert alert-success alert-dismissible fade show" role="alert" style="display:none;">
+    </div>
     @if (session('status'))
         <div class="alert alert-success">
             {{ session('status') }}
@@ -70,22 +72,45 @@
                         <table id="example2" class="table table-bordered table-hover">
                             <thead>
                             <tr>
-                                <th>الرقم التعريفي</th>
+                                <th>النوع - الصنف</th>
                                 <th>اسم العميل</th>
                                 <th>رقم الهاتف</th>
                                 <th>عدد الصواني</th>
-                                <th>النوع - الصنف</th>
+                                <th>الحالة</th>
                                 <th>العمليات</th>
                             </tr>
                             </thead>
                             <tbody>
                                 @foreach($seedling_purchase_requests as $seedling_purchase_request)
                                     <tr>
-                                        <td>{{$seedling_purchase_request->id}}</td>
-                                        <td>{{$seedling_purchase_request->farmUser->name}}</td>
-                                        <td>{{$seedling_purchase_request->farmUser->mobile_number}}</td>
-                                        <td>{{$seedling_purchase_request->tray_count}}</td>
                                         <td style="min-width:170px">{{"{$seedling_purchase_request->seedlingService->seedType->name} - {$seedling_purchase_request->seedlingService->seed_class}"}}</td>
+                                        <td>
+                                            @if($seedling_purchase_request->requestedbyUser::class =='App\Models\Nursery')
+                                                مشتل:
+                                            @else
+                                                مزارع:
+                                            @endif
+                                                {{$seedling_purchase_request->requestedbyUser->name}}
+                                        </td>
+                                        <td>
+                                            @if($seedling_purchase_request->requestedbyUser::class =='App\Models\Nursery')
+                                                مشتل: {{$seedling_purchase_request->requestedbyUser->nurseryUsers[0]->mobile_number}}
+                                            @else
+                                                مزارع:  {{$seedling_purchase_request->farmUser->mobile_number}}
+                                            @endif
+
+                                        </td>
+                                        <td>{{$seedling_purchase_request->tray_count}}</td>
+                                        <td>
+                                            <select class="form-control request_status" required data-seedling-purchase-request-id="{{$seedling_purchase_request->id}}" name='status'
+                                                    style="min-width:170px">
+                                                @foreach($statuses as $key => $status)
+                                                    <option value="{{$key}}" @selected(old('status', $seedling_purchase_request->status) == $key) >
+                                                        {{$status}}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
                                         <td>
                                             <div class="col-12" style="min-width:170px">
                                                 <a class="btn btn-primary" href="{{route('seedling-purchase-requests.show', $seedling_purchase_request->id)}}">
@@ -121,13 +146,17 @@
 
 @section('scripts')
     <script>
+        // $('.request_status').select2({
+        //     theme: 'bootstrap4',
+        //     dir: 'rtl',
+        // })
         @foreach($seedling_purchase_requests as $seedling_purchase_request)
-            $("#delete-{{$seedling_purchase_request->id}}-btn").click(async function (e) {
+            $(".request_status").change(async function (e) {
                 e.preventDefault();
 
                 const result = await Swal.fire({
-                    title: "هل انت متأكد؟",
-                    text: `هل انت متأكد من الحذف؟`,
+                    title: "طلب تعديل",
+                    text: `هل انت متأكد من تعديل حالة الطلب؟`,
                     type: "question",
                     showCancelButton: true,
                     showConfirmButton: true,
@@ -136,8 +165,28 @@
                     cancelButtonText: "إلغاء",
                 });
 
+                var seedling_purchase_request_id= $(this).data('seedling-purchase-request-id');
+                var status = $(this).val();
+                var csrf = $('[name="_token"]').val();
+
+
                 if(result?.value) {
-                    $('#delete-{{$seedling_purchase_request->id}}-form').submit()
+                    $.ajax({
+                        type: "POST",
+                        url: "{{route('seedling-purchase-request.status-update','')}}/"+seedling_purchase_request_id,
+                        data: {
+                            status : status,
+                            _token: csrf
+                        },
+                        success: function (data) {
+                            document.getElementById('alert-success').style.display = 'block'
+                            document.getElementById('alert-success').innerText = 'تم تعديل حالة الاشتال بنجاح'
+                            location.reload();
+                        },
+                        error: (response) => {
+                            showErrors(response, 'update-with-errors')
+                        }
+                    });
                 }
             });
         @endforeach

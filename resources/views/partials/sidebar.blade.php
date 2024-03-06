@@ -49,6 +49,14 @@
                 </li>
 
                 <li class="nav-item">
+                    <a href="{{route('shared-seedlings')}}" class="nav-link {{Route::currentRouteName() == 'shared-seedlings' ? 'active' : ''}}">
+                        <img class="nav-icon" src="{{@asset('images/icon/shared-seedling.svg')}}">
+                        <p>أشتال مشاركة من مشاتل</p>
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
                     <a href="{{route('nursery-seeds-sales.index')}}" class="nav-link {{Route::currentRouteName() == 'nursery-seeds-sales.index' ? 'active' : ''}}">
                         <i class="nav-icon fas fa-allergies"></i>
                         <p>مبيعات بذور المشتل</p>
