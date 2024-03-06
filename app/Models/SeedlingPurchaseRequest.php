@@ -17,7 +17,11 @@ class SeedlingPurchaseRequest extends Model
 
     protected $guarded = ['id'];
 
-    protected static $statuses = ['مرفوض','تم الحجز','قيد إنتظار الموافقة'];
+    public static $statuses = [
+        0 => 'مرفوض',
+        1 => 'تم الحجز',
+        2 => 'قيد الموافقة'
+    ];
     protected $casts = [
         'cash' => 'object',
     ];

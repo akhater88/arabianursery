@@ -323,6 +323,7 @@
                     document.getElementById('alert-success').style.display = 'block'
                     document.getElementById('alert-success').innerText = 'تم مشاركة الاشتال بنجاح'
                     document.getElementById("share_with_form").reset();
+                    location.reload();
                 },
                 error: (response) => {
                     showErrors(response, 'share-with-errors')

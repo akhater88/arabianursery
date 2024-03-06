@@ -31,6 +31,7 @@ class SeedlingPurchaseRequestController extends Controller
         //dd($seedlingPurchaseRequest);
         return view('seedling-purchase-requests.index', [
             'page_title' => 'مبيعات اشتال خاصة مشتل',
+            'statuses' => SeedlingPurchaseRequest::$statuses,
             'seedling_purchase_requests' => $seedlingPurchaseRequest,
         ]);
     }
@@ -176,7 +177,7 @@ class SeedlingPurchaseRequestController extends Controller
         $requestedByType = Nursery::class;
 
         $seedling = SeedlingService::findOrFail($request->seedling_service_id);
-        $seedlingPurchaseRequest = SeedlingPurchaseRequest::create([
+        SeedlingPurchaseRequest::create([
             "nursery_id" => $seedling->nursery_id,
             "nursery_user_id" => $seedling->nursery_user_id,
             "farm_user_id" => $requestedBy,
@@ -188,7 +189,20 @@ class SeedlingPurchaseRequestController extends Controller
             'status' => 2,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
+        return response()->json([],200);
+    }
 
+    public function updateReserveRequestSeedlingsStatus(Request $request,SeedlingPurchaseRequest $seedling_purchase_request){
+        $user = Auth::user();
+        if(!$user->hasRole('nursery-admin')){
+            return abort(403);
+        }
+        $nursery = $user->nursery;
 
+        if($seedling_purchase_request->nursery_id == $nursery->id ){
+            $seedling_purchase_request->status = $request->status;
+            $seedling_purchase_request->save();
+        }
+        return response()->json([],200);
     }
 }

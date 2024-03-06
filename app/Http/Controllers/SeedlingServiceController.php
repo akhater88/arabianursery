@@ -199,7 +199,7 @@ class SeedlingServiceController extends Controller
         $nursery = $user->nursery;
         $seedlingService = $nursery->seedlingServices()->findOrFail($seedling_service->id);
         $seedlingService->delete();
-
+        $seedlingService->installments()->delete();
         return redirect()->back()->with('status', 'تم الحذف بنجاح');
     }
 

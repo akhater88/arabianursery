@@ -50,12 +50,18 @@
                                 <th>رقم الهاتف</th>
                                 <th>عدد الصواني المتاحة</th>
                                 <th>النوع - الصنف</th>
-                                <th>الحالة</th>
+                                <th>توقع استلام </th>
                                 <th>حجز اشتال</th>
                             </tr>
                             </thead>
                             <tbody>
                                 @foreach($seedlings as $seedling)
+                                    @php
+                                        $seedlingAge = $seedling->created_at->diffInDays(\Carbon\Carbon::now());
+                                        $handedPeriod = $seedling->germination_period - $seedlingAge;
+                                        $handedDate = \Carbon\Carbon::now()->addDays($handedPeriod)->format('d-m-Y');
+                                    @endphp
+                                    @if($handedPeriod > -20 )
                                     <tr>
                                         <td>{{$seedling->id}}</td>
                                         <td>{{$seedling->nursery->name}}</td>
@@ -63,7 +69,13 @@
                                         <td>{{$seedling->tray_count - $seedling->seedling_purchase_requests_sum_tray_count}}</td>
                                         <td style="min-width:170px">{{"{$seedling->seedType->name} - {$seedling->seed_class}"}}</td>
                                         <td>
-                                            {{$seedling->status}}
+                                            @if($handedPeriod >= 4 )
+                                             بعد: {{$handedPeriod}} يوم
+                                        <br/>
+                                            بتاريخ:  {{ $handedDate }}
+                                            @elseif($handedPeriod >= -20)
+                                                جاهز للتسليم
+                                            @endif
                                         </td>
                                         <td>
                                             <div class="col-12" style="min-width:170px">
@@ -86,6 +98,7 @@
 
                                         </td>
                                     </tr>
+                                    @endif
                                 @endforeach
                             </tbody>
                         </table>
@@ -169,11 +182,12 @@
                 url: "{{route('seedling-services.reserve.request')}}",
                 data: $(this).serialize(),
                 success: function (data) {
-                    $('#shareSeedlingModal').modal('hide');
+                    $('#requestSeedlingModal').modal('hide');
 
                     document.getElementById('alert-success').style.display = 'block'
                     document.getElementById('alert-success').innerText = 'تم ارسال طلب حجزالاشتال بنجاح'
                     document.getElementById("reserve_form").reset();
+                    location.reload()
                 },
                 error: (response) => {
                     showErrors(response, 'share-with-errors')
