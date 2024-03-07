@@ -30,6 +30,11 @@ class Nursery extends Model
         return $this->hasMany(SeedlingService::class);
     }
 
+    public function reservedSeedlingServices(): hasMany
+    {
+        return $this->hasMany(SeedlingService::class,'reserved_from','id');
+    }
+
     public function nurserySeedsSales(): hasMany
     {
         return $this->hasMany(NurserySeedsSale::class);

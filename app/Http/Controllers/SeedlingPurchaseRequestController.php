@@ -199,10 +199,38 @@ class SeedlingPurchaseRequestController extends Controller
         }
         $nursery = $user->nursery;
 
+        $requestByNursery = Nursery::find($seedling_purchase_request->requestedby);
+
         if($seedling_purchase_request->nursery_id == $nursery->id ){
             $seedling_purchase_request->status = $request->status;
             $seedling_purchase_request->save();
         }
+
+        if($request->status == 1){
+            SeedlingService::create([ "type" => 1,
+                "seed_class" => $seedling_purchase_request->seedlingService->seed_class,
+                "seed_count" => $seedling_purchase_request->seedlingService->seed_count,
+                "tray_count" => 245,
+                "germination_rate" => null,
+                "germination_period" => 60,
+                "greenhouse_number" => "10",
+                "tunnel_greenhouse_number" => "1",
+                "price_per_tray" => "0.00",
+                "discount_amount" => "0.00",
+                "additional_cost" => null,
+                "cash" => null,
+                "status" => "تم التشتيل",
+                "share_with_nurseries" => 0,
+                "share_with_farmers" => 0,
+                "reserved" => true,
+                "reserved_from" => $nursery->id,
+                "seed_type_id" => 10,
+                "nursery_id" => $seedling_purchase_request->requestedby,
+                "nursery_user_id" => $requestByNursery->nurseryUsers[0]->id,
+                "farm_user_id" => null,
+            ]);
+        }
+
         return response()->json([],200);
     }
 }
