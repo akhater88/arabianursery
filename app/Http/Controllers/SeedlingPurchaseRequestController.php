@@ -228,6 +228,7 @@ class SeedlingPurchaseRequestController extends Controller
                 "nursery_id" => $seedling_purchase_request->requestedby,
                 "nursery_user_id" => $requestByNursery->nurseryUsers[0]->id,
                 "farm_user_id" => null,
+                "created_at" => $seedling_purchase_request->seedlingService->created_at
             ]);
         }
 
