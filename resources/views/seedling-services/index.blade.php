@@ -87,6 +87,7 @@
                                 <th>عدد الصواني</th>
                                 <th>النوع - الصنف</th>
                                 <th>الحالة</th>
+                                <th>توقع التسليم</th>
                                 <th>العمليات</th>
                             </tr>
                             </thead>
@@ -112,6 +113,21 @@
                                             </form>
                                             @else
                                                 تم الحجز من مشتل:{{ $seedling_service->reservedFromNursery?->name }}
+                                            @endif
+                                        </td>
+
+                                        @php
+                                            $seedlingAge = $seedling_service->created_at->diffInDays(\Carbon\Carbon::now());
+                                            $handedPeriod = $seedling_service->germination_period - $seedlingAge;
+                                            $handedDate = \Carbon\Carbon::now()->addDays($handedPeriod)->format('d-m-Y');
+                                        @endphp
+                                        <td>
+                                            @if($handedPeriod >= 4 )
+                                                بعد: {{$handedPeriod}} يوم
+                                                <br/>
+                                                بتاريخ:  {{ $handedDate }}
+                                            @elseif($handedPeriod >= -20)
+                                                جاهز للتسليم
                                             @endif
                                         </td>
                                         <td>
