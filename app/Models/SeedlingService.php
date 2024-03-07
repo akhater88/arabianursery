@@ -41,6 +41,11 @@ class SeedlingService extends Model
         return $this->belongsTo(Nursery::class);
     }
 
+    public function reservedFromNursery(): belongsTo
+    {
+        return $this->belongsTo(Nursery::class, 'reserved_from','id');
+    }
+
     public function nurseryUser(): belongsTo
     {
         return $this->belongsTo(NurseryUser::class);

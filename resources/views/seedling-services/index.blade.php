@@ -99,6 +99,7 @@
                                         <td>{{$seedling_service->tray_count}}</td>
                                         <td style="min-width:170px">{{"{$seedling_service->seedType->name} - {$seedling_service->seed_class}"}}</td>
                                         <td>
+                                            @if(!$seedling_service->reserved)
                                             <form id="seedling-service-{{$seedling_service->id}}-status-form">
                                                 <select class="form-control" required id='status-{{$seedling_service->id}}' name='status'
                                                         style="min-width:170px">
@@ -109,6 +110,9 @@
                                                     @endforeach
                                                 </select>
                                             </form>
+                                            @else
+                                                تم الحجز من مشتل:{{ $seedling_service->reservedFromNursery?->name }}
+                                            @endif
                                         </td>
                                         <td>
                                             <div class="col-12" style="min-width:170px">
@@ -116,10 +120,12 @@
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 @hasrole('nursery-admin')
-                                                <a class="btn btn-info" href="{{route('seedling-services.edit', $seedling_service->id)}}">
-                                                    <i class="fas fa-pen"></i>
-                                                </a>
-                                                @if($seedling_service->type == SeedlingService::TYPE_PERSONAL)
+                                                @if(!$seedling_service->reserved)
+                                                    <a class="btn btn-info" href="{{route('seedling-services.edit', $seedling_service->id)}}">
+                                                        <i class="fas fa-pen"></i>
+                                                    </a>
+                                                @endif
+                                                @if($seedling_service->type == SeedlingService::TYPE_PERSONAL && !$seedling_service->reserved)
                                                 <a class="btn btn-info open-share-with"
                                                    data-id="{{$seedling_service->id}}"
                                                    data-name="{{"{$seedling_service->seedType->name} - {$seedling_service->seed_class}"}}"
@@ -131,6 +137,7 @@
                                                     @endif
                                                 </a>
                                                 @endif
+                                                @if(!$seedling_service->reserved)
                                                 <form class="d-inline" id="delete-{{$seedling_service->id}}-form" method="post" action="{{route('seedling-services.destroy', $seedling_service->id)}}" style="padding: 0">
                                                     @csrf
                                                     @method('delete')
@@ -138,6 +145,7 @@
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </form>
+                                                @endif
                                                 @endhasrole
                                             </div>
                                         </td>
