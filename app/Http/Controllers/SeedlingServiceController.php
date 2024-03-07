@@ -25,7 +25,7 @@ class SeedlingServiceController extends Controller
     {
         $user = Auth::user();
         $nursery = $user->nursery;
-        $seedlingServices = $nursery->seedlingServices()->with(['farmUser' => fn($q) => $q->withTrashed(), 'seedType'])
+        $seedlingServices = $nursery->seedlingServices()->with(['farmUser' => fn($q) => $q->withTrashed(), 'seedType','reservedFromNursery'])
             ->orderBy('id', 'DESC')
             ->filterBy($filters)
             ->paginate()
@@ -216,7 +216,7 @@ class SeedlingServiceController extends Controller
     {
         $user = Auth::user();
         $nursery = $user->nursery;
-        $personal_seedling_service_query = SeedlingService::query()->with('seedType')->where('nursery_id',$nursery->id)->limit(7);
+        $personal_seedling_service_query = SeedlingService::query()->with('seedType','reservedFromNursery')->where('nursery_id',$nursery->id)->limit(7);
 
         if ($request->q) {
             $personal_seedling_service_query->where('seed_class', 'like', "%{$request->q}%")
@@ -226,10 +226,18 @@ class SeedlingServiceController extends Controller
         $personal_seedling_service_query->where('nursery_id', $request->user()->nursery->id)->personal();
 
         return [
-            'results' => $personal_seedling_service_query->get()->map(fn($seedling_service) => [
-                'id' => $seedling_service->id,
-                'text' => $seedling_service->option_name
-            ])];
+            'results' => $personal_seedling_service_query->get()->map(function ($seedling_service) {
+                $option = [
+                    'id' => $seedling_service->id,
+                    'text' => $seedling_service->option_name
+                ];
+                if($seedling_service->reserved){
+                    $option['text'] = $seedling_service->option_name. ' محجوز في مشتل '. $seedling_service->reservedFromNursery->name;
+                }
+
+                return $option;
+            }
+            )];
     }
 
     public function storeMedia(Request $request)

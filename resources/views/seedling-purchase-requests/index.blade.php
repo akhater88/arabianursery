@@ -102,6 +102,7 @@
                                         </td>
                                         <td>{{$seedling_purchase_request->tray_count}}</td>
                                         <td>
+                                            @if($seedling_purchase_request->status != 1)
                                             <select class="form-control request_status" required data-seedling-purchase-request-id="{{$seedling_purchase_request->id}}" name='status'
                                                     style="min-width:170px">
                                                 @foreach($statuses as $key => $status)
@@ -110,6 +111,9 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                            @else
+                                                تم الحجز
+                                            @endif
                                         </td>
                                         <td>
                                             <div class="col-12" style="min-width:170px">
