@@ -36,6 +36,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/blog/terms-and-conditions', function (){
+    return view('terms-and-conditions');
+});
+
 Route::middleware('auth:nursery_web')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
