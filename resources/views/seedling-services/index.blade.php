@@ -146,6 +146,7 @@
                                                    data-id="{{$seedling_service->id}}"
                                                    data-name="{{"{$seedling_service->seedType->name} - {$seedling_service->seed_class}"}}"
                                                    data-tray-count="{{$seedling_service->tray_count}}"
+                                                   data-tray-shared-price="{{$seedling_service->tray_shared_price}}"
                                                    data-toggle="modal" data-target="#shareSeedlingModal" href="#">
                                                     <i class="fas fa-share"></i>
                                                     @if($seedling_service->share_with_farmers || $seedling_service->share_with_nurseries)
@@ -224,6 +225,10 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="tray-shared-price">سعر الصنية</label>
+                                            <input id='tray-shared-price' type="number"  name="tray_shared_price" value="..." class="form-control">
+                                        </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
@@ -251,9 +256,11 @@
             var trayCount= $(this).data('tray-count');
             var name = $(this).data('name');
             var seedlingServiceId = $(this).data('id');
+            var traySharedPrice = $(this).data('tray-shared-price');
             $(".modal-body #tray-count").val( trayCount );
             $(".modal-body #seedling-name").val( name );
             $(".modal-body #seedling-service-id").val( seedlingServiceId );
+            $(".modal-body #tray-shared-price").val( traySharedPrice );
             $('#share_with').val(null).trigger('change');
             $('#share_nurseries').val([]);
             $('#share_nurseries').trigger('change');

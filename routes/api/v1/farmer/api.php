@@ -19,6 +19,7 @@ Route::post('/login/farmer', 'AuthController@login');
 Route::post('/register/farm', 'AuthController@farmRegister');
 Route::get('/posts', 'PostsController@posts');
 Route::get('/nursery/seedlings', 'SeedlingsController@seedlings');
+Route::get('/nursery/seedlings/{seedlingID}', 'SeedlingsController@getSeedlingById');
 Route::get('/post/{post}', 'PostsController@getPostById');
 
 Route::get('/page/{code}', 'PagesController@getPageByCode');
