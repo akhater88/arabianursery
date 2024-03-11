@@ -67,10 +67,19 @@ class FarmController extends Controller
         $user = Auth::user();
         $seedlingService = SeedlingService::with(['seedType', 'nursery', 'images' => function ($query) {
             $query->orderBy('created_at', 'desc');
-        }])->where('id', $seedlingID)->where('farm_user_id', $user->id)->first();
+        }])->withSum([
+            'seedlingPurchaseRequests' => function ($qry){ $qry->where('status',1);}
+        ], 'tray_count')->where('id', $seedlingID)->where('farm_user_id', $user->id)->first();
 
         if($seedlingService){
             $data = $seedlingService->toArray();
+            $seedlingAge = $seedlingService->created_at->diffInDays(\Carbon\Carbon::now());
+            $handedPeriod = $data['germination_period'] - $seedlingAge;
+            $handedDate = \Carbon\Carbon::now()->addDays($handedPeriod)->format('d-m-Y');
+            $data['expected_handed_date'] = $handedDate;
+            $data['expected_handed_period'] = $handedPeriod;
+            $data['available_tray'] = $data['tray_count'] - $data['seedling_purchase_requests_sum_tray_count'];
+            $data['show_price'] = $data['tray_shared_price'] != null ? true : false;
             return response()->json($data, 200);
         }
         else{
