@@ -298,6 +298,9 @@ class SeedlingServiceController extends Controller
                 $seedling_service->sharedWithNurseries()->attach($share_nursery);
             }
         }
+        if($request->tray_shared_price != null){
+            $seedling_service->tray_shared_price = $request->tray_shared_price;
+        }
         $seedling_service->save();
         return response()->json([],200);
 

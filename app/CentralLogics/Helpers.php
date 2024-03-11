@@ -41,6 +41,14 @@ class Helpers
                 $item['min_delivery_time'] = null;
                 $item['max_delivery_time'] = null;
             }
+            $seedlingAge = $item['created_at']->diffInDays(\Carbon\Carbon::now());
+            $handedPeriod = $item['germination_period'] - $seedlingAge;
+            $handedDate = \Carbon\Carbon::now()->addDays($handedPeriod)->format('d-m-Y');
+            $item['expected_handed_date'] = $handedDate;
+            $item['expected_handed_period'] = $handedPeriod;
+            $item['available_tray'] = $item['tray_count'] - $item['seedling_purchase_requests_sum_tray_count'];
+            $item['show_price'] = $item['tray_shared_price'] != null ? true : false;
+
             array_push($storage, $item);
         }
         $data = $storage;
