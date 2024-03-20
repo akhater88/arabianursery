@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api\V1\Farmer;
 
 use App\CentralLogics\Helpers;
+use App\Models\FarmUser;
+use App\Models\Nursery;
+use App\Models\SeedlingPurchaseRequest;
 use App\Models\SeedlingService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -86,5 +89,62 @@ class FarmController extends Controller
             return response()->json(['message' => 'Not Found'], 404);
         }
 
+    }
+
+    public function reserveSeedlings(Request $request){
+        $user = Auth::user();
+        $validator = Validator::make($request->all(), [
+            'seedling_id' => 'required',
+            'number_of_trays' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => Helpers::error_processor($validator)], 403);
+        }
+        $requestedBy = $user->id;
+        $requestedByType = FarmUser::class;
+
+        $seedling = SeedlingService::findOrFail($request->seedling_id);
+        SeedlingPurchaseRequest::create([
+            "nursery_id" => $seedling->nursery_id,
+            "nursery_user_id" => $seedling->nursery_user_id,
+            "farm_user_id" => $requestedBy,
+            "seedling_service_id" => $seedling->id,
+            "tray_count" => $request->number_of_trays,
+            "price_per_tray" => $seedling->tray_shared_price?? '10' ,
+            'requestedby' => $requestedBy,
+            'requestedby_type' => $requestedByType,
+            'status' => 2,
+            "cash" => ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount],
+        ]);
+        return response()->json([],200);
+    }
+
+    public function getReserveSeedlings(Request $request){
+        $user = $request->user();
+        $requestedByType = FarmUser::class;
+        $seedlingPurchaseRequestsIDs = SeedlingPurchaseRequest::where('requestedby',$user->id)->where('requestedby_type',$requestedByType)->pluck('seedling_service_id')->toArray();
+
+        $reservedSeedlings = SeedlingService::with([
+            'nursery',
+            'seedType',
+            'seedlingPurchaseRequests' => function ($qry) use ($user, $requestedByType) {
+                $qry->where('requestedby', $user->id);
+                $qry->where('requestedby_type', $requestedByType);
+            },
+            'images'
+            ])
+            ->withSum([
+                'seedlingPurchaseRequests' => function ($qry){ $qry->where('status',1);}
+            ], 'tray_count')->whereIn('id', $seedlingPurchaseRequestsIDs)->orderBy('created_at', 'desc')
+            ->paginate($request['limit'], ['*'], 'page', $request['offset']);
+
+        $seedlings = Helpers::reserved_seedling_data_formatting($reservedSeedlings->items(), true);
+        $data = [
+            'total_size' => $reservedSeedlings->total(),
+            'limit' => $request['limit'],
+            'offset' => $request['offset'],
+            'seedlings' => $seedlings
+        ];
+        return response()->json($data, 200);
     }
 }
