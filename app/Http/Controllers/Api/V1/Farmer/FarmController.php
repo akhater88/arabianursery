@@ -120,7 +120,7 @@ class FarmController extends Controller
     }
 
     public function getReserveSeedlings(Request $request){
-        $user = $request->user();
+        $user = Auth::user();
         $requestedByType = FarmUser::class;
         $seedlingPurchaseRequestsIDs = SeedlingPurchaseRequest::where('requestedby',$user->id)->where('requestedby_type',$requestedByType)->pluck('seedling_service_id')->toArray();
 
