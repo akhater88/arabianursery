@@ -33,7 +33,7 @@ Route::group(['middleware'=>'auth:farmer_api'], function () {
     Route::get('/farmer/seedlings/{seedlingService}', 'FarmController@getSeedlingById');
     Route::put('/farmer/update-profile', 'AuthController@updateProfile' );
     Route::put('/farmer/change-password', 'AuthController@changePassword' );
-    Route::post('/farmer/reserve/seedlings', 'FarmController@reserveSeedlings' );
+    Route::post('/farmer/reserve/trays', 'FarmController@reserveSeedlings' );
     Route::get('/farmer/reserve/seedlings', 'FarmController@getReserveSeedlings' );
     Route::delete('/farmer/remove-account','AuthController@removeAccount' );
 });
