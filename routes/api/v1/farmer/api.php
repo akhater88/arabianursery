@@ -26,7 +26,7 @@ Route::get('/page/{code}', 'PagesController@getPageByCode');
 
 
 Route::group(['middleware'=>'auth:farmer_api'], function () {
-    Route::post('/farmer/reserve/trays', 'FarmController@reserveSeedlings' );
+    Route::put('/farmer/reserve/trays', 'FarmController@reserveSeedlings' );
     Route::get('/farmer/reserve/seedlings', 'FarmController@getReserveSeedlings' );
     Route::put('/farmer/update-fcm-token','AuthController@updateFcmToken' );
     Route::get('/farmer/profile', 'FarmController@getFarmerProfile');
