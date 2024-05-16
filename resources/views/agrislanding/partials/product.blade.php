@@ -59,7 +59,9 @@
 
   </a>
                     </span>
-                    قريبا سيتوفر لاجهزة الاندرويد
+                    <a href="https://play.google.com/store/apps/details?id=com.arabiafarmers.arabiafarmers&pcampaignid=web_share" download>
+                        <img style="box-shadow: none;width: 182px;height: 77px;cursor: pointer;padding-right: 15px;" class="shadow-xl" src="{{asset('images/icon/google-play-badge.png')}}" alt="">
+                    </a>
                     <span class="icon fa-google-play"></span>
                 </p>
             </div>
