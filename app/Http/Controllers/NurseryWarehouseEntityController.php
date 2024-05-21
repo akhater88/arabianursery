@@ -61,6 +61,7 @@ class NurseryWarehouseEntityController extends Controller
             'entity_type' => SeedType::class,
             'entity_id' => $request->seed_type,
             "seed_type_id" => $request->seed_type,
+            "entity_sub_type" => $request->entity_sub_type,
             "nursery_id" => $request->user()->nursery->id,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
@@ -105,6 +106,7 @@ class NurseryWarehouseEntityController extends Controller
                 'entity_id' => $request->seed_type,
                 "seed_type_id" => $request->seed_type,
                 "nursery_id" => $request->user()->nursery->id,
+                "entity_sub_type" => $request->entity_sub_type,
                 "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
             ]
         );

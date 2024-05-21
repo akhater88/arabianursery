@@ -75,6 +75,7 @@
                                 <th>رقم هاتف المزود</th>
                                 <th>الكمية</th>
                                 <th>النوع</th>
+                                <th>الصنف</th>
                                 <th>العمليات</th>
                             </tr>
                             </thead>
@@ -86,6 +87,7 @@
                                         <td>{{$nursery_warehouse_entity->agriculturalSupplyStoreUser->mobile_number}}</td>
                                         <td>{{$nursery_warehouse_entity->quantity}}</td>
                                         <td>{{$nursery_warehouse_entity->entity->name}}</td>
+                                        <td>{{$nursery_warehouse_entity->entity_sub_type}}</td>
                                         <td>
                                             <div class="col-12" style="min-width:170px">
                                                 <a class="btn btn-primary" href="{{route('warehouse-entities.show', $nursery_warehouse_entity->id)}}">
