@@ -80,6 +80,15 @@
 
                         <div class="form-row mb-3">
                             <div class="col-12 col-sm-4">
+                                <label for="seed-type">صنف البذار</label>
+                                <div class="input-group mb-2">
+                                    <input id='entity_sub_type'  name="entity_sub_type"
+                                           value="{{ old('entity_sub_type', $nursery_warehouse_entity?->entity_sub_type) }}"
+                                           required
+                                           class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
                                 <label for="quantity">الكمية</label>
                                 <input id='quantity' type="number" min=0 step="1" name="quantity"
                                        value="{{ old('quantity', $nursery_warehouse_entity) }}"
