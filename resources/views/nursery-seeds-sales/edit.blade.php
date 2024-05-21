@@ -23,27 +23,25 @@
                     @csrf
 
                     <div class="card-body">
-                            <div class="form-row mb-3" id="farm-user-dev" >
-                                <div class="col-12 col-sm-4">
-                                    <label for="farm-user-select">اسم أو رقم العميل</label>
-                                    <select class="form-control select2" id='farm-user-select' name="farm_user"
-                                            style="width: 100%;">
-                                            <option selected value="{{ $nursery_seeds_sale->farm_user_id }}">
-                                                {{ $nursery_seeds_sale->farmUser->optionName }}
-                                            </option>
-                                    </select>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <label for="warehouse-seeds-select">من بذور المخزن</label>
-                                    <select class="form-control select2" id='warehouse-seeds-select' name='warehouse_seeds'
-                                            required style="width: 100%;">
-                                            <option selected value="{{  $nursery_seeds_sale->nursery_warehouse_entities_id }}">
-                                                {{ NurseryWarehouseEntity::whereId($nursery_seeds_sale->nursery_warehouse_entities_id)->first()?->option_name }}
-                                            </option>
-                                    </select>
-                                </div>
+                        <div class="form-row mb-3" id="farm-user-dev" >
+                            <div class="col-12 col-sm-4">
+                                <label for="farm-user-select">اسم أو رقم العميل</label>
+                                <select class="form-control select2" id='farm-user-select' name="farm_user"
+                                        style="width: 100%;">
+                                        <option selected value="{{ $nursery_seeds_sale->farm_user_id }}">
+                                            {{ $nursery_seeds_sale->farmUser->optionName }}
+                                        </option>
+                                </select>
                             </div>
-                        <div class="form-row mb-3">
+                            <div class="col-12 col-sm-4">
+                                <label for="warehouse-seeds-select">من بذور المخزن</label>
+                                <select class="form-control select2" id='warehouse-seeds-select' name='warehouse_seeds'
+                                        required style="width: 100%;">
+                                        <option selected value="{{  $nursery_seeds_sale->nursery_warehouse_entities_id }}">
+                                            {{ NurseryWarehouseEntity::whereId($nursery_seeds_sale->nursery_warehouse_entities_id)->first()?->option_name }}
+                                        </option>
+                                </select>
+                            </div>
                             <div class="col-12 col-sm-4">
                                 <label for="seed-count">عدد البذور</label>
                                 <input id='seed-count' type="number" min=0 step="1" name="seed_count"
@@ -54,6 +52,7 @@
                                 <small id="seed-remaining" class="form-text text-muted"></small>
                             </div>
                         </div>
+
 
                         <div class="form-row mb-3">
                             <div class="col-12 col-sm-4">
@@ -66,9 +65,6 @@
                                     @endforeach
                                 </select>
                             </div>
-                        </div>
-
-                        <div class="form-row mb-3">
                             <div class="col-12 col-sm-4">
                                 <label for="price">السعر</label>
                                 <div class="input-group mb-2">
@@ -80,6 +76,13 @@
                                         <div class="input-group-text">دينار</div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <label for="sold-date">تاريخ بيع البذور</label>
+                                <input type="date" name="sold_at"
+                                       class="form-control"
+                                       value="{{ old('sold_at', $nursery_seeds_sale->sold_at) }}"
+                                       id="sold-date">
                             </div>
                         </div>
 

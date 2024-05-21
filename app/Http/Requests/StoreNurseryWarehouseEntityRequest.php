@@ -29,6 +29,7 @@ class StoreNurseryWarehouseEntityRequest extends FormRequest
             "agricultural_supply_store_user" => ['required', 'exists:' . AgriculturalSupplyStoreUser::class . ',id'],
             'entity_type' => ['required', 'exists:' . EntityType::class . ',id'],
             "seed_type" => ['required', 'exists:' . SeedType::class . ',id'],
+            "received_at" => ['required'],
             "quantity" => ['required', 'integer', 'gt:0'],
             "price" => ['required', 'numeric', 'regex:/^\d*\.{0,1}\d{0,2}$/'],
             "payment_type" => ['required', 'in:cash,installments'],
