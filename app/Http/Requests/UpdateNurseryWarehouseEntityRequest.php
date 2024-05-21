@@ -30,6 +30,7 @@ class UpdateNurseryWarehouseEntityRequest extends FormRequest
             'entity_type' => ['required', 'exists:' . EntityType::class . ',id'],
             "seed_type" => ['required', 'exists:' . SeedType::class . ',id'],
             "quantity" => ['required', 'integer', 'gt:0'],
+            "received_at" => ['required'],
             "price" => ['required', 'numeric', 'regex:/^\d*\.{0,1}\d{0,2}$/'],
             "payment_type" => ['required', 'in:cash,installments'],
             "cash_invoice_number" => ['nullable', 'required_with:cash_amount'],
