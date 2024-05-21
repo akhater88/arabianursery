@@ -1,4 +1,4 @@
-@php use App\Models\SeedlingService; @endphp
+@php use App\Models\NurseryWarehouseEntity; @endphp
 @extends('layouts.dashboard')
 
 @section('content')
@@ -33,45 +33,29 @@
                                             </option>
                                     </select>
                                 </div>
+                                <div class="col-12 col-sm-4">
+                                    <label for="warehouse-seeds-select">من بذور المخزن</label>
+                                    <select class="form-control select2" id='warehouse-seeds-select' name='warehouse_seeds'
+                                            required style="width: 100%;">
+                                            <option selected value="{{  $nursery_seeds_sale->nursery_warehouse_entities_id }}">
+                                                {{ NurseryWarehouseEntity::whereId($nursery_seeds_sale->nursery_warehouse_entities_id)->first()?->option_name }}
+                                            </option>
+                                    </select>
+                                </div>
                             </div>
-
-
-                        <div class="form-row mb-3">
-                            <div class="col-12 col-sm-4">
-                                <label for="seed-type">نوع البذار</label>
-                                <select class="form-control select2" id='seed-type' name='seed_type'
-                                        disabled style="width: 100%;">
-                                        <option selected value="{{$nursery_seeds_sale->seed_type_id }}">
-                                            {{ $nursery_seeds_sale->seedType->name }}
-                                        </option>
-                                </select>
-                            </div>
-
-                            <div class="col-12 col-sm-4">
-                                <label for="seed-class">الصنف</label>
-                                <input id='seed-class' disabled type="text" name='seed_class' value="{{ $nursery_seeds_sale->seed_class }}"
-                                       class="form-control">
-                            </div>
-                        </div>
-
                         <div class="form-row mb-3">
                             <div class="col-12 col-sm-4">
                                 <label for="seed-count">عدد البذور</label>
-                                <input id='seed-count' disabled type="number" min=0 step="1" name="seed_count"
+                                <input id='seed-count' type="number" min=0 step="1" name="seed_count"
                                        value="{{ $nursery_seeds_sale->seed_count }}"
                                        required
+                                       onchange="setRemainingSeeds(this.value)"
                                        class="form-control">
+                                <small id="seed-remaining" class="form-text text-muted"></small>
                             </div>
-
-
-
                         </div>
 
                         <div class="form-row mb-3">
-
-
-
-
                             <div class="col-12 col-sm-4">
                                 <label for="status">الحالة</label>
                                 <select class="form-control select2" required id='status' name='status'
@@ -118,11 +102,6 @@
 @section('scripts')
 
     <script>
-        $('#seed-type').select2({
-            theme: 'bootstrap4',
-            dir: 'rtl',
-        })
-
         $('#farm-user-select').select2({
             theme: 'bootstrap4',
             dir: 'rtl',
@@ -132,6 +111,58 @@
             theme: 'bootstrap4',
             dir: 'rtl',
         })
+    </script>
+
+    <script>
+        $('#warehouse-seeds-select').select2({
+            theme: 'bootstrap4',
+            dir: 'rtl',
+            ajax: {
+                url: "{{route('warehouse-entities.search')}}",
+                dataType: 'json',
+            }
+        })
+
+        let seedEntityCount = null;
+        let inputEntityCount = $('#seed-count').val()
+        $(document).ready(async function () {
+            await updateSeedsSalesCount({{$nursery_seeds_sale->nursery_warehouse_entities_id}});
+            setRemainingSeeds(inputEntityCount);
+        });
+
+        $('#warehouse-seeds-select').on('select2:select', async (e) => {
+            try {
+                await updateSeedsSalesCount(e.params.data.id)
+                setRemainingSeeds(inputEntityCount)
+            } catch (e) {
+                throw e;
+            }
+        })
+
+        function setRemainingSeeds(value) {
+            inputEntityCount = value
+            if(seedEntityCount !== null) {
+                let remaining = seedEntityCount - value;
+                //remaining = remaining > 0 ? remaining : 0
+                document.getElementById('seed-remaining').innerText = `المتبقي: ${remaining}`
+            }
+        }
+
+        async function updateSeedsSalesCount(warehouseEntityId) {
+            let response = await axios.get(`{{route('warehouse-entities.get', '')}}/${warehouseEntityId}`);
+
+            seedEntityCount = response.data.quantity - response.data.seeds_sales.reduce((sum, request) => {
+
+                return sum + request.seed_count
+            }, 0)
+
+
+            if($('#warehouse-seeds-select').val() == {{$nursery_seeds_sale->nursery_warehouse_entities_id}}) {
+                seedEntityCount += {{$nursery_seeds_sale->seed_count}}
+            }
+
+
+        }
     </script>
 
     @include('components.payments.script', ['model' => $nursery_seeds_sale, 'is_view_only' => false])

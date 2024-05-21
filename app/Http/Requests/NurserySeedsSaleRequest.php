@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\NurserySeedsSaleStatuses;
 use App\Models\FarmUser;
+use App\Models\NurseryWarehouseEntity;
 use App\Models\SeedType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -27,8 +28,9 @@ class NurserySeedsSaleRequest extends FormRequest
     {
         return [
             "farm_user" => ['required', 'exists:' . FarmUser::class . ',id'],
-            "seed_type" => ['required', 'exists:' . SeedType::class . ',id'],
-            "seed_class" => ['nullable', 'string', 'max:50'],
+//            "seed_type" => ['required', 'exists:' . SeedType::class . ',id'],
+//            "seed_class" => ['nullable', 'string', 'max:50'],
+            'warehouse_seeds' => ['required', 'exists:' . NurseryWarehouseEntity::class . ',id'],
             "seed_count" => ['required', 'integer', 'digits_between:1,7'],
             "price" => ['required', 'numeric', 'regex:/^\d*\.{0,1}\d{0,2}$/'], // for exactly 2 digits: regex:/^(?:[1-9]\d+|\d)(?:\.\d\d)?$/
             "status" => ['required', Rule::enum(NurserySeedsSaleStatuses::class)],
