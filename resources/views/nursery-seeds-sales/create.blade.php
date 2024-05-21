@@ -50,10 +50,6 @@
                                     @endif
                                 </select>
                             </div>
-                        </div>
-
-
-                        <div class="form-row mb-3">
                             <div class="col-12 col-sm-4">
                                 <label for="seed-count">عدد البذور</label>
                                 <input id='seed-count' type="number" min=0 step="1" name="seed_count"
@@ -63,12 +59,8 @@
                                        class="form-control">
                                 <small id="seed-remaining" class="form-text text-muted"></small>
                             </div>
-
                         </div>
-
                         <div class="form-row mb-3">
-
-
                             <div class="col-12 col-sm-4">
                                 <label for="status">الحالة</label>
                                 <select class="form-control select2" required id='status' name='status'
@@ -79,9 +71,6 @@
                                     @endforeach
                                 </select>
                             </div>
-                        </div>
-
-                        <div class="form-row mb-3">
                             <div class="col-12 col-sm-4">
                                 <label for="price">السعر</label>
                                 <div class="input-group mb-2">
@@ -94,9 +83,14 @@
                                     </div>
                                 </div>
                             </div>
-
+                            <div class="col-12 col-sm-4">
+                                <label for="sold-date">تاريخ بيع البذور</label>
+                                <input type="date" name="sold_at"
+                                       class="form-control"
+                                       value="{{ old('sold_at') }}"
+                                       id="sold-date">
+                            </div>
                         </div>
-
                         @include('components.payments.view', ['model' => null, 'is_view_only' => false])
 
                         <div class="form-group">

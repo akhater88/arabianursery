@@ -110,6 +110,16 @@
                             </div>
                         </div>
 
+                        <div class="form-row mb-3">
+                            <div class="col-12 col-sm-4">
+                                <label for="received-date">تاريخ استلام البذور</label>
+                                <input type="date" name="received_at"
+                                       class="form-control"
+                                       value="{{ old('received_at', $nursery_warehouse_entity?->received_at) }}"
+                                       id="received-date">
+                            </div>
+                        </div>
+
                         @include('components.payments.view', ['model' => $nursery_warehouse_entity, 'is_view_only' => false])
 
                         <div class="form-group">

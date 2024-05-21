@@ -58,6 +58,7 @@ class NurserySeedsSaleController extends Controller
             "farm_user_id" => $request->farm_user,
             "nursery_warehouse_entities_id" => $request->warehouse_seeds,
             "nursery_id" => $request->user()->nursery->id,
+            "sold_at" => $request->sold_at,
             "seed_count" => $request->seed_count,
             "price" => $request->price,
             "status" => $request->status,
@@ -105,6 +106,7 @@ class NurserySeedsSaleController extends Controller
         $nurserySeedsSale = $nursery->nurserySeedsSales()->findOrFail($nurserySeedsSale->id);
         $nurserySeedsSale->update([
             "farm_user" => $request->farm_user,
+            "sold_at" => $request->sold_at,
             "nursery_warehouse_entities_id" => $request->warehouse_seeds,
             "seed_count" => $request->seed_count,
             "price" => $request->price,

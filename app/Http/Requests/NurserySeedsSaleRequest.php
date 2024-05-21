@@ -30,6 +30,7 @@ class NurserySeedsSaleRequest extends FormRequest
             "farm_user" => ['required', 'exists:' . FarmUser::class . ',id'],
 //            "seed_type" => ['required', 'exists:' . SeedType::class . ',id'],
 //            "seed_class" => ['nullable', 'string', 'max:50'],
+            "sold_at" => ['required'],
             'warehouse_seeds' => ['required', 'exists:' . NurseryWarehouseEntity::class . ',id'],
             "seed_count" => ['required', 'integer', 'digits_between:1,7'],
             "price" => ['required', 'numeric', 'regex:/^\d*\.{0,1}\d{0,2}$/'], // for exactly 2 digits: regex:/^(?:[1-9]\d+|\d)(?:\.\d\d)?$/
