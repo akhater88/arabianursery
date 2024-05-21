@@ -55,7 +55,7 @@
 
     <!-- Custom style for RTL -->
     <link rel="stylesheet" href={{asset("dist/css/custom.css")}}>
-
+    <script src="https://cdn.amplitude.com/libs/analytics-browser-2.7.3-min.js.gz"></script><script src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.2.3-min.js.gz"></script><script src="https://cdn.amplitude.com/libs/plugin-autocapture-browser-0.9.0-min.js.gz"></script><script>window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1})).promise.then(function() {window.amplitude.add(window.amplitudeAutocapturePlugin.plugin());window.amplitude.init('e1b607506616fb36070161d483b20845');});</script>
     @vite(['resources/js/app.js'])
 
 </head>
