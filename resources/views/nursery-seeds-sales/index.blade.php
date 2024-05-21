@@ -79,7 +79,7 @@
                                         <td>{{$nursery_seeds_sale->farmUser?->name}}</td>
                                         <td>{{$nursery_seeds_sale->farmUser?->mobile_number}}</td>
                                         <td>{{$nursery_seeds_sale->seed_count}}</td>
-                                        <td style="min-width:170px">{{"{$nursery_seeds_sale->seedType->name} - {$nursery_seeds_sale->seed_class}"}}</td>
+                                        <td style="min-width:170px">{{"{$nursery_seeds_sale->nurseryWarehouseEntityService->option_name}"}}</td>
                                         <td>
                                             <form id="seedling-service-{{$nursery_seeds_sale->id}}-status-form">
                                                 <select class="form-control" required id='status-{{$nursery_seeds_sale->id}}' name='status'
@@ -94,9 +94,9 @@
                                         </td>
                                         <td>
                                             <div class="col-12" style="min-width:170px">
-                                                <a class="btn btn-primary" href="{{route('nursery-seeds-sales.show', $nursery_seeds_sale->id)}}">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
+{{--                                                <a class="btn btn-primary" href="{{route('nursery-seeds-sales.show', $nursery_seeds_sale->id)}}">--}}
+{{--                                                    <i class="fas fa-eye"></i>--}}
+{{--                                                </a>--}}
                                                 @hasrole('nursery-admin')
                                                 <a class="btn btn-info" href="{{route('nursery-seeds-sales.edit', $nursery_seeds_sale->id)}}">
                                                     <i class="fas fa-pen"></i>
