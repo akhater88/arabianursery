@@ -45,9 +45,15 @@ class NurserySeedsSale extends Model
         return $this->belongsTo(FarmUser::class);
     }
 
+    // I belive this has been here by mistake we should remove it
     public function seedlingPurchaseRequests(): hasMany
     {
         return $this->hasMany(SeedlingPurchaseRequest::class);
+    }
+
+    public function nurseryWarehouseEntityService(): belongsTo
+    {
+        return $this->belongsTo(NurseryWarehouseEntity::class, 'nursery_warehouse_entities_id', 'id');
     }
 
     public function images(): hasMany

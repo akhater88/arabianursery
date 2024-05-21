@@ -1,4 +1,4 @@
-@php use App\Models\FarmUser;use App\Models\SeedlingService;use App\Models\SeedType; @endphp
+@php use App\Models\FarmUser;use App\Models\NurseryWarehouseEntity;use App\Models\SeedType; @endphp
 @extends('layouts.dashboard')
 
 @section('content')
@@ -39,35 +39,19 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="form-row mb-3">
-
-
                             <div class="col-12 col-sm-4">
-                                <label for="seed-type">نوع البذار</label>
-                                <div class="input-group mb-2">
-                                    <select class="form-control select2" id='seed-type' name='seed_type'
-                                            required style="width: 70%;">
-                                        @if(old('seed_type'))
-                                            <option selected value="{{ old('seed_type') }}">
-                                                {{ SeedType::find(old('seed_type'))?->name }}
-                                            </option>
-                                        @endif
-                                    </select>
-                                    <div class="input-group-prepend ">
-                                        <div class="btn btn-info" data-toggle="modal" data-target="#addSeedTypeModal"><i
-                                                class="fas fa-plus"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-12 col-sm-4">
-                                <label for="seed-class">الصنف</label>
-                                <input id='seed-class' type="text" name='seed_class' value="{{ old('seed_class') }}"
-                                       class="form-control">
+                                <label for="warehouse-seeds-select">من بذور المخزن</label>
+                                <select class="form-control select2" id='warehouse-seeds-select' name='warehouse_seeds'
+                                        required style="width: 100%;">
+                                    @if(old('warehouse_seeds'))
+                                        <option selected value="{{ old('warehouse_seeds') }}">
+                                            {{ NurseryWarehouseEntity::whereId(old('warehouse_seeds'))->first()?->option_name }}
+                                        </option>
+                                    @endif
+                                </select>
                             </div>
                         </div>
+
 
                         <div class="form-row mb-3">
                             <div class="col-12 col-sm-4">
@@ -75,7 +59,9 @@
                                 <input id='seed-count' type="number" min=0 step="1" name="seed_count"
                                        value="{{ old('seed_count') }}"
                                        required
+                                       onchange="setRemainingSeeds(this.value)"
                                        class="form-control">
+                                <small id="seed-remaining" class="form-text text-muted"></small>
                             </div>
 
                         </div>
@@ -162,35 +148,6 @@
         </div>
     </div>
 
-    <!-- Add Seed Type Modal -->
-    <div class="modal fade" id="addSeedTypeModal" tabindex="-1" aria-labelledby="addSeedTypeModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addSeedTypeModalLabel">إضافة نوع جديد</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div id='add-seed-type-errors' class="alert alert-danger" style="display: none">
-                    </div>
-                    <form id="add-seed-type-form">
-                        @csrf
-                        <div class="form-group">
-                            <label for="seed-type-name">الاسم</label>
-                            <input required type="text" class="form-control" name="seed_type_name" id="seed-type-name">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
-                    <button type="submit" class="btn btn-primary" form="add-seed-type-form">إضافة</button>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('scripts')
@@ -222,33 +179,6 @@
             });
         });
 
-        $('#add-seed-type-form').on('submit', function (e) {
-            e.preventDefault();
-
-            $.ajax({
-                type: "POST",
-                url: "{{route('seed-types.store')}}",
-                data: $(this).serialize(),
-                success: function (data) {
-                    $('#addSeedTypeModal').modal('hide');
-
-                    document.getElementById('alert-success').style.display = 'block'
-                    document.getElementById('alert-success').innerText = 'تم إضافة النوع بنجاح'
-                    document.getElementById("add-seed-type-form").reset();
-
-                    if ($('#seed-type').find("option[value='" + data.id + "']").length) {
-                        $('#seed-type').val(data.id).trigger('change');
-                    } else {
-                        const newOption = new Option(data.name, data.id, true, true);
-                        $('#seed-type').append(newOption).trigger('change');
-                    }
-                },
-                error: (response) => {
-                    showErrors(response, 'add-seed-type-errors')
-                }
-            });
-        });
-
         function showErrors(response, divId) {
             let errors = '<ul>'
 
@@ -264,14 +194,52 @@
     </script>
 
     <script>
-        $('#seed-type').select2({
+        $('#warehouse-seeds-select').select2({
             theme: 'bootstrap4',
             dir: 'rtl',
             ajax: {
-                url: "{{route('seed-types.search')}}",
+                url: "{{route('warehouse-entities.search')}}",
                 dataType: 'json',
             }
         })
+
+        let seedEntityCount = null;
+        let inputEntityCount = 0
+
+
+        $('#warehouse-seeds-select').on('select2:select', async (e) => {
+            try {
+                await updateSeedsSalesCount(e.params.data.id)
+                setRemainingSeeds(inputEntityCount)
+            } catch (e) {
+                throw e;
+            }
+        })
+
+        function setRemainingSeeds(value) {
+            inputEntityCount = value
+            console.log('Here AM I  '+seedEntityCount);
+            if(seedEntityCount !== null) {
+                let remaining = seedEntityCount - value;
+                //remaining = remaining > 0 ? remaining : 0
+                document.getElementById('seed-remaining').innerText = `المتبقي: ${remaining}`
+            }
+        }
+
+        async function updateSeedsSalesCount(warehouseEntityId) {
+            let response = await axios.get(`{{route('warehouse-entities.get', '')}}/${warehouseEntityId}`);
+            console.log(response.data)
+
+            seedEntityCount = response.data.quantity - response.data.seeds_sales.reduce((sum, request) => {
+
+                return sum + request.seed_count
+            }, 0)
+
+            console.log(seedEntityCount)
+        }
+    </script>
+
+    <script>
 
         $('#farm-user-select').select2({
             theme: 'bootstrap4',

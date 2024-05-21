@@ -112,7 +112,10 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
     Route::get('warehouse-entities/export', [NurseryWarehouseEntityController::class, 'export'])->name('warehouse-entities.export');
     Route::resource('warehouse-entities', NurseryWarehouseEntityController::class)->parameters([
         'warehouse-entities' => 'nursery_warehouse_entity'
-    ]);
+    ])->except('search');
+    Route::get('warehouse-entities-aj/search', [NurseryWarehouseEntityController::class, 'search'])->name('warehouse-entities.search');
+    Route::get('warehouse-entities-aj/get/{id}', [NurseryWarehouseEntityController::class, 'get'])->name('warehouse-entities.get');
+
 
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');

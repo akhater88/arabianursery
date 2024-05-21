@@ -20,7 +20,7 @@ class NurserySeedsSaleController extends Controller
     {
         $user = Auth::user();
         $nursery = $user->nursery;
-        $nurserySeedsSales = $nursery->nurserySeedsSales()->with(['farmUser', 'seedType'])
+        $nurserySeedsSales = $nursery->nurserySeedsSales()->with(['farmUser', 'nurseryWarehouseEntityService'])
             ->orderBy('id', 'DESC')
             ->filterBy($filters)
             ->paginate()
@@ -56,9 +56,8 @@ class NurserySeedsSaleController extends Controller
     {
         $seeds_sale = $request->user()->nurserySeedsSales()->create([
             "farm_user_id" => $request->farm_user,
-            "seed_type_id" => $request->seed_type,
+            "nursery_warehouse_entities_id" => $request->warehouse_seeds,
             "nursery_id" => $request->user()->nursery->id,
-            "seed_class" => $request->seed_class,
             "seed_count" => $request->seed_count,
             "price" => $request->price,
             "status" => $request->status,
@@ -88,6 +87,7 @@ class NurserySeedsSaleController extends Controller
         }
         $nursery = $user->nursery;
         $nurserySeedsSale = $nursery->nurserySeedsSales()->findOrFail($nurserySeedsSale->id);
+
         return view('nursery-seeds-sales/edit', [
             'page_title' => 'تعديل مبيعات بذور',
             'statuses' => NurserySeedsSaleStatuses::values(),
@@ -105,6 +105,8 @@ class NurserySeedsSaleController extends Controller
         $nurserySeedsSale = $nursery->nurserySeedsSales()->findOrFail($nurserySeedsSale->id);
         $nurserySeedsSale->update([
             "farm_user" => $request->farm_user,
+            "nursery_warehouse_entities_id" => $request->warehouse_seeds,
+            "seed_count" => $request->seed_count,
             "price" => $request->price,
             "status" => $request->status,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,

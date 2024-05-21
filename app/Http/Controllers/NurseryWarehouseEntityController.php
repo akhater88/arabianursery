@@ -8,7 +8,9 @@ use App\Http\Requests\StoreNurseryWarehouseEntityRequest;
 use App\Http\Requests\UpdateNurseryWarehouseEntityRequest;
 use App\Models\EntityType;
 use App\Models\NurseryWarehouseEntity;
+use App\Models\SeedlingService;
 use App\Models\SeedType;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -19,7 +21,7 @@ class NurseryWarehouseEntityController extends Controller
     {
         $user = Auth::user();
         $nursery = $user->nursery;
-        $nurseryWarehouseEntities = $nursery->nurseryWarehouseEntities()->with(['agriculturalSupplyStoreUser', 'entity'])
+        $nurseryWarehouseEntities = $nursery->nurseryWarehouseEntities()->with(['agriculturalSupplyStoreUser', 'entity', 'seedsSales'])
             ->orderBy('id', 'DESC')
             ->filterBy($filters)
             ->paginate()
@@ -137,5 +139,37 @@ class NurseryWarehouseEntityController extends Controller
         $nurseryWarehouseEntity = $nursery->nurseryWarehouseEntities()->findOrFail($nursery_warehouse_entity->id);
         $nurseryWarehouseEntity->delete();
         return redirect()->back()->with('status', 'تم الحذف بنجاح');
+    }
+
+    public function search(Request $request)
+    {
+        $user = Auth::user();
+        $nursery = $user->nursery;
+        $warehouse_entity = NurseryWarehouseEntity::query()->with('seedType')->where('nursery_id',$nursery->id)->limit(7);
+
+        if ($request->q) {
+            $warehouse_entity->where('seed_class', 'like', "%{$request->q}%")
+                ->orWhereRelation('seedType', 'name', 'like', "%{$request->q}%");
+        }
+
+        $warehouse_entity->where('nursery_id', $request->user()->nursery->id);
+
+        return [
+            'results' => $warehouse_entity->get()->map(function ($entity) {
+                $option = [
+                    'id' => $entity->id,
+                    'text' => $entity->option_name
+                ];
+                return $option;
+            }
+            )];
+    }
+
+    public function get(Request $request)
+    {
+        return NurseryWarehouseEntity::with('seedsSales')
+            ->where('nursery_id', $request->user()->nursery->id)
+            ->where('id', $request->id)
+            ->firstOrFail();
     }
 }

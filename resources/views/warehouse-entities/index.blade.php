@@ -74,6 +74,7 @@
                                 <th>اسم المزود</th>
                                 <th>رقم هاتف المزود</th>
                                 <th>الكمية</th>
+                                <th>الكمية المتبقية</th>
                                 <th>النوع</th>
                                 <th>الصنف</th>
                                 <th>العمليات</th>
@@ -86,6 +87,7 @@
                                         <td>{{$nursery_warehouse_entity->agriculturalSupplyStoreUser->name}}</td>
                                         <td>{{$nursery_warehouse_entity->agriculturalSupplyStoreUser->mobile_number}}</td>
                                         <td>{{$nursery_warehouse_entity->quantity}}</td>
+                                        <td>{{$nursery_warehouse_entity->quantity - $nursery_warehouse_entity->seedsSales->sum('seed_count')}}</td>
                                         <td>{{$nursery_warehouse_entity->entity->name}}</td>
                                         <td>{{$nursery_warehouse_entity->entity_sub_type}}</td>
                                         <td>
