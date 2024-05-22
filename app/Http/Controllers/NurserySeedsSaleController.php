@@ -59,6 +59,7 @@ class NurserySeedsSaleController extends Controller
             "nursery_warehouse_entities_id" => $request->warehouse_seeds,
             "nursery_id" => $request->user()->nursery->id,
             "sold_at" => $request->sold_at,
+            "comment" => $request->comment,
             "seed_count" => $request->seed_count,
             "price" => $request->price,
             "status" => $request->status,
@@ -107,6 +108,7 @@ class NurserySeedsSaleController extends Controller
         $nurserySeedsSale->update([
             "farm_user" => $request->farm_user,
             "sold_at" => $request->sold_at,
+            "comment" => $request->comment,
             "nursery_warehouse_entities_id" => $request->warehouse_seeds,
             "seed_count" => $request->seed_count,
             "price" => $request->price,

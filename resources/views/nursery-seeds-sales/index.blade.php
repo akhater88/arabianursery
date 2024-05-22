@@ -63,7 +63,7 @@
                         <table id="example2" class="table table-bordered table-hover">
                             <thead>
                             <tr>
-                                <th>الرقم التعريفي</th>
+                                <th>تاريخ البيع</th>
                                 <th>اسم العميل</th>
                                 <th>رقم الهاتف</th>
                                 <th>عدد البذور</th>
@@ -75,7 +75,7 @@
                             <tbody>
                                 @foreach($nursery_seeds_sales as $nursery_seeds_sale)
                                     <tr>
-                                        <td>{{$nursery_seeds_sale->id}}</td>
+                                        <td>{{$nursery_seeds_sale->sold_at}}</td>
                                         <td>{{$nursery_seeds_sale->farmUser?->name}}</td>
                                         <td>{{$nursery_seeds_sale->farmUser?->mobile_number}}</td>
                                         <td>{{$nursery_seeds_sale->seed_count}}</td>

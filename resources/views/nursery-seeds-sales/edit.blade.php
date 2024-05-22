@@ -85,7 +85,14 @@
                                        id="sold-date">
                             </div>
                         </div>
-
+                        <div class="form-row mb-3">
+                            <div class="col-12 col-sm-12">
+                                <label for="comment">ملاحظات</label>
+                                <div class="input-group mb-2">
+                                    <textarea name="comment" class="form-control" id="comment">{{ old('sold_at', $nursery_seeds_sale->comment) }}</textarea>
+                                </div>
+                            </div>
+                        </div>
                         @include('components.payments.view', ['model' => $nursery_seeds_sale, 'is_view_only' => false])
 
                         <div class="form-group">
