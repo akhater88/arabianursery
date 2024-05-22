@@ -70,7 +70,7 @@
                         <table id="example2" class="table table-bordered table-hover">
                             <thead>
                             <tr>
-                                <th>الرقم التعريفي</th>
+                                <th>تاريخ الادخال</th>
                                 <th>اسم المزود</th>
                                 <th>رقم هاتف المزود</th>
                                 <th>الكمية</th>
@@ -83,7 +83,7 @@
                             <tbody>
                                 @foreach($nursery_warehouse_entities as $nursery_warehouse_entity)
                                     <tr>
-                                        <td>{{$nursery_warehouse_entity->id}}</td>
+                                        <td>{{$nursery_warehouse_entity->received_at}}</td>
                                         <td>{{$nursery_warehouse_entity->agriculturalSupplyStoreUser->name}}</td>
                                         <td>{{$nursery_warehouse_entity->agriculturalSupplyStoreUser->mobile_number}}</td>
                                         <td>{{$nursery_warehouse_entity->quantity}}</td>
