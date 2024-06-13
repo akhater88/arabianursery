@@ -118,6 +118,12 @@
                                        value="{{ old('received_at', $nursery_warehouse_entity?->received_at) }}"
                                        id="received-date">
                             </div>
+                            <div class="col-12 col-sm-8">
+                                <label for="comment">ملاحظات</label>
+                                <div class="input-group mb-2">
+                                <textarea name="comment" class="form-control" id="comment">{{ old('sold_at', $nursery_warehouse_entity?->comment) }}</textarea>
+                                </div>
+                            </div>
                         </div>
 
                         @include('components.payments.view', ['model' => $nursery_warehouse_entity, 'is_view_only' => false])
