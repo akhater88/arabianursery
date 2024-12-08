@@ -39,8 +39,8 @@ class AuthController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'farm_name' => ['required', 'string', 'max:255'],
-            'mobile_number' => ['required', 'string', 'max:255'],
-            'country_code' => ['required', 'string', 'max:5'],
+            'mobile_number' => ['required', 'string', 'max:255', 'unique:' . FarmUser::class],
+            //'country_code' => ['required', 'string', 'max:5'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . FarmUser::class],
             'password' => ['required', Rules\Password::defaults()],
         ]);
