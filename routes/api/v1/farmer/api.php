@@ -25,6 +25,7 @@ Route::get('/post/{post}', 'PostsController@getPostById');
 Route::get('/page/{code}', 'PagesController@getPageByCode');
 
 Route::get('/supply-stores', 'AgriculturalSupplyStoreController@index');
+Route::get('/stores/{storeId}/products', 'ProductController@index');
 
 
 

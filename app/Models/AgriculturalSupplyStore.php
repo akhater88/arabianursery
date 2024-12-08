@@ -17,4 +17,10 @@ class AgriculturalSupplyStore extends Model
         'address',
         'location'
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'store_id');
+    }
+
 }
