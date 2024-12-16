@@ -28,7 +28,7 @@ Route::get('/supply-stores', 'AgriculturalSupplyStoreController@index');
 Route::get('/stores/{storeId}/products', 'ProductController@index');
 
 Route::get('/nurseries', 'nurseriesController@nurseries');
-Route::get('/nurseries/{id}', 'nurseriesController@nurseriesById');
+Route::get('/nursery/{id}', 'nurseriesController@nurseriesById');
 
 
 
