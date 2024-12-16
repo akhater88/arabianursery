@@ -33,6 +33,28 @@ class nurseriesController extends Controller
         return response()->json($data, 200);
     }
 
+    public function nurseriesById($id)
+    {
+        $userId = 0;
+        if(Auth::check()) {
+            $userId = Auth::user()->id;
+        }
+
+            $data = Nursery::with(['seedlingServices' => function($qry) use ($userId) {
+                    $qry ->where(['farm_user_id' =>$userId])
+                    ->whereIn('status', [
+                        SeedlingServiceStatuses::SEEDS_NOT_RECEIVED,
+                        SeedlingServiceStatuses::SEEDS_RECEIVED,
+                        SeedlingServiceStatuses::GERMINATION_COMPLETED,
+                        SeedlingServiceStatuses::READY_FOR_PICKUP,
+                        SeedlingServiceStatuses::DELIVERED
+                    ]);
+                },'nurserySeedsSales'])->find($id);
+
+            return response()->json($data, 200);
+
+    }
+
     public function getSeedlingById($seedlingID){
         $seedlingService = SeedlingService::with(['seedType', 'nursery', 'images' => function ($query) {
             $query->orderBy('created_at', 'desc');
