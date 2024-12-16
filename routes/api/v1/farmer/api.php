@@ -28,7 +28,7 @@ Route::get('/supply-stores', 'AgriculturalSupplyStoreController@index');
 Route::get('/stores/{storeId}/products', 'ProductController@index');
 
 Route::get('/nurseries', 'nurseriesController@nurseries');
-
+Route::get('/nursery/{id}', 'nurseriesController@nurseriesById');
 
 
 
@@ -43,4 +43,5 @@ Route::group(['middleware'=>'auth:farmer_api'], function () {
     Route::put('/farmer/update-profile', 'AuthController@updateProfile' );
     Route::put('/farmer/change-password', 'AuthController@changePassword' );
     Route::delete('/farmer/remove-account','AuthController@removeAccount' );
+
 });
