@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Nursery extends Model
 {
@@ -19,6 +20,8 @@ class Nursery extends Model
     protected $casts = [
         'location' => Point::class,
     ];
+
+
 
     public function nurseryUsers(): hasMany
     {
