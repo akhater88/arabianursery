@@ -27,6 +27,9 @@ Route::get('/page/{code}', 'PagesController@getPageByCode');
 Route::get('/supply-stores', 'AgriculturalSupplyStoreController@index');
 Route::get('/stores/{storeId}/products', 'ProductController@index');
 
+Route::get('/nurseries', 'nurseriesController@nurseries');
+
+
 
 
 Route::group(['middleware'=>'auth:farmer_api'], function () {

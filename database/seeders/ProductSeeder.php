@@ -12,7 +12,7 @@ class ProductSeeder extends Seeder
         Product::create([
             'store_id' => 1,
             'name' => 'Premium Fertilizer',
-            'image' => 'images/products/fertilizer.png',
+            'image' => 'products/fertilizer.png',
             'description' => 'High-quality fertilizer for better crop yield.',
             'price' => 19.99,
         ]);
@@ -20,7 +20,7 @@ class ProductSeeder extends Seeder
         Product::create([
             'store_id' => 1,
             'name' => 'Organic Pesticide',
-            'image' => 'images/products/pesticide.png',
+            'image' => 'products/pesticide.png',
             'description' => 'Eco-friendly pesticide for safe pest control.',
             'price' => 15.49,
         ]);
