@@ -35,49 +35,66 @@ class nurseriesController extends Controller
 
     public function nurseriesById($id)
     {
+
+        $data = Nursery::with(['nurseryUsers' => function ($query) {
+            $query->first(); // Include 'id' as foreign key
+        }])->find($id);
+        $data['owner'] = [
+            'name'=> $data->nurseryUsers[0]['name'],
+            'mobile_number' => $data->nurseryUsers[0]['country_code'].$data->nurseryUsers[0]['mobile_number'],
+            'email' => $data->nurseryUsers[0]['email']
+        ];
+
+        unset($data->nurseryUsers);
+        return response()->json($data, 200);
+
+    }
+
+    public function getSeedlingById($id){
         $userId = 0;
         if(Auth::check()) {
             $userId = Auth::user()->id;
         }
+        $data = Nursery::with(['seedlingServices' => function($qry) use ($userId){
+            $qry->where('farm_user_id', $userId)
+                ->whereIn('status', [
+                SeedlingServiceStatuses::SEEDS_NOT_RECEIVED,
+                SeedlingServiceStatuses::SEEDS_RECEIVED,
+                SeedlingServiceStatuses::GERMINATION_COMPLETED,
+                SeedlingServiceStatuses::READY_FOR_PICKUP,
+                SeedlingServiceStatuses::DELIVERED
+            ]);
+        }])->find($id);
 
-            $data = Nursery::with(['seedlingServices' => function($qry) use ($userId) {
-                    $qry ->where(['farm_user_id' =>$userId])
-                    ->whereIn('status', [
-                        SeedlingServiceStatuses::SEEDS_NOT_RECEIVED,
-                        SeedlingServiceStatuses::SEEDS_RECEIVED,
-                        SeedlingServiceStatuses::GERMINATION_COMPLETED,
-                        SeedlingServiceStatuses::READY_FOR_PICKUP,
-                        SeedlingServiceStatuses::DELIVERED
-                    ]);
-                },'nurserySeedsSales'])->find($id);
 
-            return response()->json($data, 200);
+        return response()->json($data, 200);
+
 
     }
 
-    public function getSeedlingById($seedlingID){
-        $seedlingService = SeedlingService::with(['seedType', 'nursery', 'images' => function ($query) {
-            $query->orderBy('created_at', 'desc');
-        }])->withSum([
+    public function getNurserySeedlingForSaleById(Request $request,$id){
+
+        $paginator = SeedlingService::with(['seedType', 'nursery','images'])->withSum([
             'seedlingPurchaseRequests' => function ($qry){ $qry->where('status',1);}
-        ], 'tray_count')->where('id', $seedlingID)->where('share_with_farmers', true)->first();
-
-        if($seedlingService){
-            $data = $seedlingService->toArray();
-            $seedlingAge = $seedlingService->created_at->diffInDays(\Carbon\Carbon::now());
-            $handedPeriod = $data['germination_period'] - $seedlingAge;
-            $handedDate = \Carbon\Carbon::now()->addDays($handedPeriod)->format('d-m-Y');
-            $data['expected_handed_date'] = $handedDate;
-            $data['expected_handed_period'] = $handedPeriod;
-            $data['available_tray'] = $data['tray_count'] - $data['seedling_purchase_requests_sum_tray_count'];
-            $data['show_price'] = $data['tray_shared_price'] != null ? true : false;
-            return response()->json($data, 200);
-        }
-        else{
-            return response()->json(['message' => 'Not Found'], 404);
-        }
+        ], 'tray_count')->where('share_with_farmers', true) ->whereIn('status', [
+            SeedlingServiceStatuses::SEEDS_NOT_RECEIVED,
+            SeedlingServiceStatuses::SEEDS_RECEIVED,
+            SeedlingServiceStatuses::GERMINATION_COMPLETED,
+            SeedlingServiceStatuses::READY_FOR_PICKUP,
+            SeedlingServiceStatuses::DELIVERED
+        ])
+            ->where('nursery_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate($request['limit'], ['*'], 'page', $request['offset']);
+        $seedlings = Helpers::seedling_data_formatting($paginator->items(), true);
+        $data = [
+            'total_size' => $paginator->total(),
+            'limit' => $request['limit'],
+            'offset' => $request['offset'],
+            'seedlings' => $seedlings
+        ];
+        return response()->json($data, 200);
 
     }
-
 
 }

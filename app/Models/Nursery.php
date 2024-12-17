@@ -28,6 +28,11 @@ class Nursery extends Model
         return $this->hasMany(NurseryUser::class);
     }
 
+    public function nurseryOnwer(): hasMany
+    {
+        return $this->hasMany(NurseryUser::class);
+    }
+
     public function seedlingServices(): hasMany
     {
         return $this->hasMany(SeedlingService::class);
