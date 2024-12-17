@@ -50,22 +50,29 @@ class nurseriesController extends Controller
 
     }
 
-    public function getSeedlingById($id){
+    public function getSeedlingById(Request $request, $id){
         $userId = 0;
         if(Auth::check()) {
             $userId = Auth::user()->id;
         }
-        $data = Nursery::with(['seedlingServices' => function($qry) use ($userId){
-            $qry->where('farm_user_id', $userId)
-                ->whereIn('status', [
-                SeedlingServiceStatuses::SEEDS_NOT_RECEIVED,
-                SeedlingServiceStatuses::SEEDS_RECEIVED,
-                SeedlingServiceStatuses::GERMINATION_COMPLETED,
-                SeedlingServiceStatuses::READY_FOR_PICKUP,
-                SeedlingServiceStatuses::DELIVERED
-            ]);
-        }])->find($id);
-
+        $paginator = SeedlingService::with(['seedType', 'nursery','images'])->whereIn('status', [
+            SeedlingServiceStatuses::SEEDS_NOT_RECEIVED,
+            SeedlingServiceStatuses::SEEDS_RECEIVED,
+            SeedlingServiceStatuses::GERMINATION_COMPLETED,
+            SeedlingServiceStatuses::READY_FOR_PICKUP,
+            SeedlingServiceStatuses::DELIVERED
+        ])
+            ->where('farm_user_id', $userId)
+            ->where('nursery_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate($request['limit'], ['*'], 'page', $request['offset']);
+        $seedlings = Helpers::seedling_data_formatting($paginator->items(), true);
+        $data = [
+            'total_size' => $paginator->total(),
+            'limit' => $request['limit'],
+            'offset' => $request['offset'],
+            'seedlings' => $seedlings
+        ];
 
         return response()->json($data, 200);
 
