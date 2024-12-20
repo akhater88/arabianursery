@@ -22,14 +22,39 @@ class nurseriesController extends Controller
 
     public function nurseries(Request $request)
     {
-        $paginator = Nursery::paginate($request['limit'], ['*'], 'page', $request['offset']);;
+        $paginator = Nursery::with(['nurseryUsers'])->paginate($request['limit'], ['*'], 'page', $request['offset']);
+
+
+        $nurseries = collect($paginator->items())->map(function ($nursery) {
+            $owner = $nursery->nurseryUsers->first(); // Get the first user (if exists)
+            return [
+                'id' => $nursery->id,
+                'name' => $nursery->name,
+                'location' => $nursery->location,
+                'address' => $nursery->address,
+                'created_at' => $nursery->created_at,
+                'updated_at' => $nursery->updated_at,
+                'image_path' => $nursery->image_path,
+                'description' => $nursery->description,
+                'owner' => $owner ? [
+                    'name' => $owner->name,
+                    'mobile_number' => $owner->country_code . $owner->mobile_number,
+                    'email' => $owner->email,
+                ] :  [
+                    'name' => '',
+                    'mobile_number' => '',
+                    'email' => '',
+                ], // Handle case where there's no owner
+            ];
+        });
 
         $data = [
             'total_size' => $paginator->total(),
             'limit' => $request['limit'],
             'offset' => $request['offset'],
-            'nurseries' => $paginator->items()
+            'nurseries' => $nurseries,
         ];
+
         return response()->json($data, 200);
     }
 
