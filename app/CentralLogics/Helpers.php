@@ -41,6 +41,7 @@ class Helpers
                 $item['min_delivery_time'] = null;
                 $item['max_delivery_time'] = null;
             }
+
             $seedlingAge = $item['created_at']->diffInDays(\Carbon\Carbon::now());
             $handedPeriod = $item['germination_period'] - $seedlingAge;
             $handedDate = \Carbon\Carbon::now()->addDays($handedPeriod)->format('d-m-Y');
@@ -48,7 +49,10 @@ class Helpers
             $item['expected_handed_period'] = $handedPeriod;
             $item['available_tray'] = $item['tray_count'] - $item['seedling_purchase_requests_sum_tray_count'];
             $item['show_price'] = $item['tray_shared_price'] != null ? true : false;
-
+            $item['price_per_tray'] = (double) $item['price_per_tray'];
+            $item['discount_amount'] =(double) $item['discount_amount'];
+            $item['additional_cost'] = (double) $item['additional_cost'];
+            $item['tray_shared_price'] = (double) $item['tray_shared_price'];
             array_push($storage, $item);
         }
         $data = $storage;
