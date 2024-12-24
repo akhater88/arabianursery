@@ -18,7 +18,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $farmUser = FarmUser::where('mobile_number', $request->mobile_number)->first();
+        $farmUser = FarmUser::with('Farm')->where('mobile_number', $request->mobile_number)->first();
 
         if ($farmUser && Hash::check($request->password, $farmUser->password)) {
             $tokenResult = $farmUser->createToken('Farmer User Token');
