@@ -27,6 +27,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'token' => $tokenResult->accessToken,
+                "farmer_info" => $farmUser,
                 'token_type' => 'Bearer',
             ]);
         } else {
