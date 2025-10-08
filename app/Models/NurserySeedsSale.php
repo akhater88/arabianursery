@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\NurserySeedsSaleStatuses;
 use App\Traits\Filterable;
+use App\Traits\HasSeasons;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
 
 class NurserySeedsSale extends Model
 {
-    use HasFactory, SoftDeletes, Filterable;
+    use HasFactory, SoftDeletes, Filterable, HasSeasons;
 
     protected $guarded = ['id'];
 

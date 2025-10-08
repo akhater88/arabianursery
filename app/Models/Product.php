@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasSeasons;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, HasSeasons;
 
     protected $fillable = [
         'store_id',

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\SeedlingRequestStatuses;
 use App\Traits\Filterable;
+use App\Traits\HasSeasons;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SeedlingPurchaseRequest extends Model
 {
-    use HasFactory, SoftDeletes, Filterable;
+    use HasFactory, SoftDeletes, Filterable, HasSeasons;
 
     protected $guarded = ['id'];
 

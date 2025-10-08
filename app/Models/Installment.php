@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasSeasons;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Installment extends Model
 {
+    use HasSeasons;
     protected $fillable = ['invoice_number','invoice_date', 'amount', 'type', 'nursery_id', 'farm_user_id'];
     /**
      * Get the parent Installmentable model seedling service or Seedling Purchase
