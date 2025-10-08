@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateSeedlingPurchaseRequest;
 use App\Models\Farm;
 use App\Models\FarmUser;
 use App\Models\Nursery;
+use App\Models\Season;
 use App\Models\SeedlingPurchaseRequest;
 use App\Models\SeedlingService;
 use Illuminate\Http\Request;
@@ -51,6 +52,7 @@ class SeedlingPurchaseRequestController extends Controller
         return view('seedling-purchase-requests/create-or-edit', [
             'page_title' => 'طلب شراء أشتال',
             'seedling_purchase_request' => null,
+            'seasons' => Season::orderByDesc('start_date')->get(),
         ]);
     }
 
@@ -76,6 +78,8 @@ class SeedlingPurchaseRequestController extends Controller
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
 
+        $this->syncSeason($seedlingPurchase, $request->season_id);
+
         if($request->payment_type == 'installments' && !empty($request->installments)){
             $instalmentsArray = [];
             foreach ($request->installments as $key => $value ){
@@ -98,9 +102,12 @@ class SeedlingPurchaseRequestController extends Controller
             return abort(403);
         }
         $seedlingPurchaseRequest = $user->seedlingPurchaseRequests()->findOrFail($seedling_purchase_request->id);
+        $seedlingPurchaseRequest->load('seasons');
+
         return view('seedling-purchase-requests/create-or-edit', [
             'page_title' => 'تعديل طلب شراء أشتال',
             'seedling_purchase_request' => $seedlingPurchaseRequest,
+            'seasons' => Season::orderByDesc('start_date')->get(),
         ]);
     }
 
@@ -130,6 +137,8 @@ class SeedlingPurchaseRequestController extends Controller
             'requestedby_type' => $requestedByType,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
+
+        $this->syncSeason($seedlingPurchaseRequest, $request->season_id);
 
         if($request->payment_type == 'installments' && !empty($request->installments)){
             $seedling_purchase_request->installments()->delete();
@@ -233,5 +242,10 @@ class SeedlingPurchaseRequestController extends Controller
         }
 
         return response()->json([],200);
+    }
+
+    protected function syncSeason(SeedlingPurchaseRequest $seedlingPurchaseRequest, $seasonId): void
+    {
+        $seedlingPurchaseRequest->seasons()->sync($seasonId ? [$seasonId] : []);
     }
 }

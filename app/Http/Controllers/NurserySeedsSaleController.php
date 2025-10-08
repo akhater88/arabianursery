@@ -8,6 +8,7 @@ use App\Http\Filters\SeedlingServiceFilter;
 use App\Http\Requests\NurserySeedsSaleRequest;
 use App\Http\Requests\UpdateNurserySeedsSaleRequest;
 use App\Models\NurserySeedsSale;
+use App\Models\Season;
 use App\Models\SeedlingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +50,7 @@ class NurserySeedsSaleController extends Controller
         return view('nursery-seeds-sales/create', [
             'page_title' => 'اضافة مبيعات بذور',
             'statuses' => NurserySeedsSaleStatuses::values(),
+            'seasons' => Season::orderByDesc('start_date')->get(),
         ]);
     }
 
@@ -66,6 +68,8 @@ class NurserySeedsSaleController extends Controller
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
             'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
         ]);
+
+        $this->syncSeason($seeds_sale, $request->season_id);
 
         if($request->payment_type == 'installments' && !empty($request->installments)){
             $instalmentsArray = [];
@@ -90,10 +94,13 @@ class NurserySeedsSaleController extends Controller
         $nursery = $user->nursery;
         $nurserySeedsSale = $nursery->nurserySeedsSales()->findOrFail($nurserySeedsSale->id);
 
+        $nurserySeedsSale->load('seasons');
+
         return view('nursery-seeds-sales/edit', [
             'page_title' => 'تعديل مبيعات بذور',
             'statuses' => NurserySeedsSaleStatuses::values(),
             'nursery_seeds_sale' => $nurserySeedsSale,
+            'seasons' => Season::orderByDesc('start_date')->get(),
         ]);
     }
 
@@ -116,6 +123,7 @@ class NurserySeedsSaleController extends Controller
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
             'installments' => $request->payment_type == 'installments' ? collect($request->installments)->values() : null,
         ]);
+        $this->syncSeason($nurserySeedsSale, $request->season_id);
         if($request->payment_type == 'installments' && !empty($request->installments)){
             $nurserySeedsSale->installments()->delete();
             $instalmentsArray = [];
@@ -185,5 +193,10 @@ class NurserySeedsSaleController extends Controller
         return [
             'success' => true
         ];
+    }
+
+    protected function syncSeason(NurserySeedsSale $nurserySeedsSale, $seasonId): void
+    {
+        $nurserySeedsSale->seasons()->sync($seasonId ? [$seasonId] : []);
     }
 }

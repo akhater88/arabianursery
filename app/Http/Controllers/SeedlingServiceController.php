@@ -10,6 +10,7 @@ use App\Http\Requests\StoreSeedlingServiceRequest;
 use App\Http\Requests\UpdateSeedlingServiceRequest;
 use App\Models\FarmUser;
 use App\Models\Nursery;
+use App\Models\Season;
 use App\Models\SeedlingService;
 use App\Notifications\SeedlingServiceCreated;
 use Illuminate\Http\Request;
@@ -56,6 +57,7 @@ class SeedlingServiceController extends Controller
         return view('seedling-services/create', [
             'page_title' => 'إضافة خدمة تشتيل',
             'statuses' => SeedlingServiceStatuses::values(),
+            'seasons' => Season::orderByDesc('start_date')->get(),
         ]);
     }
 
@@ -79,6 +81,8 @@ class SeedlingServiceController extends Controller
             "status" => $request->status,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
+
+        $this->syncSeason($seedlingService, $request->season_id);
 
 
 
@@ -115,10 +119,12 @@ class SeedlingServiceController extends Controller
         }
         $nursery = $user->nursery;
         $seedlingService = $nursery->seedlingServices()->with(['farmUser' => fn($q) => $q->withTrashed()])->findOrFail($seedling_service->id);
+        $seedlingService->load('seasons');
         return view('seedling-services/edit', [
             'page_title' => 'تعديل خدمة تشتيل',
             'statuses' => SeedlingServiceStatuses::values(),
             'seedling_service' => $seedlingService,
+            'seasons' => Season::orderByDesc('start_date')->get(),
         ]);
     }
 
@@ -144,6 +150,7 @@ class SeedlingServiceController extends Controller
             "status" => $request->status,
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
+        $this->syncSeason($seedlingService, $request->season_id);
         $body = $seedlingService->seedType->name." ".$seedlingService->seed_class.":";
         $isUpdated = $seedling_service->syncImages($request->images);
 
@@ -319,5 +326,10 @@ class SeedlingServiceController extends Controller
             'statuses' => SeedlingServiceStatuses::values(),
         ]);
 
+    }
+
+    protected function syncSeason(SeedlingService $seedlingService, $seasonId): void
+    {
+        $seedlingService->seasons()->sync($seasonId ? [$seasonId] : []);
     }
 }

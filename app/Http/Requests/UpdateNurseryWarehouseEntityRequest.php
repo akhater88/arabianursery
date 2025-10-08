@@ -40,6 +40,7 @@ class UpdateNurseryWarehouseEntityRequest extends FormRequest
             'installments.*.invoice_number' => ['nullable'],
             'installments.*.amount' => ['nullable', Rule::requiredIf(request('payment_type') == 'installments'), 'numeric', 'regex:/^\d*\.{0,1}\d{0,2}$/'],
             'installments.*.invoice_date' => ['nullable', Rule::requiredIf(request('payment_type') == 'installments'), 'date'],
+            'season_id' => ['nullable', 'exists:seasons,id'],
         ];
     }
 }

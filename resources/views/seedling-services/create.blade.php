@@ -157,6 +157,10 @@
                         </div>
 
                         <div class="form-row mb-3">
+                            <x-season-select :seasons="$seasons" :selected="old('season_id')" class="col-12 col-sm-4" />
+                        </div>
+
+                        <div class="form-row mb-3">
                             <div class="col-12 col-sm-4">
                                 <label for="price-per-tray">السعر</label>
                                 <div class="input-group mb-2">
@@ -366,6 +370,11 @@
         })
 
         $('#status').select2({
+            theme: 'bootstrap4',
+            dir: 'rtl',
+        })
+
+        $('#season-id').select2({
             theme: 'bootstrap4',
             dir: 'rtl',
         })
