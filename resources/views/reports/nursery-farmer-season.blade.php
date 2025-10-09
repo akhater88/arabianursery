@@ -201,14 +201,22 @@
                 margin: 1cm;
             }
 
-            .no-print {
-                display: none !important;
-            }
-
+            html,
             body {
+                font-size: 12px;
                 background: #fff;
                 margin: 0;
                 padding: 0;
+                width: 100% !important;
+            }
+
+            .no-print,
+            .main-header,
+            .main-sidebar,
+            .main-footer,
+            .content-header,
+            .control-sidebar {
+                display: none !important;
             }
 
             .wrapper,
@@ -216,10 +224,8 @@
             .content,
             .container-fluid,
             .row,
-            .col-12,
-            .col-md-4,
-            .col-md-3,
-            .col-md-6 {
+            [class^="col-"],
+            [class*=" col-"] {
                 margin: 0 !important;
                 padding: 0 !important;
                 max-width: 100% !important;
@@ -230,18 +236,34 @@
                 margin-right: 0 !important;
             }
 
-            .card-body {
-                padding: 1.25rem !important;
-            }
-
             .card {
                 border: none;
                 box-shadow: none;
                 page-break-inside: avoid;
             }
 
+            .card-body {
+                padding: 1rem !important;
+            }
+
+            h3 {
+                font-size: 18px !important;
+            }
+
+            h4,
+            h5,
+            h6 {
+                font-size: 16px !important;
+            }
+
             table {
                 width: 100% !important;
+            }
+
+            table thead th,
+            table tbody td {
+                padding: 0.5rem !important;
+                font-size: 11px !important;
             }
         }
     </style>
