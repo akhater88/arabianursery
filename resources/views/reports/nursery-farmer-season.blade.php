@@ -203,11 +203,16 @@
 
             html,
             body {
-                font-size: 12px;
+                font-size: 11px;
                 background: #fff;
                 margin: 0;
                 padding: 0;
                 width: 100% !important;
+            }
+
+            body,
+            body * {
+                box-shadow: none !important;
             }
 
             .no-print,
@@ -229,11 +234,21 @@
                 margin: 0 !important;
                 padding: 0 !important;
                 max-width: 100% !important;
+                width: 100% !important;
             }
 
             .content-wrapper {
                 margin-left: 0 !important;
                 margin-right: 0 !important;
+                padding: 0 !important;
+            }
+
+            .content {
+                padding: 0 !important;
+            }
+
+            .card + .card {
+                margin-top: 1rem !important;
             }
 
             .card {
@@ -243,27 +258,32 @@
             }
 
             .card-body {
-                padding: 1rem !important;
+                padding: 0.75rem !important;
             }
 
             h3 {
-                font-size: 18px !important;
+                font-size: 16px !important;
             }
 
             h4,
             h5,
             h6 {
-                font-size: 16px !important;
+                font-size: 14px !important;
             }
 
             table {
                 width: 100% !important;
+                table-layout: fixed;
             }
 
             table thead th,
             table tbody td {
-                padding: 0.5rem !important;
-                font-size: 11px !important;
+                padding: 0.35rem !important;
+                font-size: 10px !important;
+            }
+
+            .table-responsive {
+                overflow: visible !important;
             }
         }
     </style>
