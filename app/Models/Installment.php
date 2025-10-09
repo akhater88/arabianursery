@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Installment extends Model
 {
     use HasSeasons;
-    protected $fillable = ['invoice_number','invoice_date', 'amount', 'type', 'nursery_id', 'farm_user_id'];
+    protected $fillable = ['invoice_number','invoice_date', 'amount', 'type', 'nursery_id', 'farm_user_id', 'farm_user_id_type'];
     /**
      * Get the parent Installmentable model seedling service or Seedling Purchase
      */
@@ -26,6 +26,6 @@ class Installment extends Model
 
     public function farmUser(): belongsTo
     {
-        return $this->belongsTo(FarmUser::class);
+        return $this->belongsTo(FarmUser::class)->withTrashed();
     }
 }

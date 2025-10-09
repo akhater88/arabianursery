@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\FarmUserController;
 use App\Http\Controllers\NurseryUserController;
 use App\Http\Controllers\NurseryUserDashboardController;
+use App\Http\Controllers\SeasonFinancialReportController;
 use App\Http\Controllers\NurseryWarehouseEntityController;
 use App\Http\Controllers\NurserySeedsSaleController;
 use App\Http\Controllers\ProfileController;
@@ -142,7 +143,8 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
     Route::get('nursery/farmers/details/{farmer}', [NurseryController::class,'showNurseryFarmerDetails'])->name('nursery-farmers.details');
 
 
-    Route::get('nursery/reports', [NurseryUserController::class,'showNurseriesUsers'])->name('nursery-reports');
+    Route::get('nursery/reports', SeasonFinancialReportController::class)->name('nursery-reports');
+    Route::get('nursery/reports/season-financial', SeasonFinancialReportController::class)->name('nursery-reports.season-financial');
 
     Route::get('nursery/shared/seedlings', [SeedlingServiceController::class,'getSharedSeedlings'])->name('shared-seedlings');
     Route::post('nursery/reserve/seedlings', [SeedlingPurchaseRequestController::class,'reserveRequestSharedSeedlings'])->name('seedling-services.reserve.request');

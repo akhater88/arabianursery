@@ -83,7 +83,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link {{Route::currentRouteName() == 'nursery-reports' ? 'active' : ''}}">
+                    <a href="{{ route('nursery-reports') }}" class="nav-link {{ Route::is('nursery-reports*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-chart-bar"></i>
                         <p>تقارير المشتل</p>
                     </a>

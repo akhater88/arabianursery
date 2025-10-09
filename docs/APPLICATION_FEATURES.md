@@ -27,3 +27,6 @@
 
 ## Season planning
 - Nursery admins manage a private catalog of seasons scoped to their nursery, including CRUD screens and validation that limit visibility to their own records, while associations across sales, services, and warehouse entries automatically filter to those same seasons.【F:app/Http/Controllers/SeasonController.php†L7-L88】【F:resources/views/seasons/index.blade.php†L1-L49】【F:app/Http/Controllers/NurserySeedsSaleController.php†L46-L120】【F:app/Http/Controllers/NurseryWarehouseEntityController.php†L40-L123】【F:app/Http/Controllers/SeedlingServiceController.php†L49-L139】
+
+## Financial reporting
+- Nursery admins can open a seasonal financial report that summarises total seed sales, direct cash collections, and installment inflows for the selected season, with per-farmer breakdowns of what has been paid versus what remains outstanding.【F:app/Http/Controllers/SeasonFinancialReportController.php†L5-L97】【F:resources/views/reports/season-financial.blade.php†L1-L114】【F:routes/web.php†L145-L147】【F:app/Models/Installment.php†L5-L30】
