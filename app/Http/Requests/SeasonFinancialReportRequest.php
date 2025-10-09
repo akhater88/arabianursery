@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Season;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class SeasonFinancialReportRequest extends FormRequest
 {
@@ -14,17 +14,35 @@ class SeasonFinancialReportRequest extends FormRequest
 
     public function rules(): array
     {
-        $rule = Rule::exists('seasons', 'id');
-
-        if ($nurseryId = optional($this->user()?->nursery)->getKey()) {
-            $rule->where('nursery_id', $nurseryId);
-        }
-
         return [
             'season_id' => [
                 'nullable',
-                'integer',
-                $rule,
+                function (string $attribute, $value, callable $fail): void {
+                    if ($value === null || $value === '') {
+                        return;
+                    }
+
+                    if ($value === 'all') {
+                        return;
+                    }
+
+                    if (! is_numeric($value)) {
+                        $fail(trans('validation.integer', ['attribute' => $attribute]));
+
+                        return;
+                    }
+
+                    $nurseryId = optional($this->user()?->nursery)->getKey();
+
+                    $exists = Season::query()
+                        ->whereKey((int) $value)
+                        ->when($nurseryId, fn ($query) => $query->where('nursery_id', $nurseryId))
+                        ->exists();
+
+                    if (! $exists) {
+                        $fail(trans('validation.exists', ['attribute' => $attribute]));
+                    }
+                },
             ],
         ];
     }

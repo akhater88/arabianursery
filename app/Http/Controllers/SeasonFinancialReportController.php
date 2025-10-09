@@ -24,8 +24,15 @@ class SeasonFinancialReportController extends Controller
             ->get();
 
         $validated = $request->validated();
-        $seasonId = $validated['season_id'] ?? null;
-        $selectedSeason = $seasons->firstWhere('id', $seasonId) ?? $seasons->first();
+        $seasonFilter = $validated['season_id'] ?? null;
+        $showingAllSeasons = $seasonFilter === 'all';
+
+        $selectedSeason = null;
+
+        if (! $showingAllSeasons) {
+            $selectedSeason = $seasons->firstWhere('id', $seasonFilter) ?? $seasons->first();
+            $seasonFilter = $selectedSeason?->id;
+        }
 
         $salesTotal = 0.0;
         $cashCollected = 0.0;
@@ -33,11 +40,15 @@ class SeasonFinancialReportController extends Controller
         $installmentsPending = 0.0;
         $farmerInstallments = collect();
 
-        if ($selectedSeason) {
-            $sales = $nursery->nurserySeedsSales()
-                ->with('farmUser')
-                ->inSeason($selectedSeason)
-                ->get();
+        if ($showingAllSeasons || $selectedSeason) {
+            $salesQuery = $nursery->nurserySeedsSales()
+                ->with('farmUser');
+
+            if ($selectedSeason) {
+                $salesQuery->inSeason($selectedSeason);
+            }
+
+            $sales = $salesQuery->get();
 
             $salesTotal = (float) $sales->sum('price');
             $cashCollected = (float) $sales->sum(fn ($sale) => (float) data_get($sale->cash, 'amount', 0));
@@ -55,7 +66,11 @@ class SeasonFinancialReportController extends Controller
                         SeedlingPurchaseRequest::class,
                         NurseryWarehouseEntity::class,
                     ],
-                    fn ($query) => $query->inSeason($selectedSeason)
+                    function ($query) use ($selectedSeason) {
+                        if ($selectedSeason) {
+                            $query->inSeason($selectedSeason);
+                        }
+                    }
                 )
                 ->get();
 
@@ -86,6 +101,8 @@ class SeasonFinancialReportController extends Controller
             'page_title' => 'التقرير المالي الموسمي',
             'seasons' => $seasons,
             'selectedSeason' => $selectedSeason,
+            'seasonFilter' => $seasonFilter ?? ($showingAllSeasons ? 'all' : null),
+            'showingAllSeasons' => $showingAllSeasons,
             'totals' => [
                 'sales' => $salesTotal,
                 'cash' => $cashCollected,

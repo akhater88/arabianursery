@@ -13,21 +13,34 @@
                         </div>
                     @else
                         <form method="GET" action="{{ route('nursery-reports') }}" class="row g-3 align-items-end mb-4">
-                            <x-season-select :seasons="$seasons" :selected="$selectedSeason?->id" class="col-sm-6 col-md-4" :include-placeholder="false" />
+                            <x-season-select
+                                :seasons="$seasons"
+                                :selected="$seasonFilter"
+                                class="col-sm-6 col-md-4"
+                                :include-placeholder="false"
+                                :include-all-option="true"
+                            />
 
                             <div class="col-sm-3 col-md-2 mt-3 mt-sm-0">
                                 <button type="submit" class="btn btn-primary btn-block">تحديث التقرير</button>
                             </div>
                         </form>
 
-                        @if($selectedSeason)
-                            <div class="mb-4">
-                                <h6 class="text-muted">الموسم الحالي</h6>
-                                <p class="mb-0">
-                                    {{ $selectedSeason->name }}
-                                    ({{ optional($selectedSeason->start_date)->format('Y-m-d') }} - {{ optional($selectedSeason->end_date)->format('Y-m-d') }})
-                                </p>
-                            </div>
+                        @if($showingAllSeasons || $selectedSeason)
+                            @if($showingAllSeasons)
+                                <div class="mb-4">
+                                    <h6 class="text-muted">نطاق التقرير</h6>
+                                    <p class="mb-0">جميع المواسم والسجلات غير المرتبطة بأي موسم.</p>
+                                </div>
+                            @else
+                                <div class="mb-4">
+                                    <h6 class="text-muted">الموسم الحالي</h6>
+                                    <p class="mb-0">
+                                        {{ $selectedSeason->name }}
+                                        ({{ optional($selectedSeason->start_date)->format('Y-m-d') }} - {{ optional($selectedSeason->end_date)->format('Y-m-d') }})
+                                    </p>
+                                </div>
+                            @endif
 
                             <div class="row">
                                 <div class="col-md-3 col-sm-6 mb-3">
@@ -86,7 +99,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="3">لا توجد أقساط مرتبطة بهذا الموسم.</td>
+                                                <td colspan="3">لا توجد أقساط مرتبطة بالاختيار الحالي.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
