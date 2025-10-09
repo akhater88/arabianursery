@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\FarmUserController;
 use App\Http\Controllers\NurseryUserController;
+use App\Http\Controllers\NurseryFarmerSeasonReportController;
 use App\Http\Controllers\NurseryUserDashboardController;
 use App\Http\Controllers\SeasonFinancialReportController;
 use App\Http\Controllers\NurseryWarehouseEntityController;
@@ -141,6 +142,7 @@ Route::middleware(['auth:nursery_web', 'complete-registration'])->group(function
 
     Route::get('nursery/farmers', [NurseryController::class,'showNurseryFarmers'])->name('nursery-farmers');
     Route::get('nursery/farmers/details/{farmer}', [NurseryController::class,'showNurseryFarmerDetails'])->name('nursery-farmers.details');
+    Route::get('nursery/farmers/{farmer}/reports/season', NurseryFarmerSeasonReportController::class)->name('nursery-farmers.reports.season');
 
 
     Route::get('nursery/reports', SeasonFinancialReportController::class)->name('nursery-reports');

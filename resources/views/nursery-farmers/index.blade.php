@@ -107,9 +107,16 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <div class="col-12" style="min-width:170px">
-                                                <a class="btn btn-info" href="{{route('nursery-operators.edit', $farmer->id)}}">
+                                            <div class="col-12 d-flex flex-wrap" style="min-width:220px; gap:0.5rem;">
+                                                <a class="btn btn-info" href="{{ route('nursery-operators.edit', $farmer->id) }}">
                                                     <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a class="btn btn-outline-primary"
+                                                   target="_blank"
+                                                   rel="noopener"
+                                                   href="{{ route('nursery-farmers.reports.season', ['farmer' => $farmer->id, 'season_id' => 'all']) }}">
+                                                    <i class="fas fa-print"></i>
+                                                    <span class="d-none d-md-inline">تقرير الموسم</span>
                                                 </a>
                                             </div>
                                         </td>
