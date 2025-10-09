@@ -54,10 +54,18 @@ class NurseryFarmerSeasonReportController extends Controller
         $installments = $installmentsQuery->get();
 
         $installments->loadMorph('installmentable', [
-            SeedlingService::class => fn ($query) => $query->withTrashed()->with(['seedType']),
-            NurserySeedsSale::class => fn ($query) => $query->withTrashed()->with(['seedType']),
-            SeedlingPurchaseRequest::class => fn ($query) => $query->withTrashed()->with(['seedType']),
-            NurseryWarehouseEntity::class => fn ($query) => $query->withTrashed()->with(['seedType']),
+            SeedlingService::class => function ($query) {
+                $query->withTrashed()->with(['seedType']);
+            },
+            NurserySeedsSale::class => function ($query) {
+                $query->withTrashed()->with(['seedType']);
+            },
+            SeedlingPurchaseRequest::class => function ($query) {
+                $query->withTrashed()->with(['seedType']);
+            },
+            NurseryWarehouseEntity::class => function ($query) {
+                $query->withTrashed()->with(['seedType']);
+            },
         ]);
 
         $totals = [
