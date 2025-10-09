@@ -11,6 +11,7 @@ use App\Models\SeedlingService;
 use App\Models\NurserySeedsSale;
 use App\Models\NurseryWarehouseEntity;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Collection;
 
 class NurseryFarmerSeasonReportController extends Controller
 {
@@ -42,18 +43,26 @@ class NurseryFarmerSeasonReportController extends Controller
             $selectedSeason = $seasons->firstWhere('id', $seasonFilter);
         }
 
+        $seasonableTypes = [
+            SeedlingService::class,
+            NurserySeedsSale::class,
+            SeedlingPurchaseRequest::class,
+            NurseryWarehouseEntity::class,
+        ];
+
         $installmentsQuery = $nursery->installments()
             ->with([
                 'seasons',
-                'installmentable' => function (MorphTo $morphTo) {
+                'installmentable' => function (MorphTo $morphTo) use ($seasonableTypes) {
                     $morphTo->withTrashed();
 
-                    $morphTo->morphWith([
-                        SeedlingService::class => ['seedType'],
-                        NurserySeedsSale::class => ['seedType'],
-                        SeedlingPurchaseRequest::class => ['seedType'],
-                        NurseryWarehouseEntity::class => ['seedType'],
-                    ]);
+                    $relations = [];
+
+                    foreach ($seasonableTypes as $type) {
+                        $relations[$type] = ['seedType', 'seasons'];
+                    }
+
+                    $morphTo->morphWith($relations);
                 },
             ])
             ->where('farm_user_id', $farmer->getKey())
@@ -61,10 +70,43 @@ class NurseryFarmerSeasonReportController extends Controller
             ->orderByDesc('invoice_date');
 
         if ($seasonFilter) {
-            $installmentsQuery->inSeason($seasonFilter);
+            $installmentsQuery->where(function ($query) use ($seasonFilter, $seasonableTypes) {
+                $query->whereHas('seasons', function ($relation) use ($seasonFilter) {
+                    $relation->where('seasons.id', $seasonFilter);
+                })->orWhereHasMorph(
+                    'installmentable',
+                    $seasonableTypes,
+                    function ($relation) use ($seasonFilter) {
+                        $relation->whereHas('seasons', function ($seasonQuery) use ($seasonFilter) {
+                            $seasonQuery->where('seasons.id', $seasonFilter);
+                        });
+                    }
+                );
+            });
         }
 
         $installments = $installmentsQuery->get();
+
+        $installments->transform(function (Installment $installment) {
+            $seasonCollection = Collection::make($installment->seasons ?? Collection::make());
+
+            $installmentable = $installment->installmentable;
+
+            if ($installmentable && method_exists($installmentable, 'seasons')) {
+                $relatedSeasons = Collection::make($installmentable->seasons ?? Collection::make());
+
+                $seasonCollection = $seasonCollection->concat($relatedSeasons);
+            }
+
+            $seasonCollection = $seasonCollection
+                ->filter()
+                ->unique(fn (Season $season) => $season->getKey())
+                ->values();
+
+            $installment->setRelation('allSeasons', $seasonCollection);
+
+            return $installment;
+        });
 
         $totals = [
             'overall' => $installments->sum('amount'),
@@ -75,7 +117,8 @@ class NurseryFarmerSeasonReportController extends Controller
         $seasonBreakdown = collect();
 
         $installments->each(function (Installment $installment) use ($seasonBreakdown) {
-            $seasonCollection = $installment->seasons;
+            /** @var Collection<int, Season> $seasonCollection */
+            $seasonCollection = $installment->getRelationValue('allSeasons') ?? Collection::make();
 
             if ($seasonCollection->isEmpty()) {
                 $current = $seasonBreakdown->get('unassigned', [

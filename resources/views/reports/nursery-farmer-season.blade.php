@@ -166,7 +166,9 @@
                                         default => $installment->type,
                                     };
 
-                                    $seasonNames = $installment->seasons->pluck('name')->implode(', ');
+                                    $seasonNames = $installment->getRelationValue('allSeasons')
+                                        ? $installment->getRelationValue('allSeasons')->pluck('name')->implode(', ')
+                                        : '';
                                 @endphp
                                 <tr>
                                     <td>{{ $installment->invoice_number ?? '—' }}</td>
