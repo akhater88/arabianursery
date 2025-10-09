@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Nursery;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Carbon;
 
@@ -15,6 +18,7 @@ class Season extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'nursery_id',
         'name',
         'start_date',
         'end_date',
@@ -30,11 +34,29 @@ class Season extends Model
     ];
 
     /**
+     * Get the nursery that owns the season.
+     */
+    public function nursery(): BelongsTo
+    {
+        return $this->belongsTo(Nursery::class);
+    }
+
+    /**
      * Get the models that are associated with this season.
      */
     public function seasonables(string $class): MorphToMany
     {
         return $this->morphedByMany($class, 'seasonable');
+    }
+
+    /**
+     * Scope the query to seasons that belong to the provided nursery.
+     */
+    public function scopeForNursery(Builder $query, Nursery|int $nursery): Builder
+    {
+        $nurseryId = $nursery instanceof Nursery ? $nursery->getKey() : $nursery;
+
+        return $query->where('nursery_id', $nurseryId);
     }
 
     /**

@@ -13,7 +13,15 @@ trait HasSeasons
      */
     public function seasons(): MorphToMany
     {
-        return $this->morphToMany(Season::class, 'seasonable')->withTimestamps();
+        $relation = $this->morphToMany(Season::class, 'seasonable')->withTimestamps();
+
+        $nurseryId = $this->seasonNurseryId();
+
+        if ($nurseryId) {
+            $relation->where('seasons.nursery_id', $nurseryId);
+        }
+
+        return $relation;
     }
 
     /**
@@ -40,5 +48,24 @@ trait HasSeasons
             ->whereDate('end_date', '>=', $today)
             ->orderByDesc('start_date')
             ->first();
+    }
+
+    protected function seasonNurseryId(): ?int
+    {
+        if (method_exists($this, 'getAttribute')) {
+            $nurseryId = $this->getAttribute('nursery_id');
+
+            if (! is_null($nurseryId)) {
+                return (int) $nurseryId;
+            }
+        }
+
+        if (method_exists($this, 'nursery')) {
+            $nursery = $this->getRelationValue('nursery') ?? $this->nursery;
+
+            return $nursery?->getKey();
+        }
+
+        return null;
     }
 }

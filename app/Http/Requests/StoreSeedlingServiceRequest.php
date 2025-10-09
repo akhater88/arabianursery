@@ -26,6 +26,13 @@ class StoreSeedlingServiceRequest extends FormRequest
      */
     public function rules(): array
     {
+        $seasonRule = Rule::exists('seasons', 'id');
+        $nurseryId = $this->user()?->nursery?->getKey();
+
+        if ($nurseryId) {
+            $seasonRule->where(fn ($query) => $query->where('nursery_id', $nurseryId));
+        }
+
         return [
             "type" => ['required', Rule::in([SeedlingService::TYPE_FARMER, SeedlingService::TYPE_PERSONAL])],
             "farm_user" => ['nullable', Rule::requiredIf(request('type') == SeedlingService::TYPE_FARMER), 'exists:' . FarmUser::class . ',id'],
@@ -48,7 +55,7 @@ class StoreSeedlingServiceRequest extends FormRequest
             'installments.*.invoice_number' => ['nullable'], //Rule::requiredIf(request('payment_type') == 'installments')
             'installments.*.amount' => ['nullable', Rule::requiredIf(request('payment_type') == 'installments'), 'numeric', 'regex:/^\d*\.{0,1}\d{0,2}$/'],
             'installments.*.invoice_date' => ['nullable', Rule::requiredIf(request('payment_type') == 'installments'), 'date'],
-            'season_id' => ['nullable', 'exists:seasons,id'],
+            'season_id' => ['nullable', $seasonRule],
         ];
     }
 }

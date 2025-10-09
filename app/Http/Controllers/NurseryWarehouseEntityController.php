@@ -47,11 +47,13 @@ class NurseryWarehouseEntityController extends Controller
 
     public function create()
     {
+        $nursery = Auth::user()->nursery;
+
         return view('warehouse-entities/create-or-edit', [
             'page_title' => 'طلب إدخال إلى المخزن',
             'entity_types' => EntityType::get(),
             'nursery_warehouse_entity' => null,
-            'seasons' => Season::orderByDesc('start_date')->get(),
+            'seasons' => Season::forNursery($nursery)->orderByDesc('start_date')->get(),
         ]);
     }
 
@@ -98,7 +100,7 @@ class NurseryWarehouseEntityController extends Controller
             'page_title' => 'تعديل طلب إدخال إلى المخزن',
             'entity_types' => EntityType::get(),
             'nursery_warehouse_entity' => $nurseryWarehouseEntity,
-            'seasons' => Season::orderByDesc('start_date')->get(),
+            'seasons' => Season::forNursery($nursery)->orderByDesc('start_date')->get(),
         ]);
     }
 

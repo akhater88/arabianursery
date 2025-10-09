@@ -54,10 +54,12 @@ class SeedlingServiceController extends Controller
 
     public function create()
     {
+        $nursery = Auth::user()->nursery;
+
         return view('seedling-services/create', [
             'page_title' => 'إضافة خدمة تشتيل',
             'statuses' => SeedlingServiceStatuses::values(),
-            'seasons' => Season::orderByDesc('start_date')->get(),
+            'seasons' => Season::forNursery($nursery)->orderByDesc('start_date')->get(),
         ]);
     }
 
@@ -124,7 +126,7 @@ class SeedlingServiceController extends Controller
             'page_title' => 'تعديل خدمة تشتيل',
             'statuses' => SeedlingServiceStatuses::values(),
             'seedling_service' => $seedlingService,
-            'seasons' => Season::orderByDesc('start_date')->get(),
+            'seasons' => Season::forNursery($nursery)->orderByDesc('start_date')->get(),
         ]);
     }
 

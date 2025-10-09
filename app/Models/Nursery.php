@@ -81,4 +81,9 @@ class Nursery extends Model
     {
         return $this->belongsToMany(SeedlingService::class,'seedling_shared_with_nurseries', 'nursery_id', 'seedling_id')->withTimestamps();
     }
+
+    public function definedSeasons(): HasMany
+    {
+        return $this->hasMany(Season::class);
+    }
 }

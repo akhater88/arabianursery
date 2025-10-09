@@ -26,4 +26,4 @@
 - Seed type search and creation APIs streamline categorizing services, warehouse entries, and sales with a consistent reference list.【F:routes/web.php†L91-L92】【F:app/Http/Controllers/SeedTypeController.php†L10-L34】
 
 ## Season planning
-- A reusable season ledger lets nurseries define start and end dates for planting cycles, then associate those seasons with farms, services, sales, inventory, installments, or products for unified reporting.【F:database/migrations/2024_12_18_000000_create_seasons_table.php†L1-L26】【F:app/Traits/HasSeasons.php†L9-L40】
+- Nursery admins manage a private catalog of seasons scoped to their nursery, including CRUD screens and validation that limit visibility to their own records, while associations across sales, services, and warehouse entries automatically filter to those same seasons.【F:app/Http/Controllers/SeasonController.php†L7-L88】【F:resources/views/seasons/index.blade.php†L1-L49】【F:app/Http/Controllers/NurserySeedsSaleController.php†L46-L120】【F:app/Http/Controllers/NurseryWarehouseEntityController.php†L40-L123】【F:app/Http/Controllers/SeedlingServiceController.php†L49-L139】

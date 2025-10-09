@@ -25,6 +25,13 @@ class UpdateNurseryWarehouseEntityRequest extends FormRequest
      */
     public function rules(): array
     {
+        $seasonRule = Rule::exists('seasons', 'id');
+        $nurseryId = $this->user()?->nursery?->getKey();
+
+        if ($nurseryId) {
+            $seasonRule->where(fn ($query) => $query->where('nursery_id', $nurseryId));
+        }
+
         return [
             "agricultural_supply_store_user" => ['required', 'exists:' . AgriculturalSupplyStoreUser::class . ',id'],
             'entity_type' => ['required', 'exists:' . EntityType::class . ',id'],
@@ -40,7 +47,7 @@ class UpdateNurseryWarehouseEntityRequest extends FormRequest
             'installments.*.invoice_number' => ['nullable'],
             'installments.*.amount' => ['nullable', Rule::requiredIf(request('payment_type') == 'installments'), 'numeric', 'regex:/^\d*\.{0,1}\d{0,2}$/'],
             'installments.*.invoice_date' => ['nullable', Rule::requiredIf(request('payment_type') == 'installments'), 'date'],
-            'season_id' => ['nullable', 'exists:seasons,id'],
+            'season_id' => ['nullable', $seasonRule],
         ];
     }
 }

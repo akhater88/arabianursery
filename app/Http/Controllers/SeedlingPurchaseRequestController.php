@@ -49,10 +49,12 @@ class SeedlingPurchaseRequestController extends Controller
 
     public function create()
     {
+        $nursery = Auth::user()->nursery;
+
         return view('seedling-purchase-requests/create-or-edit', [
             'page_title' => 'طلب شراء أشتال',
             'seedling_purchase_request' => null,
-            'seasons' => Season::orderByDesc('start_date')->get(),
+            'seasons' => Season::forNursery($nursery)->orderByDesc('start_date')->get(),
         ]);
     }
 
@@ -107,7 +109,7 @@ class SeedlingPurchaseRequestController extends Controller
         return view('seedling-purchase-requests/create-or-edit', [
             'page_title' => 'تعديل طلب شراء أشتال',
             'seedling_purchase_request' => $seedlingPurchaseRequest,
-            'seasons' => Season::orderByDesc('start_date')->get(),
+            'seasons' => Season::forNursery($nursery)->orderByDesc('start_date')->get(),
         ]);
     }
 

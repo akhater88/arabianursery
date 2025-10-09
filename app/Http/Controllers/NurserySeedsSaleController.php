@@ -47,10 +47,12 @@ class NurserySeedsSaleController extends Controller
 
     public function create()
     {
+        $nursery = Auth::user()->nursery;
+
         return view('nursery-seeds-sales/create', [
             'page_title' => 'اضافة مبيعات بذور',
             'statuses' => NurserySeedsSaleStatuses::values(),
-            'seasons' => Season::orderByDesc('start_date')->get(),
+            'seasons' => Season::forNursery($nursery)->orderByDesc('start_date')->get(),
         ]);
     }
 
@@ -100,7 +102,7 @@ class NurserySeedsSaleController extends Controller
             'page_title' => 'تعديل مبيعات بذور',
             'statuses' => NurserySeedsSaleStatuses::values(),
             'nursery_seeds_sale' => $nurserySeedsSale,
-            'seasons' => Season::orderByDesc('start_date')->get(),
+            'seasons' => Season::forNursery($nursery)->orderByDesc('start_date')->get(),
         ]);
     }
 
