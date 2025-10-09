@@ -10,6 +10,7 @@ use App\Models\SeedlingPurchaseRequest;
 use App\Models\SeedlingService;
 use App\Models\NurserySeedsSale;
 use App\Models\NurseryWarehouseEntity;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class NurseryFarmerSeasonReportController extends Controller
 {
@@ -42,7 +43,17 @@ class NurseryFarmerSeasonReportController extends Controller
         }
 
         $installmentsQuery = $nursery->installments()
-            ->with(['seasons'])
+            ->with([
+                'seasons',
+                'installmentable' => function (MorphTo $morphTo) {
+                    $morphTo->morphWithTrashed([
+                        SeedlingService::class => ['seedType'],
+                        NurserySeedsSale::class => ['seedType'],
+                        SeedlingPurchaseRequest::class => ['seedType'],
+                        NurseryWarehouseEntity::class => ['seedType'],
+                    ]);
+                },
+            ])
             ->where('farm_user_id', $farmer->getKey())
             ->where('farm_user_id_type', 'FarmUser')
             ->orderByDesc('invoice_date');
@@ -52,21 +63,6 @@ class NurseryFarmerSeasonReportController extends Controller
         }
 
         $installments = $installmentsQuery->get();
-
-        $installments->loadMorph('installmentable', [
-            SeedlingService::class => function ($query) {
-                $query->withTrashed()->with(['seedType']);
-            },
-            NurserySeedsSale::class => function ($query) {
-                $query->withTrashed()->with(['seedType']);
-            },
-            SeedlingPurchaseRequest::class => function ($query) {
-                $query->withTrashed()->with(['seedType']);
-            },
-            NurseryWarehouseEntity::class => function ($query) {
-                $query->withTrashed()->with(['seedType']);
-            },
-        ]);
 
         $totals = [
             'overall' => $installments->sum('amount'),
