@@ -196,17 +196,52 @@
 @push('styles')
     <style>
         @media print {
+            @page {
+                size: A4 portrait;
+                margin: 1cm;
+            }
+
             .no-print {
                 display: none !important;
             }
 
             body {
                 background: #fff;
+                margin: 0;
+                padding: 0;
+            }
+
+            .wrapper,
+            .content-wrapper,
+            .content,
+            .container-fluid,
+            .row,
+            .col-12,
+            .col-md-4,
+            .col-md-3,
+            .col-md-6 {
+                margin: 0 !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+
+            .content-wrapper {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+
+            .card-body {
+                padding: 1.25rem !important;
             }
 
             .card {
                 border: none;
                 box-shadow: none;
+                page-break-inside: avoid;
+            }
+
+            table {
+                width: 100% !important;
             }
         }
     </style>
