@@ -46,7 +46,9 @@ class NurseryFarmerSeasonReportController extends Controller
             ->with([
                 'seasons',
                 'installmentable' => function (MorphTo $morphTo) {
-                    $morphTo->morphWithTrashed([
+                    $morphTo->withTrashed();
+
+                    $morphTo->morphWith([
                         SeedlingService::class => ['seedType'],
                         NurserySeedsSale::class => ['seedType'],
                         SeedlingPurchaseRequest::class => ['seedType'],
