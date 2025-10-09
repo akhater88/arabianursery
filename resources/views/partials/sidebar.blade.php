@@ -71,6 +71,12 @@
                 </li>
                 @hasrole('nursery-admin')
                 <li class="nav-item">
+                    <a href="{{ route('seasons.index') }}" class="nav-link {{ Route::is('seasons.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-calendar-alt"></i>
+                        <p>مواسم المشتل</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{route('nursery-operators')}}" class="nav-link {{Route::currentRouteName() == 'nursery-operators' ? 'active' : ''}}">
                         <i class="nav-icon fas fa-people-carry"></i>
                         <p>مشغلين المشتل</p>
