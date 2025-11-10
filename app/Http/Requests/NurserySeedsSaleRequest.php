@@ -26,6 +26,13 @@ class NurserySeedsSaleRequest extends FormRequest
      */
     public function rules(): array
     {
+        $seasonRule = Rule::exists('seasons', 'id');
+        $nurseryId = $this->user()?->nursery?->getKey();
+
+        if ($nurseryId) {
+            $seasonRule->where(fn ($query) => $query->where('nursery_id', $nurseryId));
+        }
+
         return [
             "farm_user" => ['required', 'exists:' . FarmUser::class . ',id'],
 //            "seed_type" => ['required', 'exists:' . SeedType::class . ',id'],
@@ -43,6 +50,7 @@ class NurserySeedsSaleRequest extends FormRequest
             'installments.*.invoice_number' => ['nullable'], //Rule::requiredIf(request('payment_type') == 'installments')
             'installments.*.amount' => ['nullable', Rule::requiredIf(request('payment_type') == 'installments'), 'numeric', 'regex:/^\d*\.{0,1}\d{0,2}$/'],
             'installments.*.invoice_date' => ['nullable', Rule::requiredIf(request('payment_type') == 'installments'), 'date'],
+            'season_id' => ['nullable', $seasonRule],
         ];
     }
 }

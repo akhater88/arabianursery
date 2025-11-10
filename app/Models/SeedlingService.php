@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\SeedlingServiceStatuses;
 use App\Traits\Filterable;
+use App\Traits\HasSeasons;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class SeedlingService extends Model
 {
-    use HasFactory, SoftDeletes, Filterable;
+    use HasFactory, SoftDeletes, Filterable, HasSeasons;
 
     const TYPE_PERSONAL = 1;
     const TYPE_FARMER = 2;

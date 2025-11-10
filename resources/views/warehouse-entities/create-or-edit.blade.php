@@ -126,6 +126,11 @@
                             </div>
                         </div>
 
+                        <div class="form-row mb-3">
+                            @php($selectedSeason = old('season_id', $nursery_warehouse_entity?->seasons->first()?->id))
+                            <x-season-select :seasons="$seasons" :selected="$selectedSeason" class="col-12 col-sm-4" />
+                        </div>
+
                         @include('components.payments.view', ['model' => $nursery_warehouse_entity, 'is_view_only' => false])
 
                         <div class="form-group">
@@ -298,6 +303,11 @@
         })
 
         $('#entity-type').select2({
+            theme: 'bootstrap4',
+            dir: 'rtl',
+        })
+
+        $('#season-id').select2({
             theme: 'bootstrap4',
             dir: 'rtl',
         })

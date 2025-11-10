@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasSeasons;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Nursery extends Model
 {
-    use HasFactory, HasSpatial;
+    use HasFactory, HasSpatial, HasSeasons;
 
     protected $guarded = ['id'];
 
@@ -79,5 +80,10 @@ class Nursery extends Model
     public function seedlingsShared(): BelongsToMany
     {
         return $this->belongsToMany(SeedlingService::class,'seedling_shared_with_nurseries', 'nursery_id', 'seedling_id')->withTimestamps();
+    }
+
+    public function definedSeasons(): HasMany
+    {
+        return $this->hasMany(Season::class);
     }
 }

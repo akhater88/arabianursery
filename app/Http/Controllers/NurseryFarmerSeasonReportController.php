@@ -1,0 +1,171 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\NurseryFarmerSeasonReportRequest;
+use App\Models\FarmUser;
+use App\Models\Installment;
+use App\Models\Season;
+use App\Models\SeedlingPurchaseRequest;
+use App\Models\SeedlingService;
+use App\Models\NurserySeedsSale;
+use App\Models\NurseryWarehouseEntity;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Collection;
+
+class NurseryFarmerSeasonReportController extends Controller
+{
+    /**
+     * Display the printable financial report for a nursery farmer.
+     */
+    public function __invoke(NurseryFarmerSeasonReportRequest $request, $farmer)
+    {
+        $user = $request->user();
+        $nursery = $user->nursery;
+
+        if (! $user->hasRole('nursery-admin')) {
+            abort(403);
+        }
+
+        $farmer = FarmUser::withTrashed()->findOrFail($farmer);
+
+        if (! $nursery || ! $nursery->farmUsers()->withTrashed()->whereKey($farmer->getKey())->exists()) {
+            abort(404);
+        }
+
+        $seasons = $nursery->definedSeasons()->orderByDesc('start_date')->get();
+        $seasonInput = $request->validated('season_id');
+        $selectedSeason = null;
+        $seasonFilter = null;
+
+        if ($seasonInput && $seasonInput !== 'all') {
+            $seasonFilter = (int) $seasonInput;
+            $selectedSeason = $seasons->firstWhere('id', $seasonFilter);
+        }
+
+        $seasonableTypes = [
+            SeedlingService::class,
+            NurserySeedsSale::class,
+            SeedlingPurchaseRequest::class,
+            NurseryWarehouseEntity::class,
+        ];
+
+        $installmentsQuery = $nursery->installments()
+            ->with([
+                'seasons',
+                'installmentable' => function (MorphTo $morphTo) use ($seasonableTypes) {
+                    $morphTo->withTrashed();
+
+                    $relations = [];
+
+                    foreach ($seasonableTypes as $type) {
+                        $relations[$type] = ['seedType', 'seasons'];
+                    }
+
+                    $morphTo->morphWith($relations);
+                },
+            ])
+            ->where('farm_user_id', $farmer->getKey())
+            ->where('farm_user_id_type', 'FarmUser')
+            ->orderByDesc('invoice_date');
+
+        if ($seasonFilter) {
+            $installmentsQuery->where(function ($query) use ($seasonFilter, $seasonableTypes) {
+                $query->whereHas('seasons', function ($relation) use ($seasonFilter) {
+                    $relation->where('seasons.id', $seasonFilter);
+                })->orWhereHasMorph(
+                    'installmentable',
+                    $seasonableTypes,
+                    function ($relation) use ($seasonFilter) {
+                        $relation->whereHas('seasons', function ($seasonQuery) use ($seasonFilter) {
+                            $seasonQuery->where('seasons.id', $seasonFilter);
+                        });
+                    }
+                );
+            });
+        }
+
+        $installments = $installmentsQuery->get();
+
+        $installments->transform(function (Installment $installment) {
+            $seasonCollection = Collection::make($installment->seasons ?? Collection::make());
+
+            $installmentable = $installment->installmentable;
+
+            if ($installmentable && method_exists($installmentable, 'seasons')) {
+                $relatedSeasons = Collection::make($installmentable->seasons ?? Collection::make());
+
+                $seasonCollection = $seasonCollection->concat($relatedSeasons);
+            }
+
+            $seasonCollection = $seasonCollection
+                ->filter()
+                ->unique(fn (Season $season) => $season->getKey())
+                ->values();
+
+            $installment->setRelation('allSeasons', $seasonCollection);
+
+            return $installment;
+        });
+
+        $totals = [
+            'overall' => $installments->sum('amount'),
+            'collected' => $installments->whereNotNull('invoice_number')->sum('amount'),
+            'pending' => $installments->whereNull('invoice_number')->sum('amount'),
+        ];
+
+        $seasonBreakdown = collect();
+
+        $installments->each(function (Installment $installment) use ($seasonBreakdown) {
+            /** @var Collection<int, Season> $seasonCollection */
+            $seasonCollection = $installment->getRelationValue('allSeasons') ?? Collection::make();
+
+            if ($seasonCollection->isEmpty()) {
+                $current = $seasonBreakdown->get('unassigned', [
+                    'name' => 'سجلات بدون موسم',
+                    'overall' => 0,
+                    'collected' => 0,
+                    'pending' => 0,
+                ]);
+
+                $current['overall'] += $installment->amount;
+                $current['collected'] += $installment->invoice_number ? $installment->amount : 0;
+                $current['pending'] += $installment->invoice_number ? 0 : $installment->amount;
+
+                $seasonBreakdown->put('unassigned', $current);
+
+                return;
+            }
+
+            $seasonCollection->each(function (Season $season) use ($seasonBreakdown, $installment) {
+                $seasonId = (string) $season->getKey();
+
+                $current = $seasonBreakdown->get($seasonId, [
+                    'name' => $season->name,
+                    'overall' => 0,
+                    'collected' => 0,
+                    'pending' => 0,
+                ]);
+
+                $current['overall'] += $installment->amount;
+                $current['collected'] += $installment->invoice_number ? $installment->amount : 0;
+                $current['pending'] += $installment->invoice_number ? 0 : $installment->amount;
+
+                $seasonBreakdown->put($seasonId, $current);
+            });
+        });
+
+        $seasonBreakdown = $seasonBreakdown->sortBy('name');
+
+        return view('reports.nursery-farmer-season', [
+            'nursery' => $nursery,
+            'farmer' => $farmer,
+            'seasons' => $seasons,
+            'selectedSeason' => $selectedSeason,
+            'seasonFilter' => $seasonInput ?: 'all',
+            'installments' => $installments,
+            'totals' => $totals,
+            'seasonBreakdown' => $seasonBreakdown,
+        ]);
+    }
+}

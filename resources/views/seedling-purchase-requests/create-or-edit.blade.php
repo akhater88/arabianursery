@@ -84,6 +84,11 @@
                             </div>
                         </div>
 
+                        <div class="form-row mb-3">
+                            @php($selectedSeason = old('season_id', $seedling_purchase_request?->seasons->first()?->id))
+                            <x-season-select :seasons="$seasons" :selected="$selectedSeason" class="col-12 col-sm-4" />
+                        </div>
+
                         @include('components.payments.view', ['model' => $seedling_purchase_request, 'is_view_only' => false])
 
                         <div class="form-group">
@@ -195,6 +200,11 @@
                 url: "{{route('farmer.search')}}",
                 dataType: 'json',
             }
+        })
+
+        $('#season-id').select2({
+            theme: 'bootstrap4',
+            dir: 'rtl',
         })
 
     </script>

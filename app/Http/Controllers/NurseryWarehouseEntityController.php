@@ -8,6 +8,7 @@ use App\Http\Requests\StoreNurseryWarehouseEntityRequest;
 use App\Http\Requests\UpdateNurseryWarehouseEntityRequest;
 use App\Models\EntityType;
 use App\Models\NurseryWarehouseEntity;
+use App\Models\Season;
 use App\Models\SeedlingService;
 use App\Models\SeedType;
 use Illuminate\Http\Request;
@@ -46,10 +47,13 @@ class NurseryWarehouseEntityController extends Controller
 
     public function create()
     {
+        $nursery = Auth::user()->nursery;
+
         return view('warehouse-entities/create-or-edit', [
             'page_title' => 'طلب إدخال إلى المخزن',
             'entity_types' => EntityType::get(),
             'nursery_warehouse_entity' => null,
+            'seasons' => Season::forNursery($nursery)->orderByDesc('start_date')->get(),
         ]);
     }
 
@@ -70,6 +74,8 @@ class NurseryWarehouseEntityController extends Controller
             "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
         ]);
 
+        $this->syncSeason($warehouseEntity, $request->season_id);
+
         if($request->payment_type == 'installments' && !empty($request->installments)){
             $instalmentsArray = [];
             foreach ($request->installments as $key => $value ){
@@ -88,10 +94,13 @@ class NurseryWarehouseEntityController extends Controller
         $user = Auth::user();
         $nursery = $user->nursery;
         $nurseryWarehouseEntity = $nursery->nurseryWarehouseEntities()->findOrFail($nursery_warehouse_entity->id);
+        $nurseryWarehouseEntity->load('seasons');
+
         return view('warehouse-entities/create-or-edit', [
             'page_title' => 'تعديل طلب إدخال إلى المخزن',
             'entity_types' => EntityType::get(),
             'nursery_warehouse_entity' => $nurseryWarehouseEntity,
+            'seasons' => Season::forNursery($nursery)->orderByDesc('start_date')->get(),
         ]);
     }
 
@@ -116,6 +125,8 @@ class NurseryWarehouseEntityController extends Controller
                 "cash" => $request->payment_type == 'cash' ? ['invoice_number' => $request->cash_invoice_number, 'amount' => $request->cash_amount] : null,
             ]
         );
+
+        $this->syncSeason($nurseryWarehouseEntity, $request->season_id);
 
         if($request->payment_type == 'installments' && !empty($request->installments)){
             $nurseryWarehouseEntity->installments()->delete();
@@ -175,5 +186,10 @@ class NurseryWarehouseEntityController extends Controller
             ->where('nursery_id', $request->user()->nursery->id)
             ->where('id', $request->id)
             ->firstOrFail();
+    }
+
+    protected function syncSeason(NurseryWarehouseEntity $warehouseEntity, $seasonId): void
+    {
+        $warehouseEntity->seasons()->sync($seasonId ? [$seasonId] : []);
     }
 }
